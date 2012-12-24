@@ -1,4 +1,6 @@
-live-build (3.0~b4-1) unstable; urgency=low
+live-build (3.0~b4-1) kali; urgency=low
+
+  * Import newer live-build into kali.
 
   [ Daniel Baumann ]
   * Moving removal of actual backup files for apt sources into correct
@@ -12,7 +14,7 @@ live-build (3.0~b4-1) unstable; urgency=low
   [ Daniel Baumann ]
   * Removing grub package from binary_debian-installer for wheezy.
 
- -- Daniel Baumann <daniel@debian.org>  Sun, 23 Dec 2012 10:50:38 +0100
+ -- Raphaël Hertzog <hertzog@debian.org>  Mon, 24 Dec 2012 14:10:40 +0100
 
 live-build (3.0~b3-1) unstable; urgency=low
 
