@@ -1,8 +1,84 @@
-live-build (3.0~b5-1) kali; urgency=low
+live-build (3.0.1-1) unstable; urgency=low
 
-  * Import newer live-build into kali.
+  * Removing superfluous menu default directive in installer syslinux
+    menues.
+  * Updating wheezy release number.
+  * Updating squeeze point-release number.
+  * Dropping German manpage translations stubs for the release.
+
+ -- Daniel Baumann <daniel@debian.org>  Thu, 14 Feb 2013 19:31:04 +0100
+
+live-build (3.0.0-1) unstable; urgency=low
+
+  * Updating wheezy pre-release number for b4.
+  * Dropping dpkg compression level.
+  * Correcting spelling typos in changelog to make lintian happy.
+  * Escaping quotes to workaround a false-positive of checkbashisms in
+    binary_debian-installer.
+  * Correcting install path in loadlins install.bat for the gtk d-i
+    flavour.
+  * Switching default binary filesystem for hdd images to fat32 to be more
+    robust on todays flash devices.
+  * Correcting vshift in syslinux themes to correct display bug with
+    overlong lines, thanks to Thanatermesis <thanatermesis@gmail.com>.
+  * Adding bootrap_archive-keys to establish secure trust-chain on top of
+    debian-keyring for derivatives.
+  * Updating syslinux configurations and handling for syslinux 5.
+  * Adding hook to remove systemd machine-id.
+  * Renumbering hooks.
+  * Correcting wrong debian-installer syslinux menu files.
+  * Including HDT in advanced options menu within syslinux menu.
+  * Updating binary_debian-installer for newer append replacement
+    variables used in syslinux configs.
+  * Dropping theme package support, themes are either in the config tree
+    or the embedded one from live-build is used.
+  * Correctly remove binary contents and packages file in clean script.
+  * Adding key-shortcut for advanced options in syslinux menu.
+  * Removing default menu marker for install entry in syslinux menu.
+  * Converting splash.svg not just splash.svg.in files as syslinux
+    bootsplashes.
+  * Removing dropped syslinux-theme config option from lb_config manpage.
+
+ -- Daniel Baumann <daniel@debian.org>  Sat, 09 Feb 2013 00:18:07 +0100
+
+live-build (3.0~b6-1) unstable; urgency=low
 
   [ Daniel Baumann ]
+  * Updating manpage year handling for 2013.
+  * Updating wheezy beta-release number.
+  * Using cat instead of echo to workaround incompatible and conflicting
+    uses in escaping of \t in dash and bash, and less importantly to
+    workaround a false-positive in checkbashisms.
+  * Updating footer link to 'legal information' in cgi html template.
+  * Cleaning up binary_loadlin.
+  * Updating for twitter-bootstrap usage on live.debia.net in the cgi html
+    templates.
+  * Updating footer in cgi html template.
+  * Correcting spelling typo in html footer of the cgi, thanks to Jean-
+    Christophe Saint-Marc <jchristophe.stmarc@free.fr>.
+  * Removing reference to removed --package-lists option in lb_config
+    manpage (Closes: #698260).
+
+  [ Richard Nelson ]
+  * Correcting typo on functions/default.sh, thanks to jhcha54008
+    <jhcha54008@free.fr> (Closes: #698397).
+
+  [ Daniel Baumann ]
+  * Updating samhain workaround in chroot_dpkg to work if live-build is
+    being used with sudo or fakeroot (Closes: #698423).
+  * Correcting apt-key cleanup of local dummy signing keys when using
+    local packages, thanks to jhcha54008 <jhcha54008@free.fr>.
+  * Falling back to use genisoimage when building squeeze iso-hybrid
+    images.
+  * Applying slightly modified patch from Raphaël Hertzog
+    <hertzog@debian.org> to fix automatic firmware inclusion when using
+    debian-installer with live-installer and having firmware packages
+    installed in the live system already.
+
+ -- Daniel Baumann <daniel@debian.org>  Sun, 20 Jan 2013 10:17:42 +0100
+
+live-build (3.0~b5-1) unstable; urgency=low
+
   * Omitting binary manifest creation when chroot filesystem is set to
     none.
   * Omitting memtest in binary if chroot filesystem is set to none.
@@ -38,7 +114,7 @@ live-build (3.0~b5-1) kali; urgency=low
   * Adding support for sha512 checksums.
   * Dropping pre-squeeze handling for win32-loader files.
 
- -- Raphaël Hertzog <hertzog@debian.org>  Wed, 09 Jan 2013 15:52:46 +0100
+ -- Daniel Baumann <daniel@debian.org>  Wed, 02 Jan 2013 11:45:30 +0100
 
 live-build (3.0~b4-1) unstable; urgency=low
 
@@ -54,7 +130,7 @@ live-build (3.0~b4-1) unstable; urgency=low
   [ Daniel Baumann ]
   * Removing grub package from binary_debian-installer for wheezy.
 
- -- Raphaël Hertzog <hertzog@debian.org>  Mon, 24 Dec 2012 14:10:40 +0100
+ -- Daniel Baumann <daniel@debian.org>  Sun, 23 Dec 2012 10:50:38 +0100
 
 live-build (3.0~b3-1) unstable; urgency=low
 
@@ -4342,7 +4418,7 @@ live-helper (1.0~a38-1) unstable; urgency=medium
   * Don't fail if resolv.conf is a symlink, thanks to David Madore
     <david.madore@ens.fr> (Closes: #457595).
   * Fixing changelog.
-  * Consistently using the pipe as seperator in sed commands now.
+  * Consistently using the pipe as separator in sed commands now.
   * Checking for /sys/class rather than /sys/kernel, avoids problem when
     running under OpenVZ which doesn't have sys/kernel, thanks to
     Takeshi Yaegashi <yaegashi@debian.org>.
