@@ -1,3 +1,11 @@
+live-build (3.0.5-1kali1) kali; urgency=low
+
+  * Ensure xfsprogs and jfsutils are available in the ISO. Otherwise users
+    opting for XFS and JFS and installing without network won't have them and
+    the (first) boot can be interrupted due to this.
+
+ -- Raphaël Hertzog <hertzog@debian.org>  Mon, 26 Aug 2013 18:38:06 +0200
+
 live-build (3.0.5-1) unstable; urgency=low
 
   * Skipping loadlin inclusion on netboot images.
