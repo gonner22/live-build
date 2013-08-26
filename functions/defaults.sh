@@ -362,7 +362,7 @@ Set_defaults ()
 
 		progress-linux)
 			LB_PARENT_MIRROR_BOOTSTRAP="${LB_PARENT_MIRROR_BOOTSTRAP:-http://ftp.debian.org/debian/}"
-			LB_MIRROR_BOOTSTRAP="${LB_MIRROR_BOOTSTRAP:-http://cdn.archive.progress-linux.org/progress/}"
+			LB_MIRROR_BOOTSTRAP="${LB_MIRROR_BOOTSTRAP:-http://cdn.archive.progress-linux.org/packages/}"
 			;;
 
 		ubuntu)
@@ -445,7 +445,16 @@ Set_defaults ()
 	# Setting backports mirror to fetch packages from
 	case "${LB_MODE}" in
 		debian)
-			LB_MIRROR_CHROOT_BACKPORTS="${LB_MIRROR_CHROOT_BACKPORTS:-http://backports.debian.org/debian-backports/}"
+			case "${LB_DISTRIBUTION}" in
+				squeeze)
+					LB_MIRROR_CHROOT_BACKPORTS="${LB_MIRROR_CHROOT_BACKPORTS:-http://backports.debian.org/debian-backports/}"
+					;;
+
+				*)
+					LB_MIRROR_CHROOT_BACKPORTS="${LB_MIRROR_CHROOT_BACKPORTS:-${LB_MIRROR_CHROOT}}"
+					;;
+			esac
+
 			LB_PARENT_MIRROR_CHROOT_BACKPORTS="${LB_PARENT_MIRROR_CHROOT_BACKPORTS:-${LB_MIRROR_CHROOT_BACKPORTS}}"
 			;;
 
@@ -557,7 +566,16 @@ Set_defaults ()
 	# Setting backports mirror which ends up in the image
 	case "${LB_MODE}" in
 		debian)
-			LB_MIRROR_BINARY_BACKPORTS="${LB_MIRROR_BINARY_BACKPORTS:-http://http.debian.net/debian-backports/}"
+			case "${LB_DISTRIBUTION}" in
+				squeeze)
+					LB_MIRROR_BINARY_BACKPORTS="${LB_MIRROR_BINARY_BACKPORTS:-http://http.debian.net/debian-backports/}"
+					;;
+
+				*)
+					LB_MIRROR_BINARY_BACKPORTS="${LB_MIRROR_BINARY_BACKPORTS:-${LB_MIRROR_BINARY}}"
+					;;
+			esac
+
 			LB_PARENT_MIRROR_BINARY_BACKPORTS="${LB_PARENT_MIRROR_BINARY_BACKPORTS:-${LB_MIRROR_BINARY_BACKPORTS}}"
 			;;
 
@@ -813,7 +831,7 @@ Set_defaults ()
 
 	# Setting updates updates option
 	case "${LB_PARENT_DISTRIBUTION}" in
-		wheezy|jessie|sid)
+		jessie|sid)
 			LB_UPDATES="${LB_UPDATES:-false}"
 			;;
 
@@ -849,7 +867,7 @@ Set_defaults ()
 	# Setting apt indices
 	case "${LB_MODE}" in
 		progress-linux)
-			LB_APT_INDICES="${LB_APT_INDICES:-none}"
+			LB_APT_INDICES="${LB_APT_INDICES:-false}"
 			;;
 
 		*)
@@ -1199,6 +1217,13 @@ Check_defaults ()
 				Echo_warning "Continuing build, but it could lead to errors or different results. Please regenerate the config tree."
 			fi
 		fi
+	fi
+
+	if echo ${LB_HDD_LABEL} | grep -qs ' '
+	then
+		Echo_error "There are currently no whitespaces supported in hdd labels."
+
+		exit 1
 	fi
 
 	if [ "${LB_DEBIAN_INSTALLER}" != "false" ]
