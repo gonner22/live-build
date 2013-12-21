@@ -1,3 +1,10 @@
+live-build (3.0.5-1kali2) kali; urgency=medium
+
+  * Fix binary_debian-installer step to use linux-image-* metapackages
+    instead of linux-image-2.6-* which are gone.
+
+ -- Raphaël Hertzog <hertzog@debian.org>  Sat, 21 Dec 2013 13:55:44 +0100
+
 live-build (3.0.5-1kali1) kali; urgency=low
 
   * Ensure xfsprogs and jfsutils are available in the ISO. Otherwise users
