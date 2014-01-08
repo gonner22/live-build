@@ -1,2 +1,3 @@
 add-xfsprogs-jfsutils-to-d-i.patch
 fix-kernel-metapackages-used-in-di-step.patch
+fix-default-armhf-kernel-flavours.patch

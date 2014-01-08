@@ -1,3 +1,10 @@
+live-build (3.0.5-1kali3) kali; urgency=medium
+
+  * Update default kernel flavours for armhf to match what's available with
+    linux 3.12.
+
+ -- Raphaël Hertzog <hertzog@debian.org>  Wed, 08 Jan 2014 23:08:17 +0100
+
 live-build (3.0.5-1kali2) kali; urgency=medium
 
   * Fix binary_debian-installer step to use linux-image-* metapackages

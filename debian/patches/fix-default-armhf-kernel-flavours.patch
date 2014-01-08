@@ -1,0 +1,18 @@
+Description: Update linux flavours for armhf
+ With newer kernels, only armmp armmp-lpae flavours are available. Kali
+ has linux 3.12 (or newer) and needs to use those instead.
+Author: Raphaël Hertzog <hertzog@debian.org>
+
+--- a/functions/defaults.sh
++++ b/functions/defaults.sh
+@@ -681,8 +681,8 @@ Set_defaults ()
+ 
+ 		armhf)
+ 			# armhf will have special images: one rootfs image and many additional kernel images.
+-			# therefore we default to all available armel flavours
+-			LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-mx5 omap}"
++			# therefore we default to all available armhf flavours
++			LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-armmp armmp-lpae}"
+ 			;;
+ 
+ 		amd64)
