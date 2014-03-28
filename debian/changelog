@@ -1,7 +1,7 @@
 live-build (3.0.5-1kali4) kali; urgency=medium
 
-  * Add the /usr/share/live/build/data/debian-cd/kali symlink that
-    is currently manually created by Kali's build_all.sh script.
+  * Add the /usr/share/live/build/data/debian-cd/kali{,-dev} symlinks that
+    are currently manually created by Kali's build_all.sh script.
   * Add EFI boot support with syslinux 6. Closes: #731709
 
  -- Raphaël Hertzog <hertzog@debian.org>  Fri, 28 Mar 2014 17:09:43 +0100
