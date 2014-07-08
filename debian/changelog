@@ -1,3 +1,10 @@
+live-build (3.0.5-1kali5) UNRELEASED; urgency=medium
+
+  * Drop -isohybrid-apm-hfsplus as recommended by Thomas Schmitt.
+  * And add back ldlinux.e64 in the generated EFI image.
+
+ -- Raphaël Hertzog <hertzog@debian.org>  Tue, 08 Jul 2014 14:54:40 +0200
+
 live-build (3.0.5-1kali4) kali; urgency=medium
 
   * Add the /usr/share/live/build/data/debian-cd/kali{,-dev} symlinks that
