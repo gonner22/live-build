@@ -1,4 +1,4 @@
-live-build (3.0.5-1kali5) UNRELEASED; urgency=medium
+live-build (3.0.5-1kali5) kali; urgency=medium
 
   * Drop -isohybrid-apm-hfsplus as recommended by Thomas Schmitt.
   * And add back ldlinux.e64 in the generated EFI image.
