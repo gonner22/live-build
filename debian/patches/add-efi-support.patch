@@ -9,15 +9,16 @@ Bug-Kali: https://bugs.kali.org/view.php?id=680
 
 --- a/scripts/build/binary
 +++ b/scripts/build/binary
-@@ -71,6 +71,8 @@ lb binary_disk ${@}
- lb binary_loadlin ${@}
+@@ -72,6 +72,9 @@ lb binary_loadlin ${@}
  lb binary_win32-loader ${@}
  lb binary_includes ${@}
-+lb binary_efi ${@} # After includes because it copies files that can be
-+                   # overriden by binary_includes in efi.img
  lb binary_hooks ${@}
++lb binary_efi ${@} # After includes/hooks because it copies in efi.img
++		   # files that can be overriden by binary_includes and
++		   # modified by binary_hooks
  lb binary_checksums ${@}
  
+ if [ "${LB_BUILD_WITH_CHROOT}" != "true" ]
 --- a/scripts/build/binary_iso
 +++ b/scripts/build/binary_iso
 @@ -88,6 +88,23 @@ fi
