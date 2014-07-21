@@ -1,3 +1,12 @@
+live-build (3.0.5-1kali6) kali; urgency=medium
+
+  * Use the xorriso syntax that doesn't create a GPT but does create
+    an EFI partition recorded in MBR. This one is know to work on MAC
+    and on most UEFI implementations (even if the lack of GPT makes
+    it non-conforming in theory).
+
+ -- Raphaël Hertzog <hertzog@debian.org>  Mon, 21 Jul 2014 16:53:29 +0200
+
 live-build (3.0.5-1kali5) kali; urgency=medium
 
   * Drop -isohybrid-apm-hfsplus as recommended by Thomas Schmitt.
