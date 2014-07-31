@@ -1,11 +1,22 @@
-Description: Update linux flavours for armhf
- With newer kernels, only armmp armmp-lpae flavours are available. Kali
- has linux 3.12 (or newer) and needs to use those instead.
+Description: Update linux flavours for armhf/armel
+ With 3.12+ kernels, on armhf, only armmp / armmp-lpae flavours are
+ available. With Linux 3.14, armel lost the support of the iop32x and
+ ixp4xx flavors.
+ .
+ Kali has linux 3.14 (or newer) and needs to adapt to this.
 Author: Raphaël Hertzog <hertzog@debian.org>
 
 --- a/functions/defaults.sh
 +++ b/functions/defaults.sh
-@@ -681,8 +681,8 @@ Set_defaults ()
+@@ -674,15 +674,15 @@ Set_defaults ()
+ 				*)
+ 					# armel will have special images: one rootfs image and many additional kernel images.
+ 					# therefore we default to all available armel flavours
+-					LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-iop32x ixp4xx kirkwood orion5x versatile}"
++					LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-kirkwood orion5x versatile}"
+ 					;;
+ 			esac
+ 			;;
  
  		armhf)
  			# armhf will have special images: one rootfs image and many additional kernel images.

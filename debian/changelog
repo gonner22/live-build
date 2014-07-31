@@ -1,3 +1,9 @@
+live-build (3.0.5-1kali8) kali; urgency=medium
+
+  * Drop iop32x and ixp4xx flavors on armel. They are gone with Linux 3.14.
+
+ -- Raphaël Hertzog <hertzog@debian.org>  Thu, 31 Jul 2014 09:30:18 +0200
+
 live-build (3.0.5-1kali7) kali; urgency=medium
 
   * Call binary_efi after binary_hooks to include the files after they have
