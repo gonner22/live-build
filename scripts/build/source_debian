@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2013 Daniel Baumann <daniel@debian.org>
+## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -79,19 +79,11 @@ case "${LB_BINARY_FILESYSTEM}" in
 		;;
 
 	ntfs)
-		case "${LB_PARENT_DISTRIBUTION}" in
-			squeeze)
-				echo "ntfsprogs" >> source-selection.txt
-				;;
-
-			*)
-				echo "ntfs-3g" >> source-selection.txt
-				;;
-		esac
+		echo "ntfs-3g" >> source-selection.txt
 		;;
 esac
 
-case "${LB_ARCHITECTURES}" in
+case "${LIVE_IMAGE_ARCHITECTURE}" in
 	amd64|i386)
 
 cat >> source-selection.txt << EOF
@@ -105,25 +97,43 @@ EOF
 			echo "${LB_MEMTEST}" >> source-selection.txt
 		fi
 		;;
-
-	powerpc)
-		echo "yaboot" >> source-selection.txt
-		;;
-
-	sparc)
-
-cat >> source-selection.txt << EOF
-silo
-sparc-utils
-EOF
-
-		;;
 esac
 
 if [ -n "${LB_TASKS}" ]
 then
 	echo "${LB_TASKSEL}" >> source-selection.txt
 fi
+
+# apt-get source does not respect pinning
+# building images with backports included but not enabled
+# will result in apt-get source download stuff from backports
+# where available. workaround: disable backports
+case "${LB_MODE}" in
+	progress-linux)
+		case "${LB_DISTRIBUTION}" in
+			*-backports)
+
+				;;
+
+			*)
+				if grep -qs "${LB_DISTRIBUTION}-backports" chroot/etc/apt/sources.list.d/progress-linux.list
+				then
+					cp chroot/etc/apt/sources.list.d/progress-linux.list chroot/etc/apt/sources.list.d/progress-linux.list.orig
+
+					while read _LINE
+					do
+						if echo "${_LINE}" | grep -qs ${LB_DISTRIBUTION}-backports
+						then
+							sed -i -e "s|${_LINE}|#${_LINE}|" chroot/etc/apt/sources.list.d/progress-linux.list
+						fi
+					done < chroot/etc/apt/sources.list.d/progress-linux.list.orig
+
+					Apt chroot update
+				fi
+				;;
+		esac
+		;;
+esac
 
 MISSING=""
 
@@ -177,5 +187,14 @@ do
 	mv chroot/"${SOURCE}"_* source/debian/"${LETTER}"/"${SOURCE}"
 done
 
+# Reverting apt sources again
+if [ -e chroot/etc/apt/sources.list.d/progress-linux.list.orig ]
+then
+	mv chroot/etc/apt/sources.list.d/progress-linux.list.orig chroot/etc/apt/sources.list.d/progress-linux.list
+
+	Apt chroot update
+fi
+
 # Creating stage file
 Create_stagefile .build/source_debian
+Create_stagefile .build/source

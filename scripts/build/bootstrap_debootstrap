@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2013 Daniel Baumann <daniel@debian.org>
+## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -44,9 +44,6 @@ Echo_message "Begin bootstrapping system..."
 
 Check_package /usr/sbin/debootstrap debootstrap
 
-# Ensure that a system is built as root
-lb testroot
-
 # Checking stage file
 Check_stagefile .build/bootstrap
 Check_stagefile .build/bootstrap_cache.restore
@@ -61,22 +58,16 @@ Create_lockfile .lock
 mkdir -p chroot
 
 # Setting debootstrap options
-if [ -n "${LB_ARCHITECTURES}" ]
+if [ -n "${LIVE_IMAGE_ARCHITECTURE}" ]
 then
-	DEBOOTSTRAP_OPTIONS="${DEBOOTSTRAP_OPTIONS} --arch=${LB_ARCHITECTURES}"
+	DEBOOTSTRAP_OPTIONS="${DEBOOTSTRAP_OPTIONS} --arch=${LIVE_IMAGE_ARCHITECTURE}"
 fi
 
-if [ "${LB_ARCHIVE_AREAS}" != "main" ]
+if [ "${LIVE_IMAGE_ARCHIVE_AREAS}" != "main" ]
 then
 	# Modify archive areas to remove leading/trailing whitespaces and replace other whitepspace with commas
-	DEBOOTSTRAP_OPTIONS="${DEBOOTSTRAP_OPTIONS} --components=$(echo ${LB_ARCHIVE_AREAS} | sed -e 's| |,|g')"
+	DEBOOTSTRAP_OPTIONS="${DEBOOTSTRAP_OPTIONS} --components=$(echo ${LIVE_IMAGE_ARCHIVE_AREAS} | sed -e 's| |,|g')"
 fi
-
-case "${LB_USE_FAKEROOT}" in
-	true)
-		DEBOOTSTRAP_OPTIONS="${DEBOOTSTRAP_OPTIONS} --variant=fakechroot"
-		;;
-esac
 
 if [ "${_VERBOSE}" = "true" ]
 then
@@ -101,12 +92,7 @@ then
 		fi
 
 		Echo_breakage "Running debootstrap (download-only)... "
-		${LB_ROOT_COMMAND} debootstrap ${DEBOOTSTRAP_OPTIONS} --download-only "${LB_PARENT_DISTRIBUTION}" chroot "${LB_PARENT_MIRROR_BOOTSTRAP}"
-
-		if [ -n "${LB_ROOT_COMMAND}" ]
-		then
-			${LB_ROOT_COMMAND} chown -R $(whoami):$(whoami) chroot
-		fi
+		debootstrap ${DEBOOTSTRAP_OPTIONS} --download-only "${LB_PARENT_DISTRIBUTION}" chroot "${LB_PARENT_MIRROR_BOOTSTRAP}"
 
 		# Removing old cache
 		rm -f cache/packages.bootstrap/*.deb
@@ -119,7 +105,7 @@ then
 	Echo_breakage "Running debootstrap... "
 
 	# Run appropriate bootstrap, i.e. foreign or regular bootstrap
-	if [ "${LB_BOOTSTRAP_QEMU_ARCHITECTURES}" = "${LB_ARCHITECTURES}" ]; then
+	if [ "${LB_BOOTSTRAP_QEMU_ARCHITECTURES}" = "${LIVE_IMAGE_ARCHITECTURE}" ]; then
 
 		if [ -n "${LB_BOOTSTRAP_QEMU_EXCLUDE}" ]
 		then
@@ -127,18 +113,13 @@ then
 		fi
 
 		Echo_message "Bootstrap will be foreign"
-		${LB_ROOT_COMMAND} debootstrap ${DEBOOTSTRAP_OPTIONS} --foreign "${LB_PARENT_DISTRIBUTION}" chroot "${LB_PARENT_MIRROR_BOOTSTRAP}"
+		debootstrap ${DEBOOTSTRAP_OPTIONS} --foreign "${LB_PARENT_DISTRIBUTION}" chroot "${LB_PARENT_MIRROR_BOOTSTRAP}"
 
 		Echo_message "Running debootstrap second stage under QEMU"
 		cp ${LB_BOOTSTRAP_QEMU_STATIC} chroot/usr/bin
 		Chroot chroot /bin/sh /debootstrap/debootstrap --second-stage
 	else
-		${LB_ROOT_COMMAND} debootstrap ${DEBOOTSTRAP_OPTIONS} "${LB_PARENT_DISTRIBUTION}" chroot "${LB_PARENT_MIRROR_BOOTSTRAP}"
-	fi
-
-	if [ -n "${LB_ROOT_COMMAND}" ]
-	then
-		${LB_ROOT_COMMAND} chown -R $(whoami):$(whoami) chroot
+		debootstrap ${DEBOOTSTRAP_OPTIONS} "${LB_PARENT_DISTRIBUTION}" chroot "${LB_PARENT_MIRROR_BOOTSTRAP}"
 	fi
 
 	# Deconfiguring debootstrap configurations

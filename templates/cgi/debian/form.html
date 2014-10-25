@@ -1,5 +1,4 @@
-
-<h3>Submit your parameters (<b>working</b> email address is required) to generate your very own Debian Live system.</h3>
+<h3>Submit your parameters (<b>working</b> email address is required) to generate your very own live system.</h3>
 
 <form action="live-build" method="post">
 
@@ -37,8 +36,8 @@
 			<td><label for="Distribution">--distribution:</label> </td>
 			<td>
 				<select id="Distribution" name="distribution" size="1">
-					<option selected value="squeeze">squeeze</option>
-					<option value="wheezy">wheezy</option>
+					<option selected value="wheezy">wheezy</option>
+					<option value="jessie">jessie</option>
 					<option value="sid">sid</option>
 				</select>
 			</td>
@@ -47,12 +46,23 @@
 			<td><label for="Config">--config:</label> </td>
 			<td>
 				<select id="Config" name="config" size="1" >
+					<option value="cinnamon-desktop">Cinnamon Desktop</option>
 					<option value="gnome-desktop">GNOME Desktop</option>
 					<option value="kde-desktop">KDE Desktop</option>
 					<option value="lxde-desktop">LXDE Desktop</option>
+					<option value="mate-desktop">Mate Desktop</option>
 					<option value="rescue">Rescue</option>
 					<option selected value="standard">Standard</option>
 					<option value="xfce-desktop">Xfce Desktop</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td><label for="Apt">--apt:</label> </td>
+			<td>
+				<select id="Apt" name="apt" size="1" >
+					<option selected value="apt">apt</option>
+					<option value="aptitude">aptitude</option>
 				</select>
 			</td>
 		</tr>
@@ -148,7 +158,7 @@
 		<tr>
 			<td><label for="Apt_Indices">--apt-indices:</label> </td>
 			<td>
-				<select id="Apt_Indices" name="binary_indices" size="1">
+				<select id="Apt_Indices" name="apt_indices" size="1">
 					<option selected value="true">true</option>
 					<option value="false">false</option>
 				</select>
@@ -187,11 +197,11 @@
 		</tr>
 		<tr>
 			<td><label for="Iso_Preparer">--iso-preparer:</label> </td>
-			<td><input id="Iso_Preparer" name="iso_preparer" maxlength="128" size="50" type="text" value="live-build; http://packages.qa.debian.org/live-build" /></td>
+			<td><input id="Iso_Preparer" name="iso_preparer" maxlength="128" size="50" type="text" value="live-build; http://live-systems.org/devel/live-build/" /></td>
 		</tr>
 		<tr>
 			<td><label for="Iso_Publisher">--iso-publisher:</label> </td>
-			<td><input id="Iso_Publisher" name="iso_publisher" maxlength="128" size="50" type="text" value="Debian Live project; http://live.debian.net/; debian-live@lists.debian.org" /></td>
+			<td><input id="Iso_Publisher" name="iso_publisher" maxlength="128" size="50" type="text" value="Live Systems project; http://live-systems.org/; debian-live@lists.debian.org" /></td>
 		</tr>
 		<tr>
 			<td><label for="Iso_Volume">--iso-volume:</label> </td>

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2013 Daniel Baumann <daniel@debian.org>
+## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -14,14 +14,11 @@ set -e
 [ -e "${LIVE_BUILD}/scripts/build.sh" ] && . "${LIVE_BUILD}/scripts/build.sh" || . /usr/lib/live/build.sh
 
 # Setting static variables
-DESCRIPTION="$(Echo 'mount /selinux')"
+DESCRIPTION="$(Echo 'mount /sys/fs/selinux')"
 HELP=""
 USAGE="${PROGRAM} {install|remove} [--force]"
 
 Arguments "${@}"
-
-# Ensure that a system is built as root
-lb testroot
 
 # Reading configuration files
 Read_conffiles config/all config/common config/bootstrap config/chroot config/binary config/source
@@ -32,9 +29,9 @@ Require_stagefile .build/config .build/bootstrap
 
 case "${1}" in
 	install)
-		if [ -e /selinux/enforce ] && [ "$(cat /selinux/enforce)" = "1" ]
+		if [ -e /sys/fs/selinux/enforce ] && [ "$(cat /sys/fs/selinux/enforce)" = "1" ]
 		then
-			Echo_message "Begin mounting /selinux..."
+			Echo_message "Begin mounting /sys/fs/selinux..."
 
 			# Checking stage file
 			Check_stagefile .build/chroot_selinuxfs
@@ -45,17 +42,11 @@ case "${1}" in
 			# Creating lock file
 			Create_lockfile .lock
 
-			if [ "${LB_USE_FAKEROOT}" != "true" ]
-			then
-				# Create mountpoint
-				mkdir -p chroot/selinux
+			# Create mountpoint
+			mkdir -p chroot/sys/fs/selinux
 
-				# Mounting /selinux
-				${LB_ROOT_COMMAND} mount selinuxfs-live -t selinuxfs chroot/selinux
-			else
-				rm -rf chroot/selinux
-				ln -s /selinux chroot/
-			fi
+			# Mounting /sys/fs/selinux
+			mount selinuxfs-live -t selinuxfs chroot/sys/fs/selinux
 
 			# Creating stage file
 			Create_stagefile .build/chroot_selinuxfs
@@ -63,7 +54,7 @@ case "${1}" in
 		;;
 
 	remove)
-		Echo_message "Begin unmounting /selinux..."
+		Echo_message "Begin unmounting /sys/fs/selinux..."
 
 		# Checking lock file
 		Check_lockfile .lock
@@ -71,20 +62,10 @@ case "${1}" in
 		# Creating lock file
 		Create_lockfile .lock
 
-		if [ "${LB_USE_FAKEROOT}" != "true" ]
+		# Unmounting /sys/fs/selinux
+		if [ -e chroot/sys/fs/selinux/enforce ]
 		then
-			# Unmounting /selinux
-			#fuser -km chroot/selinux
-			if [ -e chroot/selinux/enforce ]
-			then
-				${LB_ROOT_COMMAND} umount chroot/selinux
-			fi
-		else
-			if [ -e chroot/selinux ]
-			then
-				rm -rf chroot/selinux
-				mkdir -p chroot/selinux
-			fi
+			umount chroot/sys/fs/selinux
 		fi
 
 		# Removing stage file

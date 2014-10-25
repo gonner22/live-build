@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2013 Daniel Baumann <daniel@debian.org>
+## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -43,7 +43,7 @@ Check_lockfile .lock
 # Creating lock file
 Create_lockfile .lock
 
-if [ "${LB_ARCHITECTURES}" != "amd64" ] && [ "${LB_ARCHITECTURES}" != "i386" ]
+if [ "${LIVE_IMAGE_ARCHITECTURE}" != "amd64" ] && [ "${LIVE_IMAGE_ARCHITECTURE}" != "i386" ]
 then
 	Echo_warning "skipping binary_memtest, foreign architecture."
 	exit 0

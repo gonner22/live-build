@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2013 Daniel Baumann <daniel@debian.org>
+## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -83,8 +83,7 @@ EOF
 			# Restore hosts file
 			mv chroot/etc/hosts.orig chroot/etc/hosts
 		else
-			# Blank out hosts file, don't remove in case
-			# its a symlink, as in the case of exposedroot mode
+			# Blank out hosts file, don't remove in case its a symlink
 			Truncate chroot/etc/hosts
 		fi
 

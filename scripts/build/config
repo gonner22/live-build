@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2013 Daniel Baumann <daniel@debian.org>
+## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -19,7 +19,7 @@ DESCRIPTION="$(Echo 'create configuration for live-build(7)')"
 USAGE="${PROGRAM}   [--apt apt|aptitude]\n\
 \t    [--apt-ftp-proxy URL]\n\
 \t    [--apt-http-proxy URL]\n\
-\t    [--apt-indices true|false\n\
+\t    [--apt-indices true|false]\n\
 \t    [--apt-options OPTION|\"OPTIONS\"]\n\
 \t    [--aptitude-options OPTION|\"OPTIONS\"]\n\
 \t    [--apt-pipeline DEPTH]\n\
@@ -32,7 +32,7 @@ USAGE="${PROGRAM}   [--apt apt|aptitude]\n\
 \t    [--bootappend-install PARAMETER|\"PARAMETERS\"]\n\
 \t    [--bootappend-live PARAMETER|\"PARAMETERS\"]\n\
 \t    [--bootappend-live-failsafe PARAMETER|\"PARAMETERS\"]\n\
-\t    [--bootloader grub|syslinux|yaboot]\n\
+\t    [--bootloader grub|syslinux]\n\
 \t    [--bootstrap cdebootstrap|cdebootstrap-static|debootstrap]\n\
 \t    [--cache true|false]\n\
 \t    [--cache-indices true|false]\n\
@@ -61,11 +61,11 @@ USAGE="${PROGRAM}   [--apt apt|aptitude]\n\
 \t    [--force]\n\
 \t    [--grub-splash FILE]\n\
 \t    [--gzip-options OPTION|\"OPTIONS\"]\n\
-\t    [--hooks FILE]\n\
 \t    [--ignore-system-defaults]\n\
 \t    [--initramfs auto|none|live-boot|casper]\n\
 \t    [--initramfs-compression bzip2|gzip|lzma]\n\
 \t    [--initsystem sysvinit|runit|systemd|upstart|none]\n\
+\t    [--image-name [NAME]\n\
 \t    [--interactive shell]\n\
 \t    [--isohybrid-options OPTION|\"OPTIONS\"]\n\
 \t    [--hdd-label LABEL]\n\
@@ -83,24 +83,16 @@ USAGE="${PROGRAM}   [--apt apt|aptitude]\n\
 \t    [-m|--parent-mirror-bootstrap URL]\n\
 \t    [--parent-mirror-chroot URL]\n\
 \t    [--parent-mirror-chroot-security URL]\n\
-\t    [--parent-mirror-chroot-updates URL]\n\
-\t    [--parent-mirror-chroot-backports URL]\n\
 \t    [--parent-mirror-binary URL]\n\
 \t    [--parent-mirror-binary-security URL]\n\
-\t    [--parent-mirror-binary-updates URL]\n\
-\t    [--parent-mirror-binary-backports URL]\n\
 \t    [--parent-mirror-debian-installer URL]\n\
 \t    [--mirror-bootstrap URL]\n\
 \t    [--mirror-chroot URL]\n\
 \t    [--mirror-chroot-security URL]\n\
-\t    [--mirror-chroot-updates URL]\n\
-\t    [--mirror-chroot-backports URL]\n\
 \t    [--mirror-binary URL]\n\
 \t    [--mirror-binary-security URL]\n\
-\t    [--mirror-binary-updates URL]\n\
-\t    [--mirror-binary-backports URL]\n\
 \t    [--mirror-debian-installer URL]\n\
-\t    [--mode debian|emdebian|ubuntu]\n\
+\t    [--mode debian|ubuntu]\n\
 \t    [--system live|normal]\n\
 \t    [--net-root-filesystem nfs|cfs]\n\
 \t    [--net-root-mountoptions OPTIONS]\n\
@@ -112,9 +104,6 @@ USAGE="${PROGRAM}   [--apt apt|aptitude]\n\
 \t    [--net-cow-server IP|HOSTNAME]\n\
 \t    [--net-tarball true|false]\n\
 \t    [--quiet]\n\
-\t    [--root-command sudo]\n\
-\t    [--use-fakeroot true|false]\n\
-\t    [--archives ARCHIVE|\"ARCHIVES\"]\n\
 \t    [--archive-areas ARCHIVE_AREA|\"ARCHIVE_AREAS\"]\n\
 \t    [--parent-archive-areas ARCHIVE_AREA|\"ARCHIVE_AREAS\"]\n\
 \t    [--security true|false]\n\
@@ -128,7 +117,6 @@ USAGE="${PROGRAM}   [--apt apt|aptitude]\n\
 \t    [--templates PATH]\n\
 \t    [--updates true|false]\n\
 \t    [--backports true|false]\n\
-\t    [--exposed-root true|false]\n\
 \t    [--verbose]\n\
 \t    [--loadlin true|false]\n\
 \t    [--win32-loader true|false]\n\
@@ -142,14 +130,14 @@ Local_arguments ()
 	LONG_OPTIONS="apt:,apt-ftp-proxy:,apt-http-proxy:,apt-options:,aptitude-options:,debootstrap-options:,cdebootstrap-options:,
 		apt-pipeline:,apt-recommends:,apt-secure:,apt-source-archives:,bootstrap:,cache:,cache-indices:,cache-packages:,
 		cache-stages:,debconf-frontend:,debconf-priority:,dump,
-		initramfs:,initramfs-compression:,initsystem:,fdisk:,losetup:,mode:,system:,root-command:,use-fakeroot:,tasksel:,
+		initramfs:,initramfs-compression:,initsystem:,fdisk:,losetup:,mode:,system:,tasksel:,
 		templates:,architectures:,clean,
-		distribution:,parent-distribution:,parent-debian-installer-distribution:,parent-mirror-bootstrap:,parent-mirror-chroot:,parent-mirror-chroot-security:,parent-mirror-chroot-updates:,parent-mirror-chroot-backports:,parent-mirror-binary:,
-		parent-mirror-binary-security:,parent-mirror-binary-updates:,parent-mirror-binary-backports:,parent-mirror-debian-installer:,
-		mirror-bootstrap:,mirror-chroot:,mirror-chroot-security:,mirror-chroot-updates:,mirror-chroot-backports:,mirror-binary:,
-		mirror-binary-security:,mirror-binary-updates:,mirror-binary-backports:,mirror-debian-installer:,
-		archives:,archive-areas:,parent-archive-areas:,chroot-filesystem:,exposed-root:,
-		gzip-options:,hooks:,interactive:,keyring-packages:,linux-flavours:,linux-packages:,
+		distribution:,parent-distribution:,parent-debian-installer-distribution:,parent-mirror-bootstrap:,parent-mirror-chroot:,parent-mirror-chroot-security:,parent-mirror-binary:,
+		parent-mirror-binary-security:,parent-mirror-debian-installer:,
+		mirror-bootstrap:,mirror-chroot:,mirror-chroot-security:,mirror-binary:,
+		mirror-binary-security:,mirror-debian-installer:,
+		archive-areas:,parent-archive-areas:,chroot-filesystem:,
+		gzip-options:,image-name:,interactive:,keyring-packages:,linux-flavours:,linux-packages:,
 		security:,updates:,backports:,binary-filesystem:,binary-images:,
 		apt-indices:,bootappend-install:,bootappend-live:,bootappend-live-failsafe:,bootloader:,checksums:,compression:,config:,zsync:,build-with-chroot:,
 		debian-installer:,debian-installer-distribution:,debian-installer-preseedfile:,debian-installer-gui:,
@@ -347,16 +335,6 @@ Local_arguments ()
 				shift 2
 				;;
 
-			--root-command)
-				LB_ROOT_COMMAND="${2}"
-				shift 2
-				;;
-
-			--use-fakeroot)
-				LB_USE_FAKEROOT="${2}"
-				shift 2
-				;;
-
 			--tasksel)
 				LB_TASKSEL="${2}"
 				shift 2
@@ -369,7 +347,7 @@ Local_arguments ()
 
 			# config/bootstrap
 			-a|--architectures)
-				LB_ARCHITECTURES="${2}"
+				LIVE_IMAGE_ARCHITECTURE="${2}"
 				shift 2
 				;;
 
@@ -398,16 +376,6 @@ Local_arguments ()
 				shift 2
 				;;
 
-			--parent-mirror-chroot-updates)
-				LB_PARENT_MIRROR_CHROOT_UPDATES="${2}"
-				shift 2
-				;;
-
-			--parent-mirror-chroot-backports)
-				LB_PARENT_MIRROR_CHROOT_BACKPORTS="${2}"
-				shift 2
-				;;
-
 			--parent-mirror-binary)
 				LB_PARENT_MIRROR_BINARY="${2}"
 				shift 2
@@ -415,16 +383,6 @@ Local_arguments ()
 
 			--parent-mirror-binary-security)
 				LB_PARENT_MIRROR_BINARY_SECURITY="${2}"
-				shift 2
-				;;
-
-			--parent-mirror-binary-updates)
-				LB_PARENT_MIRROR_BINARY_UPDATES="${2}"
-				shift 2
-				;;
-
-			--parent-mirror-binary-backports)
-				LB_PARENT_MIRROR_BINARY_BACKPORTS="${2}"
 				shift 2
 				;;
 
@@ -448,16 +406,6 @@ Local_arguments ()
 				shift 2
 				;;
 
-			--mirror-chroot-updates)
-				LB_MIRROR_CHROOT_UPDATES="${2}"
-				shift 2
-				;;
-
-			--mirror-chroot-backports)
-				LB_MIRROR_CHROOT_BACKPORTS="${2}"
-				shift 2
-				;;
-
 			--mirror-binary)
 				LB_MIRROR_BINARY="${2}"
 				shift 2
@@ -468,33 +416,18 @@ Local_arguments ()
 				shift 2
 				;;
 
-			--mirror-binary-updates)
-				LB_MIRROR_BINARY_UPDATES="${2}"
-				shift 2
-				;;
-
-			--mirror-binary-backports)
-				LB_MIRROR_BINARY_BACKPORTS="${2}"
-				shift 2
-				;;
-
 			--mirror-debian-installer)
 				LB_MIRROR_DEBIAN_INSTALLER="${2}"
 				shift 2
 				;;
 
-			--archives)
-				LB_ARCHIVES="${2}"
-				shift 2
-				;;
-
 			--archive-areas)
-				LB_ARCHIVE_AREAS="${2}"
+				LIVE_IMAGE_ARCHIVE_AREAS="${2}"
 				shift 2
 				;;
 
 			--parent-archive-areas)
-				LB_PARENT_ARCHIVE_AREAS="${2}"
+				LIVE_IMAGE_PARENT_ARCHIVE_AREAS="${2}"
 				shift 2
 				;;
 
@@ -504,18 +437,13 @@ Local_arguments ()
 				shift 2
 				;;
 
-			--exposed-root)
-				LB_EXPOSED_ROOT="${2}"
-				shift 2
-				;;
-
 			--gzip-options)
 				GZIP_OPTIONS="${2}"
 				shift 2
 				;;
 
-			--hooks)
-				LB_HOOKS="${2}"
+			--image-name)
+				LIVE_IMAGE_NAME="${2}"
 				shift 2
 				;;
 
@@ -561,7 +489,7 @@ Local_arguments ()
 				;;
 
 			-b|--binary-images)
-				LB_BINARY_IMAGES="${2}"
+				LIVE_IMAGE_TYPE="${2}"
 				shift 2
 				;;
 
@@ -955,21 +883,15 @@ Check_defaults
 
 if [ ! -e config ]
 then
-	Echo_message "Creating config tree for a ${LB_MODE}/${LB_DISTRIBUTION}/${LB_ARCHITECTURES} system"
+	Echo_message "Creating config tree for a ${LB_MODE}/${LB_DISTRIBUTION}/${LIVE_IMAGE_ARCHITECTURE} system"
+	mkdir config
 else
-	Echo_message "Updating config tree for a ${LB_MODE}/${LB_DISTRIBUTION}/${LB_ARCHITECTURES} system"
+	Echo_message "Updating config tree for a ${LB_MODE}/${LB_DISTRIBUTION}/${LIVE_IMAGE_ARCHITECTURE} system"
 fi
-
-# Creating bootstrap configuration
-mkdir -p config
-mkdir -p config/includes
 
 # Creating live-build configuration
 cat > config/common << EOF
 # config/common - common options for live-build(7)
-
-# LB_CONFIG_VERSION: internal version of the configuration file format
-LB_CONFIG_VERSION="${CONFIG_VERSION}"
 
 # \$LB_APT: set package manager
 # (Default: ${LB_APT})
@@ -1055,14 +977,6 @@ LB_MODE="${LB_MODE}"
 # (Default: ${LB_SYSTEM})
 LB_SYSTEM="${LB_SYSTEM}"
 
-# \$LB_ROOT_COMMAND: use sudo or equivalent
-# (Default: empty)
-#LB_ROOT_COMMAND="sudo"
-
-# \$LB_USE_FAKEROOT: use fakeroot/fakechroot
-# (Default: ${LB_USE_FAKEROOT})
-LB_USE_FAKEROOT="${LB_USE_FAKEROOT}"
-
 # \$LB_TASKSEL: set tasksel program
 # (Default: ${LB_TASKSEL})
 LB_TASKSEL="${LB_TASKSEL}"
@@ -1110,10 +1024,6 @@ EOF
 cat > config/bootstrap << EOF
 # config/bootstrap - options for live-build(7), bootstrap stage
 
-# \$LB_ARCHITECTURES: select chroot architectures
-# (Default: autodetected)
-LB_ARCHITECTURES="${LB_ARCHITECTURES}"
-
 # \$LB_DISTRIBUTION: select distribution to use
 # (Default: ${LB_DISTRIBUTION})
 LB_DISTRIBUTION="${LB_DISTRIBUTION}"
@@ -1138,14 +1048,6 @@ LB_PARENT_MIRROR_CHROOT="${LB_PARENT_MIRROR_CHROOT}"
 # (Default: ${LB_PARENT_MIRROR_CHROOT_SECURITY})
 LB_PARENT_MIRROR_CHROOT_SECURITY="${LB_PARENT_MIRROR_CHROOT_SECURITY}"
 
-# \$LB_PARENT_MIRROR_CHROOT_UPDATES: set updates parent mirror to fetch packages from
-# (Default: ${LB_PARENT_MIRROR_CHROOT_UPDATES})
-LB_PARENT_MIRROR_CHROOT_UPDATES="${LB_PARENT_MIRROR_CHROOT_UPDATES}"
-
-# \$LB_PARENT_MIRROR_CHROOT_BACKPORTS: set backports parent mirror to fetch packages from
-# (Default: ${LB_PARENT_MIRROR_CHROOT_BACKPORTS})
-LB_PARENT_MIRROR_CHROOT_BACKPORTS="${LB_PARENT_MIRROR_CHROOT_BACKPORTS}"
-
 # \$LB_PARENT_MIRROR_BINARY: set parent mirror which ends up in the image
 # (Default: ${LB_PARENT_MIRROR_BINARY})
 LB_PARENT_MIRROR_BINARY="${LB_PARENT_MIRROR_BINARY}"
@@ -1153,14 +1055,6 @@ LB_PARENT_MIRROR_BINARY="${LB_PARENT_MIRROR_BINARY}"
 # \$LB_PARENT_MIRROR_BINARY_SECURITY: set security parent mirror which ends up in the image
 # (Default: ${LB_PARENT_MIRROR_BINARY_SECURITY})
 LB_PARENT_MIRROR_BINARY_SECURITY="${LB_PARENT_MIRROR_BINARY_SECURITY}"
-
-# \$LB_PARENT_MIRROR_BINARY_UPDATES: set updates parent mirror which ends up in the image
-# (Default: ${LB_PARENT_MIRROR_BINARY_UPDATES})
-LB_PARENT_MIRROR_BINARY_UPDATES="${LB_PARENT_MIRROR_BINARY_UPDATES}"
-
-# \$LB_PARENT_MIRROR_BINARY_BACKPORTS: set backports parent mirror which ends up in the image
-# (Default: ${LB_PARENT_MIRROR_BINARY_BACKPORTS})
-LB_PARENT_MIRROR_BINARY_BACKPORTS="${LB_PARENT_MIRROR_BINARY_BACKPORTS}"
 
 # \$LB_PARENT_MIRROR_DEBIAN_INSTALLER: set debian-installer parent mirror
 # (Default: ${LB_PARENT_MIRROR_BOOTSTRAP})
@@ -1178,14 +1072,6 @@ LB_MIRROR_CHROOT="${LB_MIRROR_CHROOT}"
 # (Default: ${LB_MIRROR_CHROOT_SECURITY})
 LB_MIRROR_CHROOT_SECURITY="${LB_MIRROR_CHROOT_SECURITY}"
 
-# \$LB_MIRROR_CHROOT_UPDATES: set updates mirror to fetch packages from
-# (Default: ${LB_MIRROR_CHROOT_UPDATES})
-LB_MIRROR_CHROOT_UPDATES="${LB_MIRROR_CHROOT_UPDATES}"
-
-# \$LB_MIRROR_CHROOT_BACKPORTS: set backports mirror to fetch packages from
-# (Default: ${LB_MIRROR_CHROOT_BACKPORTS})
-LB_MIRROR_CHROOT_BACKPORTS="${LB_MIRROR_CHROOT_BACKPORTS}"
-
 # \$LB_MIRROR_BINARY: set mirror which ends up in the image
 # (Default: ${LB_MIRROR_BINARY})
 LB_MIRROR_BINARY="${LB_MIRROR_BINARY}"
@@ -1194,29 +1080,9 @@ LB_MIRROR_BINARY="${LB_MIRROR_BINARY}"
 # (Default: ${LB_MIRROR_BINARY_SECURITY})
 LB_MIRROR_BINARY_SECURITY="${LB_MIRROR_BINARY_SECURITY}"
 
-# \$LB_MIRROR_BINARY_UPDATES: set updates mirror which ends up in the image
-# (Default: ${LB_MIRROR_BINARY_UPDATES})
-LB_MIRROR_BINARY_UPDATES="${LB_MIRROR_BINARY_UPDATES}"
-
-# \$LB_MIRROR_BINARY_BACKPORTS: set backports mirror which ends up in the image
-# (Default: ${LB_MIRROR_BINARY_BACKPORTS})
-LB_MIRROR_BINARY_BACKPORTS="${LB_MIRROR_BINARY_BACKPORTS}"
-
 # \$LB_MIRROR_DEBIAN_INSTALLER: set debian-installer mirror
 # (Default: ${LB_MIRROR_BOOTSTRAP})
 LB_MIRROR_DEBIAN_INSTALLER="${LB_MIRROR_DEBIAN_INSTALLER}"
-
-# \$LB_ARCHIVES: enable available third-party archives
-# (Default: empty)
-LB_ARCHIVES="${LB_ARCHIVES}"
-
-# \$LB_ARCHIVE_AREAS: select archive areas to use
-# (Default: ${LB_ARCHIVE_AREAS})
-LB_ARCHIVE_AREAS="${LB_ARCHIVE_AREAS}"
-
-# \$LB_PARENT_ARCHIVE_AREAS: select archive areas to use
-# (Default: ${LB_PARENT_ARCHIVE_AREAS})
-LB_PARENT_ARCHIVE_AREAS="${LB_PARENT_ARCHIVE_AREAS}"
 
 # \$LB_BOOTSTRAP_QEMU_ARCHITECTURES: architectures to use foreign bootstrap
 # (Default: ${LB_BOOTSTRAP_QEMU_ARCHITECTURES})
@@ -1234,8 +1100,6 @@ EOF
 # Creating lb_chroot_* configuration
 mkdir -p config/archives
 mkdir -p config/apt
-mkdir -p config/hooks
-mkdir -p config/includes.chroot
 mkdir -p config/packages
 mkdir -p config/packages.chroot
 mkdir -p config/package-lists
@@ -1251,14 +1115,6 @@ LB_CHROOT_FILESYSTEM="${LB_CHROOT_FILESYSTEM}"
 # \$LB_UNION_FILESYSTEM: set union filesystem
 # (Default: ${LB_UNION_FILESYSTEM})
 LB_UNION_FILESYSTEM="${LB_UNION_FILESYSTEM}"
-
-# \$LB_EXPOSED_ROOT: expose root as read only
-# (Default: ${LB_EXPOSED_ROOT})
-LB_EXPOSED_ROOT="${LB_EXPOSED_ROOT}"
-
-# \$LB_HOOKS: set hook commands
-# (Default: empty)
-LB_HOOKS="${LB_HOOKS}"
 
 # \$LB_INTERACTIVE: set interactive build
 # (Default: ${LB_INTERACTIVE})
@@ -1291,8 +1147,7 @@ EOF
 
 # Creating lb_binary_* configuration
 mkdir -p config/debian-installer
-mkdir -p config/includes.binary
-mkdir -p config/includes.debian-installer
+mkdir -p config/includes.installer
 mkdir -p config/packages.binary
 mkdir -p config/package-lists
 mkdir -p config/rootfs
@@ -1303,10 +1158,6 @@ cat > config/binary << EOF
 # \$LB_BINARY_FILESYSTEM: set image filesystem
 # (Default: ${LB_BINARY_FILESYSTEM})
 LB_BINARY_FILESYSTEM="${LB_BINARY_FILESYSTEM}"
-
-# \$LB_BINARY_IMAGES: set image type
-# (Default: ${LB_BINARY_IMAGES})
-LB_BINARY_IMAGES="${LB_BINARY_IMAGES}"
 
 # \$LB_APT_INDICES: set apt/aptitude generic indices
 # (Default: ${LB_APT_INDICES})
@@ -1486,6 +1337,67 @@ then
 	rmdir --ignore-fail-on-non-empty local/*/ > /dev/null 2>&1 || true
 	rmdir --ignore-fail-on-non-empty local > /dev/null 2>&1 || true
 fi
+
+mkdir -p config/hooks
+mkdir -p config/includes config/includes.bootstrap config/includes.chroot config/includes.binary config/includes.source
+
+Echo_message "Symlinking hooks..."
+
+for _HOOK in "${LIVE_BUILD}"/share/hooks/*.hook* /usr/share/live/build/hooks/*.hook*
+do
+	if [ -e "${_HOOK}" ] && [ ! -e "config/hooks/$(basename ${_HOOK})" ]
+	then
+		ln -s "${_HOOK}" "config/hooks/$(basename ${_HOOK})"
+	fi
+done
+
+if [ ! -e config/package-lists/live.list.chroot ]
+then
+
+cat > config/package-lists/live.list.chroot << EOF
+live-boot
+live-config
+EOF
+
+case "${LB_PARENT_DISTRIBUTION}" in
+	wheezy)
+		echo "live-config-sysvinit" >> config/package-lists/live.list.chroot
+		;;
+
+	*)
+		echo "live-config-systemd" >> config/package-lists/live.list.chroot
+		;;
+esac
+
+fi
+
+cat > config/build << EOF
+[Image]
+Architecture: ${LIVE_IMAGE_ARCHITECTURE}
+Archive-Areas: ${LIVE_IMAGE_ARCHIVE_AREAS}
+Distribution: ${LB_DISTRIBUTION}
+Mirror-Bootstrap: ${LB_MIRROR_BOOTSTRAP}
+EOF
+
+if [ "${LB_DERIVATIVE}" = "true" ]
+then
+
+cat >> config/build << EOF
+
+Parent-Archive-Areas: ${LIVE_IMAGE_ARCHIVE_AREAS}
+Parent-Distribution: ${LB_PARENT_DISTRIBUTION}
+Parent-Mirror-Bootstrap: ${LB_PARENT_MIRROR_BOOTSTRAP}
+EOF
+
+fi
+
+cat >> config/build << EOF
+
+[FIXME]
+Configuration-Version: ${LIVE_CONFIGURATION_VERSION}
+Name: ${LIVE_IMAGE_NAME}
+Type: ${LIVE_IMAGE_TYPE}
+EOF
 
 # Creating stage file
 Create_stagefile .build/config
