@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2013 Daniel Baumann <daniel@debian.org>
+## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -14,7 +14,7 @@ Restore_cache ()
 
 	if [ "${LB_CACHE}" = "true" ] && [ "${LB_CACHE_PACKAGES}" = "true" ]
 	then
-		if [ -d "${DIRECTORY}" ]
+		if [ -e "${DIRECTORY}" ]
 		then
 			# Restore old cache
 			if [ "$(stat --printf %d ${DIRECTORY})" = "$(stat --printf %d chroot/var/cache/apt/archives)" ]
