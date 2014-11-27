@@ -8,7 +8,7 @@ Author: Raphaël Hertzog <hertzog@debian.org>
 
 --- a/functions/defaults.sh
 +++ b/functions/defaults.sh
-@@ -674,15 +674,15 @@ Set_defaults ()
+@@ -525,15 +525,15 @@ Set_defaults ()
  				*)
  					# armel will have special images: one rootfs image and many additional kernel images.
  					# therefore we default to all available armel flavours

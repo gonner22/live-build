@@ -1,3 +1,12 @@
+live-build (4.0.3-1kali1) kali-dev; urgency=medium
+
+  * Import new debian version
+  * Drop patches add-xfsprogs-jfsutils-to-d-i and 
+    fix-kernel-metapackages-used-in-di-step as it's already in debian version.
+  * Add a link to kali-rolling
+
+ -- Sophie Brun <sophie@freexian.com>  Thu, 27 Nov 2014 16:00:47 +0100
+
 live-build (4.0.3-1) unstable; urgency=low
 
   [ Richard Nelson ]

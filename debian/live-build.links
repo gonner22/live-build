@@ -1,2 +1,3 @@
-usr/share/live/build/data/debian-cd/wheezy usr/share/live/build/data/debian-cd/kali
-usr/share/live/build/data/debian-cd/wheezy usr/share/live/build/data/debian-cd/kali-dev
+usr/share/live/build/data/debian-cd/jessie usr/share/live/build/data/debian-cd/kali
+usr/share/live/build/data/debian-cd/jessie usr/share/live/build/data/debian-cd/kali-dev
+usr/share/live/build/data/debian-cd/jessie usr/share/live/build/data/debian-cd/kali-rolling
