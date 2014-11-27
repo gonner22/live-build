@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2013 Daniel Baumann <daniel@debian.org>
+## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -47,8 +47,18 @@ Create_lockfile .lock
 Check_architectures amd64 i386
 Check_crossarchitectures
 
+case "${LB_INITRAMFS}" in
+	casper)
+		_INITRAMFS="casper"
+		;;
+
+	*)
+		_INITRAMFS="live"
+		;;
+esac
+
 # Assembling image specifics
-case "${LB_BINARY_IMAGES}" in
+case "${LIVE_IMAGE_TYPE}" in
 	iso*)
 		_BOOTLOADER="isolinux"
 
@@ -69,15 +79,28 @@ case "${LB_BINARY_IMAGES}" in
 		;;
 
 	hdd*|*)
-		_BOOTLOADER="syslinux"
+		case ${LB_BINARY_FILESYSTEM} in
+			fat*|ntfs)
+				_BOOTLOADER=syslinux
 
-		case "${LB_MODE}" in
-			progress-linux)
-				_TARGET="binary/boot"
+				case "${LB_MODE}" in
+					progress-linux)
+						_TARGET="binary/boot"
+						;;
+
+					*)
+						_TARGET="binary/syslinux"
+						;;
+				esac
 				;;
 
+			ext[234]|btrfs)
+				_BOOTLOADER=extlinux
+				_TARGET="binary/boot/extlinux"
+				;;
 			*)
-				_TARGET="binary/syslinux"
+				Echo_error "syslinux/extlinux doesn't support ${LB_BINARY_FILESYSTEM}"
+				exit 1
 				;;
 		esac
 		;;
@@ -97,25 +120,74 @@ else
 	fi
 fi
 
+# legacy compatibility for wheezy
+if [ -e "${_SOURCE}.${LB_PARENT_DISTRIBUTION}" ]
+then
+	_SOURCE="${_SOURCE}.${LB_PARENT_DISTRIBUTION}"
+fi
+
 # Checking depends
 case "${LB_BUILD_WITH_CHROOT}" in
 	true)
-		Check_package chroot/usr/bin/syslinux syslinux
+		case "${LB_PARENT_DISTRIBUTION}" in
+			wheezy)
+				case "${_BOOTLOADER}" in
+					syslinux|extlinux)
+						Check_package chroot/usr/bin/${_BOOTLOADER} ${_BOOTLOADER}
+						;;
+
+					*)
+						Check_package chroot/usr/lib/syslinux syslinux-common
+						;;
+				esac
+				;;
+
+			*)
+				Check_package chroot/share/$(echo ${_BOOTLOADER} | tr [a-z] [A-Z]) ${_BOOTLOADER}
+				Check_package chroot/usr/lib/syslinux syslinux-common
+				;;
+		esac
+
 		Check_package chroot/usr/lib/syslinux syslinux-common
 
 		if ls "${_SOURCE}"/*.svg* > /dev/null 2>&1
 		then
-			Check_package chroot/usr/bin/rsvg librsvg2-bin
+			Check_package chroot/usr/bin/rsvg-convert librsvg2-bin
 		fi
 		;;
 
 	false)
-		if [ ! -e /usr/bin/syslinux ]
-		then
-			# syslinux
-			Echo_error "/usr/bin/syslinux - no such file."
-			exit 1
-		fi
+		case "${LB_PARENT_DISTRIBUTION}" in
+			wheezy)
+				case "${_BOOTLOADER}" in
+					syslinux|extlinux)
+						if [ ! -e /usr/bin/${_BOOTLOADER} ]
+						then
+							# syslinux or extlinux
+							Echo_error "/usr/bin/${_BOOTLOADER} - no such file."
+							exit 1
+						fi
+						;;
+
+					*)
+						if ! ls /usr/lib/syslinux/${_BOOTLOADER}* > /dev/null 2>&1
+						then
+							Echo_error "/usr/lib/syslinux/${_BOOTLOADER}* - no such files."
+							exit 1
+						fi
+						;;
+				esac
+				;;
+
+			*)
+				if [ ! -e "/usr/share/$(echo ${_BOOTLOADER} | tr [a-z] [A-Z])" ]
+				then
+					Echo_error "/usr/share/$(echo ${_BOOTLOADER} | tr [a-z] [A-Z])"
+					exit 1
+				fi
+				;;
+		esac
+
 
 		if [ ! -e /usr/lib/syslinux ]
 		then
@@ -126,10 +198,10 @@ case "${LB_BUILD_WITH_CHROOT}" in
 
 		if ls "${_SOURCE}"/*.svg* > /dev/null 2>&1
 		then
-			if [ ! -e /usr/bin/rsvg ]
+			if [ ! -e /usr/bin/rsvg-convert ]
 			then
 				# librsvg2-bin
-				Echo_error "/usr/bin/rsvg - no such file"
+				Echo_error "/usr/bin/rsvg-convert - no such file"
 				exit 1
 			fi
 		fi
@@ -145,19 +217,19 @@ Install_package
 # Copying files
 case "${LB_BUILD_WITH_CHROOT}" in
 	true)
-		mkdir -p $(dirname ${_TARGET})
+		mkdir -p ${_TARGET}
 
 		# Copy in two steps since the theme can have absolute symlinks and would therefore not be dereferenced correctly
 		cp -a ${_SOURCE} chroot/root
-		Chroot chroot cp -aL /root/$(basename ${_SOURCE}) /root/$(basename ${_SOURCE}).tmp || true
-		rm -rf chroot/root/$(basename ${_SOURCE})
-		mv chroot/root/$(basename ${_SOURCE}).tmp ${_TARGET}
+		Chroot chroot cp -aL /root/$(basename ${_SOURCE}) /root/$(basename ${_SOURCE}).tmp > /dev/null 2>&1 || true
+		cp -a chroot/root/$(basename ${_SOURCE}).tmp/* ${_TARGET}
+		rm -rf chroot/root/$(basename ${_SOURCE}) chroot/root/$(basename ${_SOURCE}).tmp
 		;;
 
 	false)
 		mkdir -p ${_TARGET}
 
-		cp -aL ${_SOURCE}/* ${_TARGET} || true
+		cp -aL ${_SOURCE}/* ${_TARGET} > /dev/null 2>&1 || true
 		;;
 esac
 
@@ -169,14 +241,14 @@ then
 
 	case "${_FLAVOURS}" in
 		1)
-			mv binary/live/vmlinuz-* binary/live/vmlinuz
-			mv binary/live/initrd.img-* binary/live/initrd.img
+			# If multiple initrd images are being generated (by DKMS packages, etc),
+			# we likely only want the latest version.
+			mv $(ls -r1 --sort=version binary/${_INITRAMFS}/vmlinuz-* | head -n 1) binary/${_INITRAMFS}/vmlinuz
+			mv $(ls -r1 --sort=version binary/${_INITRAMFS}/initrd.img-* | head -n 1) binary/${_INITRAMFS}/initrd.img
 
 			sed -e "s|@FLAVOUR@|${LB_LINUX_FLAVOURS}|g" \
-			    -e "s|@LINUX@|/live/vmlinuz|g" \
-			    -e "s|@INITRD@|/live/initrd.img|g" \
-			    -e "s#@APPEND_LIVE@#${LB_BOOTAPPEND_LIVE}#g" \
-			    -e "s#@APPEND_LIVE_FAILSAFE@#${LB_BOOTAPPEND_LIVE_FAILSAFE}#g" \
+			    -e "s|@LINUX@|/${_INITRAMFS}/vmlinuz|g" \
+			    -e "s|@INITRD@|/${_INITRAMFS}/initrd.img|g" \
 			"${_TARGET}/live.cfg.in" >> "${_TARGET}/live.cfg"
 
 			rm -f "${_TARGET}/live.cfg.in"
@@ -189,8 +261,8 @@ then
 			do
 				_NUMBER="$((${_NUMBER} + 1))"
 
-				mv binary/live/vmlinuz-*-${_FLAVOUR} binary/live/vmlinuz${_NUMBER}
-				mv binary/live/initrd.img-*-${_FLAVOUR} binary/live/initrd${_NUMBER}.img
+				mv binary/${_INITRAMFS}/vmlinuz-*-${_FLAVOUR} binary/${_INITRAMFS}/vmlinuz${_NUMBER}
+				mv binary/${_INITRAMFS}/initrd.img-*-${_FLAVOUR} binary/${_INITRAMFS}/initrd${_NUMBER}.img
 
 				if [ "${_NUMBER}" -gt 1 ]
 				then
@@ -201,110 +273,92 @@ then
 				fi
 
 				sed -i -e "s|@FLAVOUR@|${_FLAVOUR}|g" \
-				       -e "s|@LINUX@|/live/vmlinuz${_NUMBER}|g" \
-				       -e "s|@INITRD@|/live/initrd${_NUMBER}.img|g" \
-				       -e "s#@APPEND_LIVE@#${LB_BOOTAPPEND_LIVE}#g" \
-				       -e "s#@APPEND_LIVE_FAILSAFE@#${LB_BOOTAPPEND_LIVE_FAILSAFE}#g" \
+				       -e "s|@LINUX@|/${_INITRAMFS}/vmlinuz${_NUMBER}|g" \
+				       -e "s|@INITRD@|/${_INITRAMFS}/initrd${_NUMBER}.img|g" \
 				"${_TARGET}/live.cfg"
 			done
 
 			rm -f "${_TARGET}/live.cfg.in"
 			;;
 	esac
-elif [ -e "${_TARGET}/live.cfg" ]
-then
-	sed -i  -e "s#@LB_BOOTAPPEND_LIVE@#${LB_BOOTAPPEND_LIVE}#g" \
-		-e "s#@LB_BOOTAPPEND_LIVE_FAILSAFE@#${LB_BOOTAPPEND_LIVE_FAILSAFE}#g" \
-	${_TARGET}/live.cfg
 fi
 
-if [ -e ${_TARGET}/install.cfg ]
-then
-	sed -i -e "s#@APPEND_INSTALL@#${LB_BOOTAPPEND_INSTALL}#g" \
-	${_TARGET}/install.cfg
-fi
+eval _VERSION="$`echo RELEASE_${LB_DISTRIBUTION}`"
 
-if [ -e "${_TARGET}/splash.svg.in" ]
-then
-	case "${LB_MODE}" in
-		progress-linux)
-			_PROJECT="Progress Linux"
+_DISTRIBUTION="${LB_DISTRIBUTION}"
+_ARCHITECTURE="${LIVE_IMAGE_ARCHITECTURE}"
 
-			if ls config/package-lists/client-gnome.list*
-			then
-				_DESCRIPTION="Client GNOME"
-			elif ls config/package-lists/client-lxde.list* > /dev/null 2>&1
-			then
-				_DESCRIPTION="Client LXDE"
-			elif ls config/package-lists/server-lxc.list* > /dev/null 2>&1
-			then
-				_DESCRIPTION="Server LXC"
-			else
-				_DESCRIPTION="Standard"
-			fi
-			;;
+_DATE=$(date -R)
+_YEAR="$(date +%Y)"
+_MONTH="$(date +%m)"
+_DAY="$(date +%d)"
+_HOUR="$(date +%H)"
+_MINUTE="$(date +%M)"
+_SECOND="$(date +%S)"
 
-		*)
-			_PROJECT="Debian GNU/Linux"
-			_DESCRIPTION=""
-			;;
+_LINUX_VERSIONS="$(for _LINUX in chroot/boot/vmlinuz-* ; do chroot chroot apt-cache policy $(basename ${_LINUX} | sed -e 's|vmlinuz-|linux-image-|') | awk '/Installed: / { print $2 }' ; done | sort -Vru | tr "\n" " ")"
 
-	esac
+_LIVE_BUILD_VERSION="$(lb --version)"
+_LIVE_BOOT_VERSION="$(chroot chroot apt-cache policy live-boot | awk '/Installed: / { print $2 }')"
+_LIVE_CONFIG_VERSION="$(chroot chroot apt-cache policy live-config | awk '/Installed: / { print $2 }')"
+_LIVE_TOOLS_VERSION="$(chroot chroot apt-cache policy live-tools | awk '/Installed: / { print $2 }')"
 
-	eval _VERSION="$`echo RELEASE_${LB_DISTRIBUTION}`"
-	_DISTRIBUTION="${LB_DISTRIBUTION}"
-	_ARCHITECTURE="${LB_ARCHITECTURES}"
-	_DATE=$(date -R)
-	_YEAR="$(date +%Y)"
-	_MONTH="$(date +%m)"
-	_DAY="$(date +%d)"
-	_HOUR="$(date +%H)"
-	_MINUTE="$(date +%M)"
-	_SECOND="$(date +%S)"
-	_LINUX_VERSIONS="$(for _LINUX in chroot/boot/vmlinuz-* ; do chroot chroot apt-cache policy $(basename ${_LINUX} | sed -e 's|vmlinuz-|linux-image-|') | awk '/Installed: / { print $2 }' ; done | sort -u | tr "\n" " ")"
-	_LIVE_BUILD_VERSION="$(lb --version)"
-	_LIVE_BOOT_VERSION="$(chroot chroot apt-cache policy live-boot | awk '/Installed: / { print $2 }')"
-	_LIVE_CONFIG_VERSION="$(chroot chroot apt-cache policy live-config | awk '/Installed: / { print $2 }')"
-	_LIVE_TOOLS_VERSION="$(chroot chroot apt-cache policy live-tools | awk '/Installed: / { print $2 }')"
+case "${LB_MODE}" in
+	progress-linux)
+		_PROJECT="Progress Linux"
+		;;
 
-	sed	-e "s|@PROJECT@|${_PROJECT}|g" \
-		-e "s|@DISTRIBUTION@|${_DISTRIBUTION}|g" \
-		-e "s|@PARENT_DISTRIBUTION@|${LB_PARENT_DISTRIBUTION}|g" \
-		-e "s|@VERSION@|${_VERSION}|g" \
-		-e "s|@ARCHITECTURE@|${_ARCHITECTURE}|g" \
-		-e "s|@DESCRIPTION@|${_DESCRIPTION}|g" \
-		-e "s|@DATE@|${_DATE}|g" \
-		-e "s|@YEAR@|${_YEAR}|g" \
-		-e "s|@MONTH@|${_MONTH}|g" \
-		-e "s|@DAY@|${_DAY}|g" \
-		-e "s|@HOUR@|${_HOUR}|g" \
-		-e "s|@MINUTE@|${_MINUTE}|g" \
-		-e "s|@SECOND@|${_SECOND}|g" \
-		-e "s|@LINUX_VERSIONS@|${_LINUX_VERSIONS}|g" \
-		-e "s|@LIVE_BUILD_VERSION@|${_LIVE_BUILD_VERSION}|g" \
-		-e "s|@LIVE_BOOT_VERSION@|${_LIVE_BOOT_VERSION}|g" \
-		-e "s|@LIVE_CONFIG_VERSION@|${_LIVE_CONFIG_VERSION}|g" \
-		-e "s|@LIVE_TOOLS_VERSION@|${_LIVE_TOOLS_VERSION}|g" \
-	"${_TARGET}/splash.svg.in" > "${_TARGET}/splash.svg"
-fi
+	*)
+		_PROJECT="Debian GNU/Linux"
+		;;
+esac
+
+for _FILE in "${_TARGET}"/*.cfg ${_TARGET}/*.svg
+do
+	if [ -e "${_FILE}" ] && [ ! -d "${_FILE}" ]
+	then
+		sed -i  -e "s#@APPEND_LIVE@#${LB_BOOTAPPEND_LIVE}#g" \
+			-e "s#@APPEND_LIVE_FAILSAFE@#${LB_BOOTAPPEND_LIVE_FAILSAFE}#g" \
+			-e "s#@APPEND_INSTALL@#${LB_BOOTAPPEND_INSTALL}#g" \
+			-e "s#@APPEND_INSTALL_FAILSAFE@#${LB_BOOTAPPEND_INSTALL_FAILSAFE}#g" \
+			-e "s|@PROJECT@|${_PROJECT}|g" \
+			-e "s|@DISTRIBUTION@|${_DISTRIBUTION}|g" \
+			-e "s|@PARENT_DISTRIBUTION@|${LB_PARENT_DISTRIBUTION}|g" \
+			-e "s|@VERSION@|${_VERSION}|g" \
+			-e "s|@ARCHITECTURE@|${_ARCHITECTURE}|g" \
+			-e "s|@DATE@|${_DATE}|g" \
+			-e "s|@YEAR@|${_YEAR}|g" \
+			-e "s|@MONTH@|${_MONTH}|g" \
+			-e "s|@DAY@|${_DAY}|g" \
+			-e "s|@HOUR@|${_HOUR}|g" \
+			-e "s|@MINUTE@|${_MINUTE}|g" \
+			-e "s|@SECOND@|${_SECOND}|g" \
+			-e "s|@LINUX_VERSIONS@|${_LINUX_VERSIONS}|g" \
+			-e "s|@LIVE_BUILD_VERSION@|${_LIVE_BUILD_VERSION}|g" \
+			-e "s|@LIVE_BOOT_VERSION@|${_LIVE_BOOT_VERSION}|g" \
+			-e "s|@LIVE_CONFIG_VERSION@|${_LIVE_CONFIG_VERSION}|g" \
+			-e "s|@LIVE_TOOLS_VERSION@|${_LIVE_TOOLS_VERSION}|g" \
+		"${_FILE}"
+	fi
+done
 
 if [ -e "${_TARGET}/splash.svg" ]
 then
 	case "${LB_BUILD_WITH_CHROOT}" in
 		true)
 			cp "${_TARGET}/splash.svg" chroot
-			Chroot chroot "rsvg --format png --height 480 --width 640 splash.svg splash.png"
+			Chroot chroot "rsvg-convert --format png --height 480 --width 640 splash.svg -o splash.png"
 			mv chroot/splash.png "${_TARGET}"
 			rm -f chroot/splash.svg
 			;;
 
 		false)
-			rsvg --format png --height 480 --width 640 "${_TARGET}/splash.svg" "${_TARGET}/splash.png"
+			rsvg-convert --format png --height 480 --width 640 "${_TARGET}/splash.svg" -o "${_TARGET}/splash.png"
 			;;
 	esac
-fi
 
-rm -f "${_TARGET}/splash.svg.in" "${_TARGET}/splash.svg"
+	rm -f "${_TARGET}/splash.svg"
+fi
 
 case "${LB_MODE}" in
 	progress-linux)

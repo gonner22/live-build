@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2013 Daniel Baumann <daniel@debian.org>
+## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -37,7 +37,7 @@ Expand_packagelist ()
 			continue
 		fi
 
-		while read _LB_LINE
+		printf "$(cat ${_LB_LIST_LOCATION})\n" | while read _LB_LINE
 		do
 			case "${_LB_LINE}" in
 				\!*)
@@ -107,22 +107,6 @@ Expand_packagelist ()
 					_LB_ENABLED=1
 					;;
 
-				\#*)
-					if [ ${_LB_ENABLED} -ne 1 ]
-					then
-						continue
-					fi
-
-					# Find includes
-					_LB_INCLUDES="$(echo "${_LB_LINE}" | sed -n \
-						-e 's|^#<include> \([^ ]*\)|\1|gp' \
-						-e 's|^#include <\([^ ]*\)>|\1|gp')"
-
-					# Add to queue
-					_LB_EXPAND_QUEUE="$(echo ${_LB_EXPAND_QUEUE} ${_LB_INCLUDES} |
-						sed -e 's|[ ]*$||' -e 's|^[ ]*||')"
-					;;
-
 				*)
 					if [ ${_LB_ENABLED} -eq 1 ]
 					then
@@ -131,6 +115,33 @@ Expand_packagelist ()
 					;;
 
 			esac
-		done < "${_LB_LIST_LOCATION}"
+		done
 	done
+}
+
+Discover_package_architectures ()
+{
+	_LB_EXPANDED_PKG_LIST="${1}"
+	_LB_DISCOVERED_ARCHITECTURES=""
+
+	shift
+
+	if [ -e "${_LB_EXPANDED_PKG_LIST}" ] && [ -s "${_LB_EXPANDED_PKG_LIST}" ]
+	then
+		while read _LB_PACKAGE_LINE
+		do
+			# Lines from the expanded package list may have multiple, space-separated packages
+			for _LB_PACKAGE_LINE_PART in ${_LB_PACKAGE_LINE}
+			do
+				# Looking for <package>:<architecture>
+				if [ -n "$(echo ${_LB_PACKAGE_LINE_PART} | awk -F':' '{print $2}')" ]
+				then
+					_LB_DISCOVERED_ARCHITECTURES="${_LB_DISCOVERED_ARCHITECTURES} $(echo ${_LB_PACKAGE_LINE_PART} | awk -F':' '{print $2}')"
+				fi
+			done
+		done < "${_LB_EXPANDED_PKG_LIST}"
+
+		# Output unique architectures, alpha-sorted, one per line
+		echo "${_LB_DISCOVERED_ARCHITECTURES}" | tr -s '[:space:]' '\n' | sort | uniq
+	fi
 }

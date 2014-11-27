@@ -1,15 +1,90 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2013 Daniel Baumann <daniel@debian.org>
+## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
 ## under certain conditions; see COPYING for details.
 
 
+New_configuration ()
+{
+	## Runtime
+
+	# Image: Architecture
+	if [ -x "/usr/bin/dpkg" ]
+	then
+		CURRENT_IMAGE_ARCHITECTURE="$(dpkg --print-architecture)"
+	else
+		case "$(uname -m)" in
+			x86_64)
+				CURRENT_IMAGE_ARCHITECTURE="amd64"
+				;;
+
+			i?86)
+				CURRENT_IMAGE_ARCHITECTURE="i386"
+				;;
+
+			*)
+				Echo_warning "Unable to determine current architecture, using ${CURRENT_IMAGE_ARCHITECTURE}"
+				;;
+		esac
+	fi
+
+
+	## Configuration
+
+	# Configuration-Version
+	LIVE_CONFIGURATION_VERSION="${LIVE_CONFIGURATION_VERSION:-$(Get_configuration config/build Configuration-Version)}"
+	LIVE_CONFIGURATION_VERSION="${LIVE_CONFIGURATION_VERSION:-${LIVE_BUILD_VERSION}}"
+	export LIVE_CONFIGURATION_VERSION
+
+	# Image: Name
+	LIVE_IMAGE_NAME="${LIVE_IMAGE_NAME:-$(Get_configuration config/build Name)}"
+	LIVE_IMAGE_NAME="${LIVE_IMAGE_NAME:-live-image}"
+	export LIVE_IMAGE_NAME
+
+	# Image: Architecture (FIXME: Support and default to 'any')
+	LIVE_IMAGE_ARCHITECTURE="${LIVE_IMAGE_ARCHITECTURE:-$(Get_configuration config/build Architecture)}"
+	LIVE_IMAGE_ARCHITECTURE="${LIVE_IMAGE_ARCHITECTURE:-${CURRENT_IMAGE_ARCHITECTURE}}"
+	export LIVE_IMAGE_ARCHITECTURE
+
+	# Image: Archive Areas
+	LIVE_IMAGE_ARCHIVE_AREAS="${LIVE_IMAGE_ARCHIVE_AREAS:-$(Get_configuration config/build Archive-Areas)}"
+
+	case "${LB_MODE}" in
+		progress-linux)
+			LIVE_IMAGE_ARCHIVE_AREAS="${LIVE_IMAGE_ARCHIVE_AREAS:-main contrib non-free}"
+			;;
+
+		ubuntu)
+			LIVE_IMAGE_ARCHIVE_AREAS="${LIVE_IMAGE_ARCHIVE_AREAS:-main restricted}"
+			;;
+
+		*)
+			LIVE_IMAGE_ARCHIVE_AREAS="${LIVE_IMAGE_ARCHIVE_AREAS:-main}"
+			;;
+	esac
+
+	export LIVE_IMAGE_ARCHIVE_AREAS
+
+	# Image: Archive Areas
+	LIVE_IMAGE_PARENT_ARCHIVE_AREAS="${LIVE_IMAGE_PARENT_ARCHIVE_AREAS:-$(Get_configuration config/build Parent-Archive-Areas)}"
+	LIVE_IMAGE_PARENT_ARCHIVE_AREAS="${LIVE_IMAGE_PARENT_ARCHIVE_AREAS:-${LIVE_IMAGE_ARCHIVE_AREAS}}"
+	export LIVE_IMAGE_PARENT_ARCHIVE_AREAS
+
+	# Image: Type
+	LIVE_IMAGE_TYPE="${LIVE_IMAGE_TYPE:-$(Get_configuration config/build Type)}"
+	LIVE_IMAGE_TYPE="${LIVE_IMAGE_TYPE:-iso-hybrid}"
+	export LIVE_IMAGE_TYPE
+}
+
 Set_defaults ()
 {
+	# FIXME
+	New_configuration
+
 	## config/common
 
 	if [ -e local/live-build ]
@@ -21,10 +96,10 @@ Set_defaults ()
 	# Setting system type
 	LB_SYSTEM="${LB_SYSTEM:-live}"
 
-	# Setting mode (currently: debian, emdebian, progress-linux, and ubuntu)
+	# Setting mode (currently: debian, progress-linux, and ubuntu)
 	if [ -x /usr/bin/lsb_release ]
 	then
-		_DISTRIBUTOR="$(lsb_release -is | tr [A-Z] [a-z])"
+		_DISTRIBUTOR="$(lsb_release -is | tr "[A-Z]" "[a-z]")"
 
 		case "${_DISTRIBUTOR}" in
 			debian|progress-linux|ubuntu)
@@ -55,12 +130,12 @@ Set_defaults ()
 			;;
 
 		ubuntu)
-			LB_DISTRIBUTION="${LB_DISTRIBUTION:-precise}"
+			LB_DISTRIBUTION="${LB_DISTRIBUTION:-quantal}"
 			LB_DERIVATIVE="false"
 			;;
 
 		*)
-			LB_DISTRIBUTION="${LB_DISTRIBUTION:-wheezy}"
+			LB_DISTRIBUTION="${LB_DISTRIBUTION:-jessie}"
 			LB_DERIVATIVE="false"
 			;;
 	esac
@@ -68,11 +143,6 @@ Set_defaults ()
 	case "${LB_MODE}" in
 		progress-linux)
 			case "${LB_DISTRIBUTION}" in
-				artax|artax-backports)
-					LB_PARENT_DISTRIBUTION="${LB_PARENT_DISTRIBUTION:-squeeze}"
-					LB_PARENT_DEBIAN_INSTALLER_DISTRIBUTION="${LB_PARENT_DEBIAN_INSTALLER_DISTRIBUTION:-${LB_PARENT_DISTRIBUTION}}"
-					;;
-
 				baureo|baureo-backports)
 					LB_PARENT_DISTRIBUTION="${LB_PARENT_DISTRIBUTION:-wheezy}"
 					LB_PARENT_DEBIAN_INSTALLER_DISTRIBUTION="${LB_PARENT_DEBIAN_INSTALLER_DISTRIBUTION:-${LB_PARENT_DISTRIBUTION}}"
@@ -127,7 +197,7 @@ Set_defaults ()
 
 	# Setting apt recommends
 	case "${LB_MODE}" in
-		emdebian|progress-linux)
+		progress-linux)
 			LB_APT_RECOMMENDS="${LB_APT_RECOMMENDS:-false}"
 			;;
 
@@ -205,12 +275,12 @@ Set_defaults ()
 
 		progress-linux)
 			case "${LB_DISTRIBUTION}" in
-				artax|artax-backports)
-					LB_INITSYSTEM="${LB_INITSYSTEM:-sysvinit}"
+				chairon*)
+					LB_INITSYSTEM="${LB_INITSYSTEM:-systemd}"
 					;;
 
 				*)
-					LB_INITSYSTEM="${LB_INITSYSTEM:-systemd}"
+					LB_INITSYSTEM="${LB_INITSYSTEM:-sysvinit}"
 					;;
 			esac
 			;;
@@ -260,36 +330,16 @@ Set_defaults ()
 		fi
 	fi
 
-	if [ "$(id -u)" = "0" ]
+	if [ "${LIVE_IMAGE_ARCHITECTURE}" = "i386" ] && [ "${CURRENT_IMAGE_ARCHITECTURE}" = "amd64" ]
 	then
-		# If we are root, disable root command
-		LB_ROOT_COMMAND=""
-	else
-		if [ -x /usr/bin/sudo ]
-		then
-			# FIXME: this is false until considered safe
-			#LB_ROOT_COMMAND="sudo"
-			LB_ROOT_COMMAND=""
-		fi
-	fi
-
-	if [ "${LB_ARCHITECTURE}" = "i386" ] && [ "$(uname -m)" = "x86_64" ]
-	then
+		# Use linux32 when building amd64 images on i386
 		_LINUX32="linux32"
 	else
 		_LINUX32=""
 	fi
 
 	# Setting tasksel
-	case "${LB_PARENT_DISTRIBUTION}" in
-		squeeze)
-			LB_TASKSEL="${LB_TASKSEL:-tasksel}"
-			;;
-
-		*)
-			LB_TASKSEL="${LB_TASKSEL:-apt}"
-			;;
-	esac
+	LB_TASKSEL="${LB_TASKSEL:-apt}"
 
 	# Setting root directory
 	case "${LB_MODE}" in
@@ -320,43 +370,10 @@ Set_defaults ()
 
 	## config/bootstrap
 
-	# Setting architecture value
-	if [ -z "${LB_ARCHITECTURES}" ]
-	then
-		if [ -x "/usr/bin/dpkg" ]
-		then
-			LB_ARCHITECTURES="$(dpkg --print-architecture)"
-		else
-			case "$(uname -m)" in
-				sparc|powerpc)
-					LB_ARCHITECTURES="$(uname -m)"
-					;;
-				x86_64)
-					LB_ARCHITECTURES="amd64"
-					;;
-				*)
-					if [ -e /lib64 ]
-					then
-						LB_ARCHITECTURES="amd64"
-					else
-						LB_ARCHITECTURES="i386"
-					fi
-
-					Echo_warning "Can't determine architecture, assuming ${LB_ARCHITECTURES}"
-					;;
-			esac
-		fi
-	fi
-
 	# Setting mirror to fetch packages from
 	case "${LB_MODE}" in
 		debian)
 			LB_MIRROR_BOOTSTRAP="${LB_MIRROR_BOOTSTRAP:-http://ftp.debian.org/debian/}"
-			LB_PARENT_MIRROR_BOOTSTRAP="${LB_PARENT_MIRROR_BOOTSTRAP:-${LB_MIRROR_BOOTSTRAP}}"
-			;;
-
-		emdebian)
-			LB_MIRROR_BOOTSTRAP="${LB_MIRROR_BOOTSTRAP:-http://www.emdebian.org/grip/}"
 			LB_PARENT_MIRROR_BOOTSTRAP="${LB_PARENT_MIRROR_BOOTSTRAP:-${LB_MIRROR_BOOTSTRAP}}"
 			;;
 
@@ -366,7 +383,7 @@ Set_defaults ()
 			;;
 
 		ubuntu)
-			case "${LB_ARCHITECTURES}" in
+			case "${LIVE_IMAGE_ARCHITECTURE}" in
 				amd64|i386)
 					LB_MIRROR_BOOTSTRAP="${LB_MIRROR_BOOTSTRAP:-http://archive.ubuntu.com/ubuntu/}"
 					;;
@@ -390,18 +407,13 @@ Set_defaults ()
 			LB_PARENT_MIRROR_CHROOT_SECURITY="${LB_PARENT_MIRROR_CHROOT_SECURITY:-${LB_MIRROR_CHROOT_SECURITY}}"
 			;;
 
-		emdebian)
-			LB_MIRROR_CHROOT_SECURITY="${LB_MIRROR_CHROOT_SECURITY:-none}"
-			LB_PARENT_MIRROR_CHROOT_SECURITY="${LB_PARENT_MIRROR_CHROOT_SECURITY:-${LB_MIRROR_CHROOT_SECURITY}}"
-			;;
-
 		progress-linux)
 			LB_PARENT_MIRROR_CHROOT_SECURITY="${LB_PARENT_MIRROR_CHROOT_SECURITY:-http://security.debian.org/}"
 			LB_MIRROR_CHROOT_SECURITY="${LB_MIRROR_CHROOT_SECURITY:-${LB_MIRROR_CHROOT}}"
 			;;
 
 		ubuntu)
-			case "${LB_ARCHITECTURES}" in
+			case "${LIVE_IMAGE_ARCHITECTURE}" in
 				amd64|i386)
 					LB_MIRROR_CHROOT_SECURITY="${LB_MIRROR_CHROOT_SECURITY:-http://security.ubuntu.com/ubuntu/}"
 					;;
@@ -412,59 +424,6 @@ Set_defaults ()
 			esac
 
 			LB_PARENT_MIRROR_CHROOT_SECURITY="${LB_PARENT_MIRROR_CHROOT_SECURITY:-${LB_MIRROR_CHROOT_SECURITY}}"
-			;;
-	esac
-
-	# Setting updates mirror to fetch packages from
-	case "${LB_MODE}" in
-		debian|progress-linux)
-			LB_PARENT_MIRROR_CHROOT_UPDATES="${LB_PARENT_MIRROR_CHROOT_UPDATES:-${LB_PARENT_MIRROR_CHROOT}}"
-			LB_MIRROR_CHROOT_UPDATES="${LB_MIRROR_CHROOT_UPDATES:-${LB_MIRROR_CHROOT}}"
-			;;
-
-		ubuntu)
-			case "${LB_ARCHITECTURES}" in
-				amd64|i386)
-					LB_MIRROR_CHROOT_UPDATES="${LB_MIRROR_CHROOT_UPDATES:-http://archive.ubuntu.com/ubuntu/}"
-					;;
-
-				*)
-					LB_MIRROR_CHROOT_UPDATES="${LB_MIRROR_CHROOT_UPDATES:-http://ports.ubuntu.com/ubuntu-ports/}"
-					;;
-			esac
-
-			LB_PARENT_MIRROR_CHROOT_UPDATES="${LB_PARENT_MIRROR_CHROOT_UPDATES:-${LB_PARENT_MIRROR_CHROOT}}"
-			;;
-
-		*)
-			LB_PARENT_MIRROR_CHROOT_UPDATES="${LB_PARENT_MIRROR_CHROOT_UPDATES:-none}"
-			LB_MIRROR_CHROOT_UPDATES="${LB_MIRROR_CHROOT_UPDATES:-none}"
-			;;
-	esac
-
-	# Setting backports mirror to fetch packages from
-	case "${LB_MODE}" in
-		debian)
-			case "${LB_DISTRIBUTION}" in
-				squeeze)
-					LB_MIRROR_CHROOT_BACKPORTS="${LB_MIRROR_CHROOT_BACKPORTS:-http://backports.debian.org/debian-backports/}"
-					;;
-
-				*)
-					LB_MIRROR_CHROOT_BACKPORTS="${LB_MIRROR_CHROOT_BACKPORTS:-${LB_MIRROR_CHROOT}}"
-					;;
-			esac
-
-			LB_PARENT_MIRROR_CHROOT_BACKPORTS="${LB_PARENT_MIRROR_CHROOT_BACKPORTS:-${LB_MIRROR_CHROOT_BACKPORTS}}"
-			;;
-
-		progress-linux)
-			LB_MIRROR_CHROOT_BACKPORTS="${LB_MIRROR_CHROOT_BACKPORTS:-${LB_MIRROR_CHROOT}}"
-			;;
-
-		*)
-			LB_PARENT_MIRROR_CHROOT_BACKPORTS="${LB_PARENT_MIRROR_CHROOT_BACKPORTS:-none}"
-			LB_MIRROR_CHROOT_BACKPORTS="${LB_MIRROR_CHROOT_BACKPORTS:-none}"
 			;;
 	esac
 
@@ -480,13 +439,8 @@ Set_defaults ()
 			LB_MIRROR_BINARY="${LB_MIRROR_BINARY:-${LB_MIRROR_CHROOT}}"
 			;;
 
-		emdebian)
-			LB_MIRROR_BINARY="${LB_MIRROR_BINARY:-http://www.emdebian.org/grip/}"
-			LB_PARENT_MIRROR_BINARY="${LB_PARENT_MIRROR_BINARY:-${LB_MIRROR_BINARY}}"
-			;;
-
 		ubuntu)
-			case "${LB_ARCHITECTURES}" in
+			case "${LIVE_IMAGE_ARCHITECTURE}" in
 				amd64|i386)
 					LB_MIRROR_BINARY="${LB_MIRROR_BINARY:-http://archive.ubuntu.com/ubuntu/}"
 				;;
@@ -507,18 +461,13 @@ Set_defaults ()
 			LB_PARENT_MIRROR_BINARY_SECURITY="${LB_PARENT_MIRROR_BINARY_SECURITY:-${LB_MIRROR_BINARY_SECURITY}}"
 			;;
 
-		emdebian)
-			LB_MIRROR_BINARY_SECURITY="${LB_MIRROR_BINARY_SECURITY:-none}"
-			LB_PARENT_MIRROR_BINARY_SECURITY="${LB_PARENT_MIRROR_BINARY_SECURITY:-${LB_MIRROR_BINARY_SECURITY}}"
-			;;
-
 		progress-linux)
 			LB_PARENT_MIRROR_BINARY_SECURITY="${LB_PARENT_MIRROR_BINARY_SECURITY:-http://security.debian.org/}"
 			LB_MIRROR_BINARY_SECURITY="${LB_MIRROR_BINARY_SECURITY:-${LB_MIRROR_CHROOT}}"
 			;;
 
 		ubuntu)
-			case "${LB_ARCHITECTURES}" in
+			case "${LIVE_IMAGE_ARCHITECTURE}" in
 				amd64|i386)
 					LB_MIRROR_BINARY_SECURITY="${LB_MIRROR_BINARY_SECURITY:-http://security.ubuntu.com/ubuntu/}"
 					;;
@@ -529,63 +478,6 @@ Set_defaults ()
 			esac
 
 			LB_PARENT_MIRROR_BINARY_SECURITY="${LB_PARENT_MIRROR_BINARY_SECURITY:-${LB_MIRROR_BINARY_SECURITY}}"
-			;;
-	esac
-
-	# Setting updates mirror which ends up in the image
-	case "${LB_MODE}" in
-		debian)
-			LB_MIRROR_BINARY_UPDATES="${LB_MIRROR_BINARY_UPDATES:-${LB_MIRROR_BINARY}}"
-			LB_PARENT_MIRROR_BINARY_UPDATES="${LB_PARENT_MIRROR_BINARY_UPDATES:-${LB_PARENT_MIRROR_BINARY}}"
-			;;
-
-		progress-linux)
-			LB_PARENT_MIRROR_BINARY_UPDATES="${LB_PARENT_MIRROR_BINARY_UPDATES:-${LB_PARENT_MIRROR_BINARY}}"
-			LB_MIRROR_BINARY_UPDATES="${LB_MIRROR_BINARY_UPDATES:-${LB_MIRROR_BINARY}}"
-			;;
-
-		ubuntu)
-			case "${LB_ARCHITECTURES}" in
-				amd64|i386)
-					LB_MIRROR_BINARY_UPDATES="${LB_MIRROR_BINARY_UPDATES:-http://archive.ubuntu.com/ubuntu/}"
-					;;
-
-				*)
-					LB_MIRROR_BINARY_UPDATES="${LB_MIRROR_BINARY_UPDATES:-http://ports.ubuntu.com/ubuntu-ports/}"
-					;;
-			esac
-
-			LB_PARENT_MIRROR_BINARY_UPDATES="${LB_PARENT_MIRROR_BINARY_UPDATES:-${LB_PARENT_MIRROR_BINARY}}"
-			;;
-
-		*)
-			LB_PARENT_MIRROR_BINARY_UPDATES="${LB_PARENT_MIRROR_BINARY_UPDATES:-none}"
-			;;
-	esac
-
-	# Setting backports mirror which ends up in the image
-	case "${LB_MODE}" in
-		debian)
-			case "${LB_DISTRIBUTION}" in
-				squeeze)
-					LB_MIRROR_BINARY_BACKPORTS="${LB_MIRROR_BINARY_BACKPORTS:-http://http.debian.net/debian-backports/}"
-					;;
-
-				*)
-					LB_MIRROR_BINARY_BACKPORTS="${LB_MIRROR_BINARY_BACKPORTS:-${LB_MIRROR_BINARY}}"
-					;;
-			esac
-
-			LB_PARENT_MIRROR_BINARY_BACKPORTS="${LB_PARENT_MIRROR_BINARY_BACKPORTS:-${LB_MIRROR_BINARY_BACKPORTS}}"
-			;;
-
-		progress-linux)
-			LB_MIRROR_BINARY_BACKPORTS="${LB_MIRROR_BINARY_BACKPORTS:-${LB_MIRROR_BINARY}}"
-			;;
-
-		*)
-			LB_PARENT_MIRROR_BINARY_BACKPORTS="${LB_PARENT_MIRROR_BINARY_BACKPORTS:-none}"
-			LB_MIRROR_BINARY_BACKPORTS="${LB_MIRROR_BINARY_BACKPORTS:-none}"
 			;;
 	esac
 
@@ -601,54 +493,13 @@ Set_defaults ()
 			;;
 	esac
 
-	# Setting archive areas value
-	case "${LB_MODE}" in
-		progress-linux)
-			LB_ARCHIVE_AREAS="${LB_ARCHIVE_AREAS:-main contrib non-free}"
-			LB_PARENT_ARCHIVE_AREAS="${LB_PARENT_ARCHIVE_AREAS:-${LB_ARCHIVE_AREAS}}"
-			;;
-
-		ubuntu)
-			LB_ARCHIVE_AREAS="${LB_ARCHIVE_AREAS:-main restricted}"
-			LB_PARENT_ARCHIVE_AREAS="${LB_PARENT_ARCHIVE_AREAS:-${LB_ARCHIVE_AREAS}}"
-			;;
-
-		*)
-			LB_ARCHIVE_AREAS="${LB_ARCHIVE_AREAS:-main}"
-			LB_PARENT_ARCHIVE_AREAS="${LB_PARENT_ARCHIVE_AREAS:-${LB_ARCHIVE_AREAS}}"
-			;;
-	esac
-
 	## config/chroot
 
 	# Setting chroot filesystem
 	LB_CHROOT_FILESYSTEM="${LB_CHROOT_FILESYSTEM:-squashfs}"
 
-	# Setting whether to expose root filesystem as read only
-	LB_EXPOSED_ROOT="${LB_EXPOSED_ROOT:-false}"
-
 	# Setting union filesystem
 	LB_UNION_FILESYSTEM="${LB_UNION_FILESYSTEM:-aufs}"
-
-	# Setting distribution hooks
-	LB_CHROOT_HOOKS="${LB_CHROOT_HOOKS:-disable-kexec-tools \
-		remove-adjtime-configuration \
-		remove-backup-files \
-		remove-dbus-machine-id \
-		remove-gnome-icon-cache \
-		remove-log-files \
-		remove-mdadm-configuration \
-		remove-openssh-server-host-keys \
-		remove-python-py \
-		remove-temporary-files \
-		remove-udev-persistent-rules \
-		remove-systemd-machine-id \
-		update-apt-file-cache \
-		update-apt-xapian-index \
-		update-glx-alternative \
-		update-mlocate-database \
-		update-nvidia-alternative}"
-		#remove-apt-sources-lists
 
 	# Setting interactive shell/X11/Xnest
 	LB_INTERACTIVE="${LB_INTERACTIVE:-false}"
@@ -665,7 +516,7 @@ Set_defaults ()
 	esac
 
 	# Setting linux flavour string
-	case "${LB_ARCHITECTURES}" in
+	case "${LIVE_IMAGE_ARCHITECTURE}" in
 		armel)
 			case "${LB_MODE}" in
                                 ubuntu)
@@ -700,15 +551,7 @@ Set_defaults ()
 		i386)
 			case "${LB_MODE}" in
 				progress-linux)
-					case "${LB_DISTRIBUTION}" in
-						artax)
-							LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-686}"
-							;;
-
-						*)
-							LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-686-pae}"
-							;;
-					esac
+					LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-686-pae}"
 					;;
 
 				ubuntu)
@@ -724,15 +567,7 @@ Set_defaults ()
 					;;
 
 				*)
-					case "${LB_PARENT_DISTRIBUTION}" in
-						squeeze)
-							LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-686 486}"
-							;;
-
-						*)
-							LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-686-pae 486}"
-							;;
-					esac
+					LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-486}"
 					;;
 			esac
 			;;
@@ -740,7 +575,7 @@ Set_defaults ()
 		ia64)
 			case "${LB_MODE}" in
 				progress-linux)
-					Echo_error "Architecture ${LB_ARCHITECTURES} not supported in the ${LB_MODE} mode."
+					Echo_error "Architecture ${LIVE_IMAGE_ARCHITECTURE} not supported in the ${LB_MODE} mode."
 					exit 1
 					;;
 
@@ -753,7 +588,7 @@ Set_defaults ()
 		powerpc)
 			case "${LB_MODE}" in
 				progress-linux)
-					Echo_error "Architecture ${LB_ARCHITECTURES} not supported in the ${LB_MODE} mode."
+					Echo_error "Architecture ${LIVE_IMAGE_ARCHITECTURE} not supported in the ${LB_MODE} mode."
 					exit 1
 					;;
 
@@ -767,15 +602,15 @@ Set_defaults ()
 			esac
 			;;
 
-		s390)
+		s390x)
 			case "${LB_MODE}" in
 				progress-linux|ubuntu)
-					Echo_error "Architecture ${LB_ARCHITECTURES} not supported in the ${LB_MODE} mode."
+					Echo_error "Architecture ${LIVE_IMAGE_ARCHITECTURE} not supported in the ${LB_MODE} mode."
 					exit 1
 					;;
 
 				*)
-					LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-s390}"
+					LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-s390x}"
 					;;
 			esac
 			;;
@@ -783,7 +618,7 @@ Set_defaults ()
 		sparc)
 			case "${LB_MODE}" in
 				progress-linux)
-					Echo_error "Architecture ${LB_ARCHITECTURES} not supported in the ${LB_MODE} mode."
+					Echo_error "Architecture ${LIVE_IMAGE_ARCHITECTURE} not supported in the ${LB_MODE} mode."
 					exit 1
 					;;
 
@@ -794,7 +629,7 @@ Set_defaults ()
 			;;
 
 		*)
-			Echo_error "Architecture(s) ${LB_ARCHITECTURES} not yet supported (FIXME)"
+			Echo_error "Architecture(s) ${LIVE_IMAGE_ARCHITECTURE} not yet supported (FIXME)"
 			exit 1
 			;;
 	esac
@@ -806,15 +641,7 @@ Set_defaults ()
 			;;
 
 		*)
-			case "${LB_PARENT_DISTRIBUTION}" in
-				squeeze)
-					LB_LINUX_PACKAGES="${LB_LINUX_PACKAGES:-linux-image-2.6}"
-					;;
-
-				*)
-					LB_LINUX_PACKAGES="${LB_LINUX_PACKAGES:-linux-image}"
-					;;
-			esac
+			LB_LINUX_PACKAGES="${LB_LINUX_PACKAGES:-linux-image}"
 			;;
 	esac
 
@@ -843,7 +670,7 @@ Set_defaults ()
 	## config/binary
 
 	# Setting image filesystem
-	case "${LB_ARCHITECTURES}" in
+	case "${LIVE_IMAGE_ARCHITECTURE}" in
 		sparc)
 			LB_BINARY_FILESYSTEM="${LB_BINARY_FILESYSTEM:-ext4}"
 			;;
@@ -854,13 +681,13 @@ Set_defaults ()
 	esac
 
 	# Setting image type
-	case "${LB_ARCHITECTURES}" in
+	case "${LIVE_IMAGE_ARCHITECTURE}" in
 		amd64|i386)
-			LB_BINARY_IMAGES="${LB_BINARY_IMAGES:-iso-hybrid}"
+			LIVE_IMAGE_TYPE="${LIVE_IMAGE_TYPE:-iso-hybrid}"
 			;;
 
 		*)
-			LB_BINARY_IMAGES="${LB_BINARY_IMAGES:-iso}"
+			LIVE_IMAGE_TYPE="${LIVE_IMAGE_TYPE:-iso}"
 			;;
 	esac
 
@@ -878,17 +705,9 @@ Set_defaults ()
 	# Setting bootloader
 	if [ -z "${LB_BOOTLOADER}" ]
 	then
-		case "${LB_ARCHITECTURES}" in
+		case "${LIVE_IMAGE_ARCHITECTURE}" in
 			amd64|i386)
 				LB_BOOTLOADER="syslinux"
-				;;
-
-			powerpc)
-				LB_BOOTLOADER="yaboot"
-				;;
-
-			sparc)
-				LB_BOOTLOADER="silo"
 				;;
 		esac
 	fi
@@ -948,8 +767,8 @@ Set_defaults ()
 	# Setting boot parameters
 	case "${LB_INITRAMFS}" in
 		live-boot)
-			LB_BOOTAPPEND_LIVE="${LB_BOOTAPPEND_LIVE:-boot=live config quiet splash}"
-			LB_BOOTAPPEND_LIVE_FAILSAFE="${LB_BOOTAPPEND_LIVE_FAILSAFE:-boot=live config memtest noapic noapm nodma nomce nolapic nomodeset nosmp nosplash vga=normal}"
+			LB_BOOTAPPEND_LIVE="${LB_BOOTAPPEND_LIVE:-boot=live components quiet splash}"
+			LB_BOOTAPPEND_LIVE_FAILSAFE="${LB_BOOTAPPEND_LIVE_FAILSAFE:-boot=live components memtest noapic noapm nodma nomce nolapic nomodeset nosmp nosplash vga=normal}"
 			;;
 
 		casper)
@@ -965,7 +784,7 @@ Set_defaults ()
 
 	if [ -n "${LB_DEBIAN_INSTALLER_PRESEEDFILE}" ]
 	then
-		case "${LB_BINARY_IMAGES}" in
+		case "${LIVE_IMAGE_TYPE}" in
 			iso*)
 				_LB_BOOTAPPEND_PRESEED="file=/cdrom/install/${LB_DEBIAN_INSTALLER_PRESEEDFILE}"
 				;;
@@ -1017,10 +836,6 @@ Set_defaults ()
 			LB_ISO_APPLICATION="${LB_ISO_APPLICATION:-Debian Live}"
 			;;
 
-		emdebian)
-			LB_ISO_APPLICATION="${LB_ISO_APPLICATION:-Emdebian Live}"
-			;;
-
 		progress-linux)
 			LB_ISO_APPLICATION="${LB_ISO_APPLICATION:-Progress Linux}"
 			;;
@@ -1031,7 +846,7 @@ Set_defaults ()
 	esac
 
 	# Set iso preparer
-	LB_ISO_PREPARER="${LB_ISO_PREPARER:-live-build \$VERSION; http://packages.qa.debian.org/live-build}"
+	LB_ISO_PREPARER="${LB_ISO_PREPARER:-live-build \$VERSION; http://live-systems.org/devel/live-build}"
 
 	# Set iso publisher
 	case "${LB_MODE}" in
@@ -1040,7 +855,7 @@ Set_defaults ()
 			;;
 
 		*)
-			LB_ISO_PUBLISHER="${LB_ISO_PUBLISHER:-Debian Live project; http://live.debian.net/; debian-live@lists.debian.org}"
+			LB_ISO_PUBLISHER="${LB_ISO_PUBLISHER:-Live Systems project; http://live-systems.org/; debian-live@lists.debian.org}"
 			;;
 	esac
 
@@ -1050,12 +865,8 @@ Set_defaults ()
 			LB_HDD_LABEL="${LB_HDD_LABEL:-DEBIAN_LIVE}"
 			;;
 
-		emdebian)
-			LB_HDD_LABEL="${LB_HDD_LABEL:-EMDEBIAN_LIVE}"
-			;;
-
 		progress-linux)
-			LB_HDD_LABEL="${LB_HDD_LABEL:-PROGRESS_$(echo ${LB_DISTRIBUTION} | tr [a-z] [A-Z])}"
+			LB_HDD_LABEL="${LB_HDD_LABEL:-PROGRESS_$(echo ${LB_DISTRIBUTION} | tr "[a-z]" "[A-Z]")}"
 			;;
 
 		ubuntu)
@@ -1064,16 +875,12 @@ Set_defaults ()
 	esac
 
 	# Setting hdd size
-	LB_HDD_SIZE="${LB_HDD_SIZE:-10000}"
+	LB_HDD_SIZE="${LB_HDD_SIZE:-auto}"
 
 	# Setting iso volume
 	case "${LB_MODE}" in
 		debian)
 			LB_ISO_VOLUME="${LB_ISO_VOLUME:-Debian ${LB_DISTRIBUTION} \$(date +%Y%m%d-%H:%M)}"
-			;;
-
-		emdebian)
-			LB_ISO_VOLUME="${LB_ISO_VOLUME:-Emdebian ${LB_DISTRIBUTION} \$(date +%Y%m%d-%H:%M)}"
 			;;
 
 		progress-linux)
@@ -1086,7 +893,7 @@ Set_defaults ()
 	esac
 
 	# Setting memtest option
-	LB_MEMTEST="${LB_MEMTEST:-memtest86+}"
+	LB_MEMTEST="${LB_MEMTEST:-none}"
 
 	# Setting loadlin option
 	case "${LB_MODE}" in
@@ -1095,7 +902,7 @@ Set_defaults ()
 			;;
 
 		*)
-			case "${LB_ARCHITECTURES}" in
+			case "${LIVE_IMAGE_ARCHITECTURE}" in
 				amd64|i386)
 					if [ "${LB_DEBIAN_INSTALLER}" != "false" ]
 					then
@@ -1119,7 +926,7 @@ Set_defaults ()
 			;;
 
 		*)
-			case "${LB_ARCHITECTURES}" in
+			case "${LIVE_IMAGE_ARCHITECTURE}" in
 				amd64|i386)
 					if [ "${LB_DEBIAN_INSTALLER}" != "false" ]
 					then
@@ -1182,42 +989,59 @@ Set_defaults ()
 
 	# Setting image type
 	LB_SOURCE_IMAGES="${LB_SOURCE_IMAGES:-tar}"
-
-	# Setting fakeroot/fakechroot
-	LB_USE_FAKEROOT="${LB_USE_FAKEROOT:-false}"
 }
 
 Check_defaults ()
 {
-	if [ "${LB_CONFIG_VERSION}" ]
+	if [ -n "${LIVE_BUILD_VERSION}" ]
 	then
 		# We're only checking when we're actually running the checks
 		# that's why the check for emptyness of the version;
-		# however, as live-build always declares LB_CONFIG_VERSION
+		# however, as live-build always declares LIVE_BUILD_VERSION
 		# internally, this is safe assumption (no cases where it's unset,
 		# except when bootstrapping the functions/defaults etc.).
-		CURRENT_CONFIG_VERSION="$(echo ${LB_CONFIG_VERSION} | awk -F. '{ print $1 }')"
 
-		if [ ${CURRENT_CONFIG_VERSION} -ne 3 ]
+		CURRENT_CONFIGURATION_VERSION="$(echo ${LIVE_CONFIGURATION_VERSION} | awk -F. ' { print $1 }')"
+
+		if [ -n "${CURRENT_CONFIGURATION_VERSION}" ]
 		then
-			if [ ${CURRENT_CONFIG_VERSION} -ge 4 ]
-			then
-				Echo_error "This config tree is too new for this version of live-build (${VERSION})."
-				Echo_error "Aborting build, please get a new version of live-build."
+			CORRECT_VERSION="$(echo ${LIVE_BUILD_VERSION} | awk -F. '{ print $1 }')"
+			TOO_NEW_VERSION="$((${CORRECT_VERSION} + 1))"
+			TOO_OLD_VERSION="$((${CORRECT_VERSION} - 1))"
 
-				exit 1
-			elif [ ${CURRENT_CONFIG_VERSION} -le 2 ]
+			if [ ${CURRENT_CONFIGURATION_VERSION} -ne ${CORRECT_VERSION} ]
 			then
-				Echo_error "This config tree is too old for this version of live-build (${VERSION})."
-				Echo_error "Aborting build, please regenerate the config tree."
+				if [ ${CURRENT_CONFIGURATION_VERSION} -ge ${TOO_NEW_VERSION} ]
+				then
+					Echo_error "This config tree is too new for live-build (${VERSION})."
+					Echo_error "Aborting build, please update live-build."
 
-				exit 1
-			else
-				Echo_warning "This config tree does not specify a format version or has an unknown version number."
-				Echo_warning "Continuing build, but it could lead to errors or different results. Please regenerate the config tree."
+					exit 1
+				elif [ ${CURRENT_CONFIGURATION_VERSION} -le ${TOO_OLD_VERSION} ]
+				then
+					Echo_error "This config tree is too old for live-build (${VERSION})."
+					Echo_error "Aborting build, please update the configuration."
+
+					exit 1
+				else
+					Echo_warning "This configuration does not specify a version or has a unknown version."
+					Echo_warning "Continuing build, please correct the configuration."
+				fi
 			fi
 		fi
 	fi
+
+	case "${LB_BINARY_FILESYSTEM}" in
+		ntfs)
+			if [ ! -x "$(which ntfs-3g 2>/dev/null)" ]
+			then
+				Echo_error "Using ntfs as the binary filesystem is currently only supported"
+				Echo_error "if ntfs-3g is installed on the host system."
+
+				exit 1
+			fi
+			;;
+	esac
 
 	if echo ${LB_HDD_LABEL} | grep -qs ' '
 	then
@@ -1237,21 +1061,20 @@ Check_defaults ()
 
 	if [ "${LB_BOOTLOADER}" = "syslinux" ]
 	then
-		# syslinux + fat
+		# syslinux + fat or ntfs, or extlinux + ext[234] or btrfs
 		case "${LB_BINARY_FILESYSTEM}" in
-			fat*|ntfs)
+			fat*|ntfs|ext[234]|btrfs)
 				;;
 			*)
-				Echo_warning "You have selected values of LB_BOOTLOADER and LB_BINARY_FILESYSTEM which are incompatible - syslinux only supports FAT and NTFS filesystems."
+				Echo_warning "You have selected values of LB_BOOTLOADER and LB_BINARY_FILESYSTEM which are incompatible - the syslinux family only support FAT, NTFS, ext[234] or btrfs filesystems."
 				;;
 		esac
 	fi
 
-	case "${LB_BINARY_IMAGES}" in
+	case "${LIVE_IMAGE_TYPE}" in
 		hdd*)
-			# grub or yaboot + hdd
 			case "${LB_BOOTLOADER}" in
-				grub|yaboot)
+				grub)
 					Echo_error "You have selected a combination of bootloader and image type that is currently not supported by live-build. Please use either another bootloader or a different image type."
 					exit 1
 					;;

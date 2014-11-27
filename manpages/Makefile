@@ -19,7 +19,26 @@ po4a.cfg:
 update:
 	./bin/update-version.sh
 
-build: po4a.cfg
+check:
+	@echo -n "Checking the integrity of .po files "
+
+	@if [ -x /usr/bin/msgfmt ]; \
+	then \
+		for POFILE in po/*/*; \
+		do \
+			msgfmt --check --output-file=/dev/null $${POFILE}; \
+			echo -n "."; \
+		done; \
+	else \
+		echo "E: msgfmt - command not found"; \
+		echo "I: gettext can be obtained from http://www.gnu.org/software/gettext/"; \
+		echo "I: On Debian based systems, gettext can be installed with 'apt-get install gettext'."; \
+		exit 1; \
+	fi
+
+	@echo " done!"
+
+build: check po4a.cfg
 	@if [ ! -x "$$(which po4a 2>/dev/null)" ]; \
 	then \
 		echo "E: po4a - command not found"; \
@@ -28,7 +47,7 @@ build: po4a.cfg
 		exit 1; \
 	fi
 
-	po4a --keep 0 --no-backups --package-name live-build po4a.cfg
+	po4a --keep 0 --package-name live-build --package-version $(shell cat ../VERSION) po4a.cfg
 
 clean:
 	rm -f po/*/*.po~

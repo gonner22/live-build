@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2013 Daniel Baumann <daniel@debian.org>
+## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -45,9 +45,9 @@ Create_lockfile .lock
 # command, then the resulting mount will be rw (see mount(8)). Making it
 # ro prevents modifications and prevents accidentally removing the
 # contents of the config directory when removing the chroot.
-mkdir -p chroot/root/config
-mount -o bind config chroot/root/config
-mount -o remount,ro,bind config chroot/root/config
+mkdir -p chroot/live-build/config
+mount -o bind config chroot/live-build/config
+mount -o remount,ro,bind config chroot/live-build/config
 
 # Copying hooks
 for _HOOK in ${LB_CHROOT_HOOKS}
@@ -110,6 +110,6 @@ then
 fi
 
 # Remove bind mount of build config inside chroot.
-umount chroot/root/config
-rmdir chroot/root/config
+umount chroot/live-build/config
+rmdir chroot/live-build/config
 

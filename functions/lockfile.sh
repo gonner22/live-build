@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2013 Daniel Baumann <daniel@debian.org>
+## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -14,7 +14,7 @@ Check_lockfile ()
 
 	if [ -z "${FILE}" ]
 	then
-		FILE="/var/lock/${PROGRAM}.lock"
+		FILE=".build/lock"
 	fi
 
 	# Checking lock file
@@ -31,7 +31,7 @@ Create_lockfile ()
 
 	if [ -z "${FILE}" ]
 	then
-		FILE="/var/lock/${PROGRAM}.lock"
+		FILE=".build/lock"
 	fi
 
 	DIRECTORY="$(dirname ${FILE})"

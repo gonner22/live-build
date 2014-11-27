@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2013 Daniel Baumann <daniel@debian.org>
+## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -32,14 +32,6 @@ Require_stagefile .build/config .build/bootstrap
 
 _LB_LOCAL_KEY_EMAIL="live-build-local-key@invalid"
 
-# FIXME: this is ugly
-if [ -n "${LIVE_BUILD}" ]
-then
-	_BASE="${LIVE_BUILD}"
-else
-	_BASE="/usr/share/live/build"
-fi
-
 case "${LB_DERIVATIVE}" in
 	true)
 		_PARENT_FILE="sources.list.d/debian.list"
@@ -69,12 +61,12 @@ case "${1}" in
 		# Configure custom sources.list
 
 cat > chroot/etc/apt/${_PARENT_FILE} << EOF
-deb ${LB_PARENT_MIRROR_CHROOT} ${LB_PARENT_DISTRIBUTION} ${LB_PARENT_ARCHIVE_AREAS}
+deb ${LB_PARENT_MIRROR_CHROOT} ${LB_PARENT_DISTRIBUTION} ${LIVE_IMAGE_PARENT_ARCHIVE_AREAS}
 EOF
 
 		if [ "${_PASS}" = "source" ] || [ "${LB_APT_SOURCE_ARCHIVES}" = "true" ]
 		then
-			echo "deb-src ${LB_PARENT_MIRROR_CHROOT} ${LB_PARENT_DISTRIBUTION} ${LB_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
+			echo "deb-src ${LB_PARENT_MIRROR_CHROOT} ${LB_PARENT_DISTRIBUTION} ${LIVE_IMAGE_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
 		fi
 
 		if [ "${LB_DERIVATIVE}" = "true" ]
@@ -83,11 +75,11 @@ EOF
 
 			_DISTRIBUTION="$(echo ${LB_DISTRIBUTION} | sed -e 's|-backports||')"
 
-			echo "deb ${LB_MIRROR_CHROOT} ${_DISTRIBUTION} ${LB_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
+			echo "deb ${LB_MIRROR_CHROOT} ${_DISTRIBUTION} ${LIVE_IMAGE_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
 
 			if [ "${_PASS}" = "source" ] || [ "${LB_APT_SOURCE_ARCHIVES}" = "true" ]
 			then
-				echo "deb-src ${LB_MIRROR_CHROOT} ${_DISTRIBUTION} ${LB_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
+				echo "deb-src ${LB_MIRROR_CHROOT} ${_DISTRIBUTION} ${LIVE_IMAGE_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
 			fi
 		fi
 
@@ -101,42 +93,42 @@ EOF
 							;;
 
 						*)
-							echo "deb ${LB_PARENT_MIRROR_CHROOT_SECURITY} ${LB_PARENT_DISTRIBUTION}/updates ${LB_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
+							echo "deb ${LB_PARENT_MIRROR_CHROOT_SECURITY} ${LB_PARENT_DISTRIBUTION}/updates ${LIVE_IMAGE_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
 
 							if [ "${_PASS}" = "source" ] || [ "${LB_APT_SOURCE_ARCHIVES}" = "true" ]
 							then
-								echo "deb-src ${LB_PARENT_MIRROR_CHROOT_SECURITY} ${LB_PARENT_DISTRIBUTION}/updates ${LB_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
+								echo "deb-src ${LB_PARENT_MIRROR_CHROOT_SECURITY} ${LB_PARENT_DISTRIBUTION}/updates ${LIVE_IMAGE_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
 							fi
 							;;
 					esac
 
 					if [ "${LB_MODE}" = progress-linux ]
 					then
-						echo "deb ${LB_MIRROR_CHROOT_SECURITY} ${_DISTRIBUTION}-security ${LB_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
+						echo "deb ${LB_MIRROR_CHROOT_SECURITY} ${_DISTRIBUTION}-security ${LIVE_IMAGE_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
 
 						if [ "${_PASS}" = "source" ] || [ "${LB_APT_SOURCE_ARCHIVES}" = "true" ]
 						then
-							echo "deb-src ${LB_MIRROR_CHROOT_SECURITY} ${_DISTRIBUTION}-security ${LB_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
+							echo "deb-src ${LB_MIRROR_CHROOT_SECURITY} ${_DISTRIBUTION}-security ${LIVE_IMAGE_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
 						fi
 					else
 						if [ "${LB_DERIVATIVE}" = "true" ]
 						then
-							echo "deb ${LB_MIRROR_CHROOT_SECURITY} ${_DISTRIBUTION}/updates ${LB_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
+							echo "deb ${LB_MIRROR_CHROOT_SECURITY} ${_DISTRIBUTION}/updates ${LIVE_IMAGE_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
 
 							if [ "${_PASS}" = "source" ] || [ "${LB_APT_SOURCE_ARCHIVES}" = "true" ]
 							then
-								echo "deb-src ${LB_MIRROR_CHROOT_SECURITY} ${_DISTRIBUTION}/updates ${LB_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
+								echo "deb-src ${LB_MIRROR_CHROOT_SECURITY} ${_DISTRIBUTION}/updates ${LIVE_IMAGE_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
 							fi
 						fi
 					fi
 					;;
 
 				ubuntu)
-					echo "deb ${LB_PARENT_MIRROR_CHROOT_SECURITY} ${LB_PARENT_DISTRIBUTION}-security ${LB_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
+					echo "deb ${LB_PARENT_MIRROR_CHROOT_SECURITY} ${LB_PARENT_DISTRIBUTION}-security ${LIVE_IMAGE_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
 
 					if [ "${_PASS}" = "source" ] || [ "${LB_APT_SOURCE_ARCHIVES}" = "true" ]
 					then
-						echo "deb-src ${LB_PARENT_MIRROR_CHROOT_SECURITY} ${LB_PARENT_DISTRIBUTION}-security ${LB_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
+						echo "deb-src ${LB_PARENT_MIRROR_CHROOT_SECURITY} ${LB_PARENT_DISTRIBUTION}-security ${LIVE_IMAGE_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
 					fi
 					;;
 			esac
@@ -144,20 +136,20 @@ EOF
 
 		if [ "${LB_UPDATES}" = "true" ]
 		then
-			echo "deb ${LB_PARENT_MIRROR_CHROOT_UPDATES} ${LB_PARENT_DISTRIBUTION}-updates ${LB_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
+			echo "deb ${LB_PARENT_MIRROR_CHROOT} ${LB_PARENT_DISTRIBUTION}-updates ${LIVE_IMAGE_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
 
 			if [ "${_PASS}" = "source" ] || [ "${LB_APT_SOURCE_ARCHIVES}" = "true" ]
 			then
-				echo "deb-src ${LB_PARENT_MIRROR_CHROOT_UPDATES} ${LB_PARENT_DISTRIBUTION}-updates ${LB_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
+				echo "deb-src ${LB_PARENT_MIRROR_CHROOT} ${LB_PARENT_DISTRIBUTION}-updates ${LIVE_IMAGE_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
 			fi
 
-			if [ "${LB_DERIVATIVE}" = "true" ] && [ "${LB_MIRROR_CHROOT_UPDATES}" != "none" ]
+			if [ "${LB_DERIVATIVE}" = "true" ]
 			then
-				echo "deb ${LB_MIRROR_CHROOT_UPDATES} ${_DISTRIBUTION}-updates ${LB_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
+				echo "deb ${LB_MIRROR_CHROOT} ${_DISTRIBUTION}-updates ${LIVE_IMAGE_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
 
 				if [ "${_PASS}" = "source" ] || [ "${LB_APT_SOURCE_ARCHIVES}" = "true" ]
 				then
-					echo "deb-src ${LB_MIRROR_CHROOT_UPDATES} ${_DISTRIBUTION}-updates ${LB_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
+					echo "deb-src ${LB_MIRROR_CHROOT} ${_DISTRIBUTION}-updates ${LIVE_IMAGE_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
 				fi
 			fi
 		fi
@@ -168,97 +160,25 @@ EOF
 				debian)
 					if [ "${LB_PARENT_DISTRIBUTION}" != "sid" ]
 					then
-						echo "deb ${LB_PARENT_MIRROR_CHROOT_BACKPORTS} ${LB_PARENT_DISTRIBUTION}-backports ${LB_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
+						echo "deb ${LB_PARENT_MIRROR_CHROOT} ${LB_PARENT_DISTRIBUTION}-backports ${LIVE_IMAGE_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
 
 						if [ "${_PASS}" = "source" ] || [ "${LB_APT_SOURCE_ARCHIVES}" = "true" ]
 						then
-							echo "deb-src ${LB_PARENT_MIRROR_CHROOT_BACKPORTS} ${LB_PARENT_DISTRIBUTION}-backports ${LB_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
+							echo "deb-src ${LB_PARENT_MIRROR_CHROOT} ${LB_PARENT_DISTRIBUTION}-backports ${LIVE_IMAGE_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
 						fi
 					fi
 					;;
 			esac
 
-			if [ "${LB_DERIVATIVE}" = "true" ] && [ "${LB_MIRROR_CHROOT_BACKPORTS}" != "none" ]
+			if [ "${LB_DERIVATIVE}" = "true" ]
 			then
-				echo "deb ${LB_MIRROR_CHROOT_BACKPORTS} ${_DISTRIBUTION}-backports ${LB_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
+				echo "deb ${LB_MIRROR_CHROOT} ${_DISTRIBUTION}-backports ${LIVE_IMAGE_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
 
 				if [ "${_PASS}" = "source" ] || [ "${LB_APT_SOURCE_ARCHIVES}" = "true" ]
 				then
-					echo "deb-src ${LB_MIRROR_CHROOT_BACKPORTS} ${_DISTRIBUTION}-backports ${LB_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
+					echo "deb-src ${LB_MIRROR_CHROOT} ${_DISTRIBUTION}-backports ${LIVE_IMAGE_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
 				fi
 			fi
-		fi
-
-		# Configure third-party archives
-		if [ -n "${LB_ARCHIVES}" ]
-		then
-			for REPOSITORY in ${LB_ARCHIVES}
-			do
-				# ubuntu workaround to allow using live.debian.net
-				case "${LB_MODE}" in
-					ubuntu)
-						if [ "${REPOSITORY}" = "live.debian.net" ]
-						then
-							_DISTRIBUTION="sid"
-						else
-							_DISTRIBUTION="${LB_PARENT_DISTRIBUTION}"
-						fi
-						;;
-
-					*)
-						_DISTRIBUTION="${LB_PARENT_DISTRIBUTION}"
-						;;
-				esac
-
-				# Prefer archives from the config tree
-				# over the global ones.
-				if ! ls "${_BASE}/archives/${REPOSITORY}"* > /dev/null 2>&1
-				then
-					continue
-				fi
-
-				# Adding apt sources (chroot)
-				for _FILE in "${_BASE}/archives/${REPOSITORY}" "${_BASE}/archives/${REPOSITORY}.chroot"
-				do
-					if [ -e "${_FILE}" ]
-					then
-						sed -e "s|@DISTRIBUTION@|${_DISTRIBUTION}|g" \
-						    -e "s|@PARENT_DISTRIBUTION@|${LB_PARENT_DISTRIBUTION}|g" \
-						    -e "s|@ARCHIVE_AREAS@|${LB_PARENT_ARCHIVE_AREAS}|g" \
-						"${_FILE}" > "chroot/etc/apt/sources.list.d/${REPOSITORY}.list"
-					fi
-				done
-
-				# Adding apt configuration (chroot)
-				for _FILE in "${_BASE}/archives/${REPOSITORY}.conf" "${_BASE}/archives/${REPOSITORY}.conf.chroot"
-				do
-					if [ -e "${_FILE}" ]
-					then
-						cp "${_FILE}" "chroot/etc/apt/conf.d/${REPOSITORY}.conf"
-					fi
-				done
-
-				# Adding apt preferences (chroot)
-				for _FILE in "${_BASE}/archives/${REPOSITORY}.pref" "${_BASE}/archives/${REPOSITORY}.pref.chroot"
-				do
-					if [ -e "${_FILE}" ]
-					then
-						cp "${_FILE}" "chroot/etc/apt/preferences.d/${REPOSITORY}.pref"
-					fi
-				done
-
-				# Adding apt keys (chroot)
-				if [ "${LB_APT_SECURE}" != false ]
-				then
-					for _FILE in "${_BASE}/archives/${REPOSITORY}.key" "${_BASE}/archives/${REPOSITORY}.key.chroot"
-					do
-						if [ -e "${_FILE}" ]
-						then
-							cat "${_FILE}" | Chroot chroot "apt-key add -"
-						fi
-					done
-				fi
-			done
 		fi
 
 		# Adding local apt sources (chroot)
@@ -268,8 +188,8 @@ EOF
 			then
 				sed -e "s|@DISTRIBUTION@|${LB_DISTRIBUTION}|g" \
 				    -e "s|@PARENT_DISTRIBUTION@|${LB_PARENT_DISTRIBUTION}|g" \
-				    -e "s|@ARCHIVE_AREAS@|${LB_ARCHIVE_AREAS}|g" \
-				    -e "s|@PARENT_ARCHIVE_AREAS@|${LB_PARENT_ARCHIVE_AREAS}|g" \
+				    -e "s|@ARCHIVE_AREAS@|${LIVE_IMAGE_ARCHIVE_AREAS}|g" \
+				    -e "s|@PARENT_ARCHIVE_AREAS@|${LIVE_IMAGE_PARENT_ARCHIVE_AREAS}|g" \
 				"${FILE}" > "chroot/etc/apt/sources.list.d/$(basename ${FILE} .chroot)"
 
 				if [ "${_PASS}" != "source" ] && [ "${LB_APT_SOURCE_ARCHIVES}" = "false" ]
@@ -311,9 +231,9 @@ EOF
 			fi
 
 			# Copy packages
-			if Find_files config/packages.chroot/*_"${LB_ARCHITECTURES}".deb || Find_files config/packages/*_"${LB_ARCHITECTURES}".deb
+			if Find_files config/packages.chroot/*_"${LIVE_IMAGE_ARCHITECTURE}".deb || Find_files config/packages/*_"${LIVE_IMAGE_ARCHITECTURE}".deb
 			then
-				for FILE in config/packages.chroot/*_"${LB_ARCHITECTURES}".deb config/packages/*_"${LB_ARCHITECTURES}".deb
+				for FILE in config/packages.chroot/*_"${LIVE_IMAGE_ARCHITECTURE}".deb config/packages/*_"${LIVE_IMAGE_ARCHITECTURE}".deb
 				do
 					if [ -L "${FILE}" ]
 					then
@@ -633,12 +553,12 @@ EOF
 		# Configure custom sources.list
 
 cat > chroot/etc/apt/${_PARENT_FILE} << EOF
-deb ${LB_PARENT_MIRROR_BINARY} ${LB_PARENT_DISTRIBUTION} ${LB_PARENT_ARCHIVE_AREAS}
+deb ${LB_PARENT_MIRROR_BINARY} ${LB_PARENT_DISTRIBUTION} ${LIVE_IMAGE_PARENT_ARCHIVE_AREAS}
 EOF
 
 		if [ "${_PASS}" = "source" ] || [ "${LB_APT_SOURCE_ARCHIVES}" = "true" ]
 		then
-			echo "deb-src ${LB_PARENT_MIRROR_BINARY} ${LB_PARENT_DISTRIBUTION} ${LB_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
+			echo "deb-src ${LB_PARENT_MIRROR_BINARY} ${LB_PARENT_DISTRIBUTION} ${LIVE_IMAGE_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
 		fi
 
 		if [ "${LB_DERIVATIVE}" = "true" ]
@@ -647,11 +567,11 @@ EOF
 
 			_DISTRIBUTION="$(echo ${LB_DISTRIBUTION} | sed -e 's|-backports||')"
 
-			echo "deb ${LB_MIRROR_BINARY} ${_DISTRIBUTION} ${LB_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
+			echo "deb ${LB_MIRROR_BINARY} ${_DISTRIBUTION} ${LIVE_IMAGE_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
 
 			if [ "${_PASS}" = "source" ] || [ "${LB_APT_SOURCE_ARCHIVES}" = "true" ]
 			then
-				echo "deb-src ${LB_MIRROR_BINARY} ${_DISTRIBUTION} ${LB_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
+				echo "deb-src ${LB_MIRROR_BINARY} ${_DISTRIBUTION} ${LIVE_IMAGE_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
 			fi
 		fi
 
@@ -665,42 +585,42 @@ EOF
 							;;
 
 						*)
-							echo "deb ${LB_PARENT_MIRROR_BINARY_SECURITY} ${LB_PARENT_DISTRIBUTION}/updates ${LB_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
+							echo "deb ${LB_PARENT_MIRROR_BINARY_SECURITY} ${LB_PARENT_DISTRIBUTION}/updates ${LIVE_IMAGE_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
 
 							if [ "${_PASS}" = "source" ] || [ "${LB_APT_SOURCE_ARCHIVES}" = "true" ]
 							then
-								echo "deb-src ${LB_PARENT_MIRROR_BINARY_SECURITY} ${LB_PARENT_DISTRIBUTION}/updates ${LB_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
+								echo "deb-src ${LB_PARENT_MIRROR_BINARY_SECURITY} ${LB_PARENT_DISTRIBUTION}/updates ${LIVE_IMAGE_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
 							fi
 							;;
 					esac
 
 					if [ "${LB_MODE}" = progress-linux ]
 					then
-						echo "deb ${LB_MIRROR_BINARY_SECURITY} ${_DISTRIBUTION}-security ${LB_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
+						echo "deb ${LB_MIRROR_BINARY_SECURITY} ${_DISTRIBUTION}-security ${LIVE_IMAGE_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
 
 						if [ "${_PASS}" = "source" ] || [ "${LB_APT_SOURCE_ARCHIVES}" = "true" ]
 						then
-							echo "deb-src ${LB_MIRROR_BINARY_SECURITY} ${_DISTRIBUTION}-security ${LB_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
+							echo "deb-src ${LB_MIRROR_BINARY_SECURITY} ${_DISTRIBUTION}-security ${LIVE_IMAGE_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
 						fi
 					else
 						if [ "${LB_DERIVATIVE}" = "true" ]
 						then
-							echo "deb ${LB_MIRROR_BINARY_SECURITY} ${_DISTRIBUTION}/updates ${LB_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
+							echo "deb ${LB_MIRROR_BINARY_SECURITY} ${_DISTRIBUTION}/updates ${LIVE_IMAGE_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
 
 							if [ "${_PASS}" = "source" ] || [ "${LB_APT_SOURCE_ARCHIVES}" = "true" ]
 							then
-								echo "deb-src ${LB_MIRROR_BINARY_SECURITY} ${_DISTRIBUTION}/updates ${LB_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
+								echo "deb-src ${LB_MIRROR_BINARY_SECURITY} ${_DISTRIBUTION}/updates ${LIVE_IMAGE_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
 							fi
 						fi
 					fi
 					;;
 
 				ubuntu)
-					echo "deb ${LB_PARENT_MIRROR_BINARY_SECURITY} ${LB_PARENT_DISTRIBUTION}-security ${LB_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
+					echo "deb ${LB_PARENT_MIRROR_BINARY_SECURITY} ${LB_PARENT_DISTRIBUTION}-security ${LIVE_IMAGE_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
 
 					if [ "${_PASS}" = "source" ] || [ "${LB_APT_SOURCE_ARCHIVES}" = "true" ]
 					then
-						echo "deb-src ${LB_PARENT_MIRROR_BINARY_SECURITY} ${LB_PARENT_DISTRIBUTION}-security ${LB_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
+						echo "deb-src ${LB_PARENT_MIRROR_BINARY_SECURITY} ${LB_PARENT_DISTRIBUTION}-security ${LIVE_IMAGE_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
 					fi
 					;;
 			esac
@@ -708,20 +628,20 @@ EOF
 
 		if [ "${LB_UPDATES}" = "true" ]
 		then
-			echo "deb ${LB_PARENT_MIRROR_BINARY_UPDATES} ${LB_PARENT_DISTRIBUTION}-updates ${LB_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
+			echo "deb ${LB_PARENT_MIRROR_BINARY} ${LB_PARENT_DISTRIBUTION}-updates ${LIVE_IMAGE_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
 
 			if [ "${_PASS}" = "source" ] || [ "${LB_APT_SOURCE_ARCHIVES}" = "true" ]
 			then
-				echo "deb-src ${LB_PARENT_MIRROR_BINARY_UPDATES} ${LB_PARENT_DISTRIBUTION}-updates ${LB_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
+				echo "deb-src ${LB_PARENT_MIRROR_BINARY} ${LB_PARENT_DISTRIBUTION}-updates ${LIVE_IMAGE_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
 			fi
 
-			if [ "${LB_DERIVATIVE}" = "true" ] && [ "${LB_MIRROR_BINARY_UPDATES}" != "none" ]
+			if [ "${LB_DERIVATIVE}" = "true" ]
 			then
-				echo "deb ${LB_MIRROR_BINARY_UPDATES} ${_DISTRIBUTION}-updates ${LB_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
+				echo "deb ${LB_MIRROR_BINARY} ${_DISTRIBUTION}-updates ${LIVE_IMAGE_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
 
 				if [ "${_PASS}" = "source" ] || [ "${LB_APT_SOURCE_ARCHIVES}" = "true" ]
 				then
-					echo "deb-src ${LB_MIRROR_BINARY_UPDATES} ${_DISTRIBUTION}-updates ${LB_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
+					echo "deb-src ${LB_MIRROR_BINARY} ${_DISTRIBUTION}-updates ${LIVE_IMAGE_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
 				fi
 			fi
 		fi
@@ -732,89 +652,53 @@ EOF
 				debian)
 					if [ "${LB_PARENT_DISTRIBUTION}" != "sid" ]
 					then
-						echo "deb ${LB_PARENT_MIRROR_BINARY_BACKPORTS} ${LB_PARENT_DISTRIBUTION}-backports ${LB_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
+						echo "deb ${LB_PARENT_MIRROR_BINARY} ${LB_PARENT_DISTRIBUTION}-backports ${LIVE_IMAGE_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
 
 						if [ "${_PASS}" = "source" ] || [ "${LB_APT_SOURCE_ARCHIVES}" = "true" ]
 						then
-							echo "deb-src ${LB_PARENT_MIRROR_BINARY_BACKPORTS} ${LB_PARENT_DISTRIBUTION}-backports ${LB_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
+							echo "deb-src ${LB_PARENT_MIRROR_BINARY} ${LB_PARENT_DISTRIBUTION}-backports ${LIVE_IMAGE_PARENT_ARCHIVE_AREAS}" >> chroot/etc/apt/${_PARENT_FILE}
 						fi
 					fi
 					;;
 			esac
 
-			if [ "${LB_DERIVATIVE}" = "true" ] && [ "${LB_MIRROR_BINARY_BACKPORTS}" != "none" ]
+			if [ "${LB_DERIVATIVE}" = "true" ]
 			then
-				echo "deb ${LB_MIRROR_BINARY_BACKPORTS} ${_DISTRIBUTION}-backports ${LB_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
+				echo "deb ${LB_MIRROR_BINARY} ${_DISTRIBUTION}-backports ${LIVE_IMAGE_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
 
 				if [ "${_PASS}" = "source" ] || [ "${LB_APT_SOURCE_ARCHIVES}" = "true" ]
 				then
-					echo "deb-src ${LB_MIRROR_BINARY_BACKPORTS} ${_DISTRIBUTION}-backports ${LB_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
+					echo "deb-src ${LB_MIRROR_BINARY} ${_DISTRIBUTION}-backports ${LIVE_IMAGE_ARCHIVE_AREAS}" >> chroot/etc/apt/sources.list.d/${LB_MODE}.list
 				fi
 			fi
 		fi
 
-		# probably too bold, needs refinment (FIXME)
-		rm -f chroot/etc/apt/conf.d/*
-		rm -f chroot/etc/apt/preferences.d/*
+		# Removing chroot-only apt sources
+		for FILE in config/archives/*.list.chroot
+		do
+			if [ -e "${FILE}" ]
+			then
+				rm -f "chroot/etc/apt/sources.list.d/$(basename ${FILE} .chroot)"
+			fi
+		done
 
-		# Configure third-party archives
-		if [ -n "${LB_ARCHIVES}" ]
-		then
-			for REPOSITORY in ${LB_ARCHIVES}
-			do
-				# Removing sources.list entries (chroot)
-				rm -f "chroot/etc/apt/sources.list.d/${REPOSITORY}.list"
+		# Removing chroot-only apt configuration
+		for FILE in config/archives/*.conf.chroot
+		do
+			if [ -e "${FILE}" ]
+			then
+				rm -f "chroot/etc/apt/conf.d/$(basename ${FILE} .chroot)"
+			fi
+		done
 
-				# Prefer archives from the config tree
-				# over the global ones.
-				if ! ls "${_BASE}/archives/${REPOSITORY}"* > /dev/null 2>&1
-				then
-					continue
-				fi
-
-				# Adding apt sources (binary)
-				for _FILE in "${_BASE}/archives/${REPOSITORY}" "${_BASE}/archives/${REPOSITORY}.binary"
-				do
-					if [ -e "${_FILE}" ]
-					then
-						sed -e "s|@DISTRIBUTION@|${LB_PARENT_DISTRIBUTION}|g" \
-						    -e "s|@PARENT_DISTRIBUTION@|${LB_PARENT_DISTRIBUTION}|g" \
-						    -e "s|@ARCHIVE_AREAS@|${LB_PARENT_ARCHIVE_AREAS}|g" \
-						"${_FILE}" > "chroot/etc/apt/sources.list.d/${REPOSITORY}.list"
-					fi
-				done
-
-				# Adding apt configuration (binary)
-				for _FILE in "${_BASE}/archives/${REPOSITORY}.conf" "${_BASE}/archives/${REPOSITORY}.conf.binary"
-				do
-					if [ -e "${_FILE}" ]
-					then
-						cp "${_FILE}" "chroot/etc/apt/conf.d/${REPOSITORY}.conf"
-					fi
-				done
-
-				# Adding apt preferences (binary)
-				for _FILE in "${_BASE}/archives/${REPOSITORY}.pref" "${_BASE}/archives/${REPOSITORY}.pref.binary"
-				do
-					if [ -e "${_FILE}" ]
-					then
-						cp "${_FILE}" "chroot/etc/apt/preferences.d/${REPOSITORY}.pref"
-					fi
-				done
-
-				# Adding apt keys (binary)
-				if [ "${LB_APT_SECURE}" != false ]
-				then
-					for _FILE in "${_BASE}/archives/${REPOSITORY}.key" "${_BASE}/archives/${REPOSITORY}.key.binary"
-					do
-						if [ -e "${_FILE}" ]
-						then
-							cat "${_FILE}" | Chroot chroot "apt-key add -"
-						fi
-					done
-				fi
-			done
-		fi
+		# Removing chroot-only apt preferences
+		for FILE in config/archives/*.pref.chroot
+		do
+			if [ -e "${FILE}" ]
+			then
+				rm -f "chroot/etc/apt/preferences.d/$(basename ${FILE} .chroot)"
+			fi
+		done
 
 		# Adding local apt sources (binary)
 		for FILE in config/archives/*.list config/archives/*.list.binary
@@ -823,8 +707,8 @@ EOF
 			then
 				sed -e "s|@DISTRIBUTION@|${LB_DISTRIBUTION}|g" \
 				    -e "s|@PARENT_DISTRIBUTION@|${LB_PARENT_DISTRIBUTION}|g" \
-				    -e "s|@ARCHIVE_AREAS@|${LB_ARCHIVE_AREAS}|g" \
-				    -e "s|@PARENT_ARCHIVE_AREAS@|${LB_PARENT_ARCHIVE_AREAS}|g" \
+				    -e "s|@ARCHIVE_AREAS@|${LIVE_IMAGE_ARCHIVE_AREAS}|g" \
+				    -e "s|@PARENT_ARCHIVE_AREAS@|${LIVE_IMAGE_PARENT_ARCHIVE_AREAS}|g" \
 				"${FILE}" > "chroot/etc/apt/sources.list.d/$(basename ${FILE} .binary)"
 
 				if [ "${_PASS}" != "source" ] && [ "${LB_APT_SOURCE_ARCHIVES}" = "false" ]

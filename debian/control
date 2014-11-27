@@ -1,34 +1,42 @@
 Source: live-build
 Section: misc
 Priority: optional
-Maintainer: Debian Live Project <debian-live@lists.debian.org>
-Uploaders: Daniel Baumann <daniel@debian.org>
+Maintainer: Live Systems Maintainers <debian-live@lists.debian.org>
+Uploaders: Daniel Baumann <mail@daniel-baumann.ch>
 Build-Depends: debhelper (>= 9)
-Standards-Version: 3.9.4
-Homepage: http://live.debian.net/devel/live-build/
-Vcs-Browser: http://live.debian.net/gitweb/?p=live-build.git
-Vcs-Git: git://live.debian.net/git/live-build.git
+Standards-Version: 3.9.6
+Homepage: http://live-systems.org/devel/live-build/
+Vcs-Browser: http://live-systems.org/gitweb/?p=live-build.git
+Vcs-Git: git://live-systems.org/git/live-build.git
 
 Package: live-build
 Architecture: all
-Depends: ${misc:Depends}, debootstrap | cdebootstrap | cdebootstrap-static
+Depends:
+ ${misc:Depends},
+ debootstrap | cdebootstrap | cdebootstrap-static,
 Recommends:
- live-boot-doc, live-config-doc, live-manual-html | live-manual, cpio,
- gnu-fdisk
-Suggests:
- dosfstools, debian-keyring, xorriso, git, gpgv, loadlin, memtest86+ | memtest86,
- mtools, parted, squashfs-tools | mtd-tools, sudo | fakeroot, syslinux | grub,
- uuid-runtime, win32-loader
-Description: Live System Build Scripts
- live-build contains the scripts to build a live system from a configuration
+ cpio,
+ live-boot-doc,
+ live-config-doc,
+ live-manual-html | live-manual,
+Description: Live System Build Components
+ The Live Systems project maintains the components to build Debian based Live
+ systems and the official Debian Live images themselves.
+ .
+ live-build contains the components to build a live system from a configuration
  directory.
 
 Package: live-build-cgi
 Architecture: all
 Depends: ${misc:Depends}, live-build (= ${source:Version})
-Recommends: apache2 | httpd, cron
+Recommends:
+ apache2 | httpd,
+ cron,
 Description: Live System Build Scripts (CGI frontend)
- live-build contains the scripts to build a live system from a configuration
+ The Live Systems project maintains the components to build Debian based Live
+ systems and the official Debian Live images themselves.
+ .
+ live-build contains the components to build a live system from a configuration
  directory.
  .
  This package contains the CGI frontend (experimental!).

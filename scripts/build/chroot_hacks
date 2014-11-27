@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2013 Daniel Baumann <daniel@debian.org>
+## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -38,7 +38,7 @@ Check_lockfile .lock
 # Creating lock file
 Create_lockfile .lock
 
-case "${LB_BINARY_IMAGES}" in
+case "${LIVE_IMAGE_TYPE}" in
 	netboot)
 		if [ ! -f chroot/sbin/mount.cifs ]
 		then
@@ -90,34 +90,18 @@ case "${LB_INITRAMFS_COMPRESSION}" in
 		for INITRAMFS in $(find chroot/boot -name 'initrd*'); do
 			zcat "${INITRAMFS}" | bzip2 -c ${BZIP2_OPTIONS} > "${INITRAMFS}.new"
 			mv "${INITRAMFS}.new" "${INITRAMFS}"
+			echo "$(sha1sum ${INITRAMFS} | awk '{ print $1 }')  /boot/$(basename ${INITRAMFS})" > chroot/var/lib/initramfs-tools/$(basename ${INITRAMFS} | sed -e 's|initrd.img-||')
 		done
 		;;
 
 	lzma)
-		# We probably ought to use COMPRESS= in a temporary file in
-		# /etc/initramfs-tools/conf.d/ instead, but it's hard to
-		# pass options that way.
 		for INITRAMFS in $(find chroot/boot -name 'initrd*'); do
 			zcat "${INITRAMFS}" | lzma -c ${LZMA_OPTIONS} > "${INITRAMFS}.new"
 			mv "${INITRAMFS}.new" "${INITRAMFS}"
+			echo "$(sha1sum ${INITRAMFS} | awk '{ print $1 }')  /boot/$(basename ${INITRAMFS})" > chroot/var/lib/initramfs-tools/$(basename ${INITRAMFS} | sed -e 's|initrd.img-||')
 		done
 		;;
 esac
-
-case "${LB_PARENT_DISTRIBUTION}" in
-	squeeze)
-		# Ensure readable permissions on initramfs. loop-aes-utils sets umask to
-		# protect GPG keys, which live-build does not support.
-		# Note: Use find rather than chmod on the wildcard, one never knows what
-		# people might do in local hooks, and there might be no initrds at all.
-		find chroot/boot -name 'initrd*' -print0 | xargs -r -0 chmod go+r
-		;;
-esac
-
-if [ -n "${LB_ROOT_COMMAND}" ]
-then
-	${LB_ROOT_COMMAND} chown -R --quiet $(whoami):$(whoami) chroot
-fi
 
 case "${LB_INITRAMFS}" in
 	casper)
@@ -133,53 +117,14 @@ case "${LB_INITRAMFS}" in
 		;;
 esac
 
+rm -f chroot/etc/hosts
+
 if [ "${LB_DEBIAN_INSTALLER}" = "live" ]
 then
 	# This is a temporary hack to get rid of fstab;
 	# needs cleanup in live-boot first to proper fix.
 	rm -f chroot/etc/fstab
 	touch chroot/etc/fstab
-fi
-
-if [ "${LB_EXPOSED_ROOT}" = "true" ]
-then
-	# Make sure RW dirs exist so that the initramfs script has
-	# a directory in which to bind the tmpfs filesystems
-	COW_DIRECTORIES="/home /live /tmp /var/lib/live /var/lock /var/log /var/run /var/tmp /var/spool"
-
-	for DIRECTORY in ${COW_DIRECTORIES}
-	do
-		mkdir -p chroot/"${DIRECTORY}"
-	done
-
-	# Config files which need to be RW
-	COW_FILES="/etc/adjtime /etc/fstab /etc/hostname /etc/hosts /etc/live.conf /etc/network/interfaces /etc/resolv.conf /etc/udev/rules.d/*persistent-net.rules /etc/udev/rules.d/*persistent-cd.rules /etc/X11/xorg.conf"
-
-	# Where we will store RW config files
-	RW_DIRECTORY="/var/lib/live"
-
-	for FILE in ${COW_FILES}
-	do
-		DIRECTORY="$(dirname ${FILE})"
-		FILE="$(basename ${FILE})"
-		RELATIVE_PATH="$(echo ${DIRECTORY} | sed 's|[^/]\+|..|g; s|^/||g')"
-
-		# Touch files in case they don't yet exist
-		mkdir -p chroot/${DIRECTORY}
-		touch chroot/${DIRECTORY}/${FILE}
-
-		# Move files to the read-write directory
-		mkdir -p chroot/${RW_DIRECTORY}/${DIRECTORY}
-		mv chroot/${DIRECTORY}/${FILE} chroot/${RW_DIRECTORY}/${DIRECTORY}
-
-		# Create a symbolic link to RW config file
-		ln -s ${RELATIVE_PATH}/${RW_DIRECTORY}/${DIRECTORY}/${FILE} chroot/${DIRECTORY}/${FILE}
-	done
-
-	# Mount doesn't write to a symlink so use /proc/mounts instead,
-	# see debian bug #154438 for more info
-	rm -f chroot/etc/mtab
-	ln -s /proc/mounts chroot/etc/mtab
 fi
 
 if [ "${LB_SWAP_FILE_PATH}" ]; then

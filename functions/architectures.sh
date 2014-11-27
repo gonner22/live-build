@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2013 Daniel Baumann <daniel@debian.org>
+## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -15,7 +15,7 @@ Check_architectures ()
 
 	for ARCHITECTURE in ${ARCHITECTURES}
 	do
-		if [ "$(echo ${LB_ARCHITECTURES} | grep ${ARCHITECTURE})" ]
+		if [ "$(echo ${LIVE_IMAGE_ARCHITECTURE} | grep ${ARCHITECTURE})" ]
 		then
 			VALID="true"
 			break
@@ -70,7 +70,7 @@ Check_crossarchitectures ()
 			;;
 	esac
 
-	if [ "${LB_ARCHITECTURES}" = "${LB_BOOTSTRAP_QEMU_ARCHITECTURES}" ]
+	if [ "${LIVE_IMAGE_ARCHITECTURE}" = "${LB_BOOTSTRAP_QEMU_ARCHITECTURES}" ]
 	then
 
 		if [ ! -e "${LB_BOOTSTRAP_QEMU_STATIC}" ]
@@ -93,10 +93,10 @@ Check_crossarchitectures ()
 
 Check_multiarchitectures ()
 {
-	if [ "$(echo ${LB_ARCHITECTURES} | wc -w)" -gt "1" ]
+	if [ "$(echo ${LIVE_IMAGE_ARCHITECTURE} | wc -w)" -gt "1" ]
 	then
 		# First, only support multiarch on iso
-		case "${LB_BINARY_IMAGES}" in
+		case "${LIVE_IMAGE_TYPE}" in
 			iso*)
 				# Assemble multi-arch
 				case "${LB_CURRENT_ARCHITECTURE}" in

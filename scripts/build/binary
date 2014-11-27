@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2013 Daniel Baumann <daniel@debian.org>
+## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -60,13 +60,10 @@ lb binary_manifest ${@}
 # Prepare images
 lb binary_package-lists ${@}
 lb binary_linux-image ${@}
-lb binary_debian-installer ${@}
 lb binary_memtest ${@}
 lb binary_grub ${@}
 lb binary_grub2 ${@}
 lb binary_syslinux ${@}
-lb binary_yaboot ${@}
-lb binary_silo ${@}
 lb binary_disk ${@}
 lb binary_loadlin ${@}
 lb binary_win32-loader ${@}

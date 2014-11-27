@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2013 Daniel Baumann <daniel@debian.org>
+## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -89,7 +89,7 @@ done
 
 # File list
 cd binary
-find . | sed -e 's|^.||g' | grep "^/" | sort > ../binary.contents
+find . | sed -e 's|^.||g' | grep "^/" | sort > ../${LIVE_IMAGE_NAME}-${LIVE_IMAGE_ARCHITECTURE}.contents
 cd "${OLDPWD}"
 
 # Creating stage file
