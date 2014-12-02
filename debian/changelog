@@ -1,3 +1,9 @@
+live-build (4.0.3-1kali2) kali-dev; urgency=medium
+
+  * Update patch efi
+
+ -- Sophie Brun <sophie@freexian.com>  Tue, 02 Dec 2014 15:56:49 +0100
+
 live-build (4.0.3-1kali1) kali-dev; urgency=medium
 
   * Import new debian version

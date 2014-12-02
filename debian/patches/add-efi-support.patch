@@ -124,7 +124,7 @@ Bug-Kali: https://bugs.kali.org/view.php?id=680
 +Check_architectures amd64 i386
 +Check_crossarchitectures
 +
-+case "$LB_ARCHITECTURES" in
++case "$LIVE_IMAGE_ARCHITECTURE" in
 +	amd64)
 +		_EFI_TYPE=efi64
 +		;;
@@ -132,7 +132,7 @@ Bug-Kali: https://bugs.kali.org/view.php?id=680
 +		_EFI_TYPE=efi32
 +		;;
 +	*)
-+		echo "ERROR: can't provide EFI boot support to architecture $LB_ARCHITECTURES" >&2
++		echo "ERROR: can't provide EFI boot support to architecture $LIVE_IMAGE_ARCHITECTURE" >&2
 +		exit 1
 +		;;
 +esac
