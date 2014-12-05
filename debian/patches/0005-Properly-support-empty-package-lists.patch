@@ -1,0 +1,35 @@
+From: =?utf-8?q?Rapha=C3=ABl_Hertzog?= <hertzog@debian.org>
+Date: Fri, 5 Dec 2014 09:53:13 +0100
+Subject: Properly support empty package lists
+
+The user might not have created any package list or it might have
+created a packages list that end up being empty due to various #if tests.
+We should not fail in those cases.
+---
+ scripts/build/binary_package-lists | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/build/binary_package-lists b/scripts/build/binary_package-lists
+index 0584c59..496d631 100755
+--- a/scripts/build/binary_package-lists
++++ b/scripts/build/binary_package-lists
+@@ -101,7 +101,7 @@ then
+ 			Expand_packagelist "${LIST}" "config/package-lists" > chroot/root/"$(basename ${LIST})"
+ 
+ 			# Downloading additional packages
+-			Chroot chroot "xargs --arg-file=/root/$(basename ${LIST}) apt-get ${APT_OPTIONS} -o Dir::Cache=/binary.deb --download-only install"
++			Chroot chroot "xargs --no-run-if-empty --arg-file=/root/$(basename ${LIST}) apt-get ${APT_OPTIONS} -o Dir::Cache=/binary.deb --download-only install"
+ 
+ 			# Remove package list
+ 			rm chroot/root/"$(basename ${LIST})"
+@@ -110,6 +110,10 @@ then
+ 
+ 	for FILE in chroot/binary.deb/archives/*.deb
+ 	do
++		if [ ! -e ${FILE} ]; then
++			break # Do nothing if the package lists were empty...
++		fi
++
+ 		SOURCE="$(dpkg -f ${FILE} Source | awk '{ print $1 }')"
+ 		SECTION="$(dpkg -f ${FILE} Section | awk '{ print $1 }')"
+ 

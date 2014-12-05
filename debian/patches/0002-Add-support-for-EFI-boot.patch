@@ -1,12 +1,18 @@
-Description: Add support for EFI boot
- Note that this patch relies on syslinux 6 packaged sanely (i.e.
- respecting upstream file locations), such a package only exists in
- Kali for now... the experimental package in Debian places files
- in new directories (see #742836).
-Author: Raphaël Hertzog <buxy@kali.org>
+From: =?utf-8?q?Rapha=C3=ABl_Hertzog?= <hertzog@debian.org>
+Date: Fri, 5 Dec 2014 09:36:27 +0100
+Subject: Add support for EFI boot
+
 Bug-Debian: http://bugs.debian.org/731709
 Bug-Kali: https://bugs.kali.org/view.php?id=680
+---
+ scripts/build/binary     |   3 +
+ scripts/build/binary_efi | 256 +++++++++++++++++++++++++++++++++++++++++++++++
+ scripts/build/binary_iso |  37 +++++++
+ 3 files changed, 296 insertions(+)
+ create mode 100644 scripts/build/binary_efi
 
+diff --git a/scripts/build/binary b/scripts/build/binary
+index c1f9ec6..b893988 100755
 --- a/scripts/build/binary
 +++ b/scripts/build/binary
 @@ -69,6 +69,9 @@ lb binary_loadlin ${@}
@@ -19,59 +25,9 @@ Bug-Kali: https://bugs.kali.org/view.php?id=680
  lb binary_checksums ${@}
  
  if [ "${LB_BUILD_WITH_CHROOT}" != "true" ]
---- a/scripts/build/binary_iso
-+++ b/scripts/build/binary_iso
-@@ -82,6 +82,23 @@ fi
- # Handle xorriso generic options
- XORRISO_OPTIONS="-R -r -J -joliet-long -l -cache-inodes"
- 
-+case "${LB_BUILD_WITH_CHROOT}" in
-+	true)
-+		XORRISO_VER=$(Chroot chroot xorriso --version 2>&1 | awk '
-+		    /^xorriso version/ {
-+			 split($4, ver, ".")
-+			 print ver[1]*10000+ver[2]*100+ver[3]
-+		    }')
-+		;;
-+	false)
-+		XORRISO_VER=$(xorriso --version 2>&1 | awk '
-+		    /^xorriso version/ {
-+			 split($4, ver, ".")
-+			 print ver[1]*10000+ver[2]*100+ver[3]
-+		    }')
-+		;;
-+esac
-+
- # Handle xorriso live-build specific options
- if [ "${LIVE_IMAGE_TYPE}" = "iso-hybrid" ]
- then
-@@ -155,6 +172,26 @@ case "${LB_BOOTLOADER}" in
- 		;;
- esac
- 
-+if [ -e binary/boot/efi.img ]; then
-+	#if [ "$XORRISO_VER" -le 10202 ]; then
-+		# 1.2.2 shipping in wheezy
-+		Echo "Using older EFI command line for xorriso $XORRISO_VER"
-+		# Tell xorriso to create a secondary ElTorito boot record for the
-+		# EFI bootloader
-+		XORRISO_OPTIONS="${XORRISO_OPTIONS} -eltorito-alt-boot --efi-boot boot/efi.img"
-+		# Add the efi image as a FAT partition too, so our CD image will
-+		# also boot on a USB key (like isohybrid, just implemented
-+		# differently)
-+		XORRISO_OPTIONS="${XORRISO_OPTIONS} -append_partition 2 0x01 binary/boot/efi.img"
-+	#else
-+	#	Echo "Using newer EFI support in xorriso $XORRISO_VER"
-+	#	XORRISO_OPTIONS="${XORRISO_OPTIONS} -eltorito-alt-boot -e boot/efi.img -no-emul-boot"
-+	#	XORRISO_OPTIONS="${XORRISO_OPTIONS} -isohybrid-gpt-basdat"
-+	#fi
-+else
-+	Echo "No EFI boot code to include in the ISO"
-+fi
-+
- #if [ "${LB_DEBIAN_INSTALLER}" != "live" ]
- #then
- #	XORRISO_OPTIONS="${XORRISO_OPTIONS} -m ${XORRISO_EXCLUDE}"
+diff --git a/scripts/build/binary_efi b/scripts/build/binary_efi
+new file mode 100644
+index 0000000..4e711e1
 --- /dev/null
 +++ b/scripts/build/binary_efi
 @@ -0,0 +1,256 @@
@@ -331,3 +287,58 @@ Bug-Kali: https://bugs.kali.org/view.php?id=680
 +
 +# Creating stage file
 +Create_stagefile .build/binary_efi
+diff --git a/scripts/build/binary_iso b/scripts/build/binary_iso
+index 7abfc69..62fcf9c 100755
+--- a/scripts/build/binary_iso
++++ b/scripts/build/binary_iso
+@@ -82,6 +82,23 @@ fi
+ # Handle xorriso generic options
+ XORRISO_OPTIONS="-R -r -J -joliet-long -l -cache-inodes"
+ 
++case "${LB_BUILD_WITH_CHROOT}" in
++	true)
++		XORRISO_VER=$(Chroot chroot xorriso --version 2>&1 | awk '
++		    /^xorriso version/ {
++			 split($4, ver, ".")
++			 print ver[1]*10000+ver[2]*100+ver[3]
++		    }')
++		;;
++	false)
++		XORRISO_VER=$(xorriso --version 2>&1 | awk '
++		    /^xorriso version/ {
++			 split($4, ver, ".")
++			 print ver[1]*10000+ver[2]*100+ver[3]
++		    }')
++		;;
++esac
++
+ # Handle xorriso live-build specific options
+ if [ "${LIVE_IMAGE_TYPE}" = "iso-hybrid" ]
+ then
+@@ -155,6 +172,26 @@ case "${LB_BOOTLOADER}" in
+ 		;;
+ esac
+ 
++if [ -e binary/boot/efi.img ]; then
++	#if [ "$XORRISO_VER" -le 10202 ]; then
++		# 1.2.2 shipping in wheezy
++		Echo "Using older EFI command line for xorriso $XORRISO_VER"
++		# Tell xorriso to create a secondary ElTorito boot record for the
++		# EFI bootloader
++		XORRISO_OPTIONS="${XORRISO_OPTIONS} -eltorito-alt-boot --efi-boot boot/efi.img"
++		# Add the efi image as a FAT partition too, so our CD image will
++		# also boot on a USB key (like isohybrid, just implemented
++		# differently)
++		XORRISO_OPTIONS="${XORRISO_OPTIONS} -append_partition 2 0x01 binary/boot/efi.img"
++	#else
++	#	Echo "Using newer EFI support in xorriso $XORRISO_VER"
++	#	XORRISO_OPTIONS="${XORRISO_OPTIONS} -eltorito-alt-boot -e boot/efi.img -no-emul-boot"
++	#	XORRISO_OPTIONS="${XORRISO_OPTIONS} -isohybrid-gpt-basdat"
++	#fi
++else
++	Echo "No EFI boot code to include in the ISO"
++fi
++
+ #if [ "${LB_DEBIAN_INSTALLER}" != "live" ]
+ #then
+ #	XORRISO_OPTIONS="${XORRISO_OPTIONS} -m ${XORRISO_EXCLUDE}"

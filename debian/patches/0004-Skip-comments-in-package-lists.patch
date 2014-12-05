@@ -1,0 +1,28 @@
+From: =?utf-8?q?Rapha=C3=ABl_Hertzog?= <hertzog@debian.org>
+Date: Fri, 5 Dec 2014 09:45:40 +0100
+Subject: Skip comments in package lists
+
+Comments in package lists used to work in live-build 3.x (although
+possibly only as a side-effect of some other logic) and being able to
+comment package is a useful feature (to explain why some packages are
+included and to make it easy to uncomment some lines to add more useful
+packages).
+---
+ functions/packagelists.sh | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/functions/packagelists.sh b/functions/packagelists.sh
+index 3660f0f..5327591 100755
+--- a/functions/packagelists.sh
++++ b/functions/packagelists.sh
+@@ -109,6 +109,10 @@ Expand_packagelist ()
+ 					_LB_ENABLED=1
+ 					;;
+ 
++				\#*)
++					# Skip comments
++					;;
++
+ 				*)
+ 					if [ ${_LB_ENABLED} -eq 1 ]
+ 					then

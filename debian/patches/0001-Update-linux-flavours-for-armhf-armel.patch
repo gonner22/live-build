@@ -1,11 +1,18 @@
-Description: Update linux flavours for armhf/armel
- With 3.12+ kernels, on armhf, only armmp / armmp-lpae flavours are
- available. With Linux 3.14, armel lost the support of the iop32x and
- ixp4xx flavors.
- .
- Kali has linux 3.14 (or newer) and needs to adapt to this.
-Author: Raphaël Hertzog <hertzog@debian.org>
+From: =?utf-8?q?Rapha=C3=ABl_Hertzog?= <hertzog@debian.org>
+Date: Fri, 5 Dec 2014 09:36:27 +0100
+Subject: Update linux flavours for armhf/armel
 
+With 3.12+ kernels, on armhf, only armmp / armmp-lpae flavours are
+available. With Linux 3.14, armel lost the support of the iop32x and
+ixp4xx flavors.
+
+Kali has linux 3.14 (or newer) and needs to adapt to this.
+---
+ functions/defaults.sh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/functions/defaults.sh b/functions/defaults.sh
+index feebdee..715869c 100755
 --- a/functions/defaults.sh
 +++ b/functions/defaults.sh
 @@ -525,15 +525,15 @@ Set_defaults ()

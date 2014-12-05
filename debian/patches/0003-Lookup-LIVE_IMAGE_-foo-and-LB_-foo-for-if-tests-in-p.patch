@@ -1,0 +1,36 @@
+From: =?utf-8?q?Rapha=C3=ABl_Hertzog?= <hertzog@debian.org>
+Date: Fri, 5 Dec 2014 09:41:16 +0100
+Subject: Lookup $LIVE_IMAGE_<foo> and $LB_<foo> for #if tests in package lists
+
+The old LB_ARCHITECTURES and LB_ARCHIVE_AREAS got renamed to
+LIVE_IMAGE_ARCHITECTURE and LIVE_IMAGE_ARCHIVE_AREAS in live-build 4.x
+whereas LB_DISTRIBUTION has not been renamed. Is thus required
+to lookup variables with both prefixes.
+---
+ functions/packagelists.sh | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/functions/packagelists.sh b/functions/packagelists.sh
+index 8470d9a..3660f0f 100755
+--- a/functions/packagelists.sh
++++ b/functions/packagelists.sh
+@@ -63,7 +63,8 @@ Expand_packagelist ()
+ 					_LB_NESTED=1
+ 
+ 					_LB_NEEDLE="$(echo "${_LB_LINE}" | cut -d' ' -f3-)"
+-					_LB_HAYSTACK="$(eval "echo \$LB_$(echo "${_LB_LINE}" | cut -d' ' -f2)")"
++					_LB_HAYSTACK_VAR="$(echo "${_LB_LINE}" | cut -d' ' -f2)"
++					_LB_HAYSTACK="$(eval "echo \${LB_$_LB_HAYSTACK_VAR:-\$LIVE_IMAGE_$_LB_HAYSTACK_VAR}")"
+ 
+ 					_LB_ENABLED=0
+ 					for _LB_NEEDLE_PART in ${_LB_NEEDLE}
+@@ -87,7 +88,8 @@ Expand_packagelist ()
+ 					_LB_NESTED=1
+ 
+ 					_LB_NEEDLE="$(echo "${_LB_LINE}" | cut -d' ' -f3-)"
+-					_LB_HAYSTACK="$(eval "echo \$LB_$(echo "${_LB_LINE}" | cut -d' ' -f2)")"
++					_LB_HAYSTACK_VAR="$(echo "${_LB_LINE}" | cut -d' ' -f2)"
++					_LB_HAYSTACK="$(eval "echo \${LB_$_LB_HAYSTACK_VAR:-\$LIVE_IMAGE_$_LB_HAYSTACK_VAR}")"
+ 
+ 					_LB_ENABLED=0
+ 					for _LB_NEEDLE_PART in ${_LB_NEEDLE}

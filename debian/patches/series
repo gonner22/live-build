@@ -1,2 +1,5 @@
-fix-default-armhf-kernel-flavours.patch
-add-efi-support.patch
+0001-Update-linux-flavours-for-armhf-armel.patch
+0002-Add-support-for-EFI-boot.patch
+0003-Lookup-LIVE_IMAGE_-foo-and-LB_-foo-for-if-tests-in-p.patch
+0004-Skip-comments-in-package-lists.patch
+0005-Properly-support-empty-package-lists.patch
