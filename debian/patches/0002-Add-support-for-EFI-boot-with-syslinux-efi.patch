@@ -1,14 +1,14 @@
 From: =?utf-8?q?Rapha=C3=ABl_Hertzog?= <hertzog@debian.org>
 Date: Fri, 5 Dec 2014 09:36:27 +0100
-Subject: Add support for EFI boot
+Subject: Add support for EFI boot with syslinux-efi.
 
 Bug-Debian: http://bugs.debian.org/731709
 Bug-Kali: https://bugs.kali.org/view.php?id=680
 ---
  scripts/build/binary     |   3 +
- scripts/build/binary_efi | 256 +++++++++++++++++++++++++++++++++++++++++++++++
+ scripts/build/binary_efi | 278 +++++++++++++++++++++++++++++++++++++++++++++++
  scripts/build/binary_iso |  37 +++++++
- 3 files changed, 296 insertions(+)
+ 3 files changed, 318 insertions(+)
  create mode 100644 scripts/build/binary_efi
 
 diff --git a/scripts/build/binary b/scripts/build/binary
@@ -27,10 +27,10 @@ index c1f9ec6..b893988 100755
  if [ "${LB_BUILD_WITH_CHROOT}" != "true" ]
 diff --git a/scripts/build/binary_efi b/scripts/build/binary_efi
 new file mode 100644
-index 0000000..4e711e1
+index 0000000..f98a5bf
 --- /dev/null
 +++ b/scripts/build/binary_efi
-@@ -0,0 +1,256 @@
+@@ -0,0 +1,278 @@
 +#!/bin/sh
 +
 +## live-build(7) - System Build Scripts
@@ -94,7 +94,7 @@ index 0000000..4e711e1
 +esac
 +
 +# Assembling image specifics
-+case "${LB_BINARY_IMAGES}" in
++case "${LIVE_IMAGE_TYPE}" in
 +	iso*)
 +		_BOOTLOADER="isolinux"
 +
@@ -115,15 +115,29 @@ index 0000000..4e711e1
 +		;;
 +
 +	hdd*|*)
-+		_BOOTLOADER="syslinux"
++		case ${LB_BINARY_FILESYSTEM} in
++			fat*|ntfs)
++				_BOOTLOADER=syslinux
 +
-+		case "${LB_MODE}" in
-+			progress-linux)
-+				_CONFDIR="binary/boot"
++				case "${LB_MODE}" in
++					progress-linux)
++						_CONFDIR="binary/boot"
++						;;
++
++					*)
++						_CONFDIR="binary/syslinux"
++						;;
++				esac
++				;;
++
++			ext[234]|btrfs)
++				_BOOTLOADER=extlinux
++				_CONFDIR="binary/boot/extlinux"
 +				;;
 +
 +			*)
-+				_CONFDIR="binary/syslinux"
++				Echo_error "syslinux/extlinux doesn't support ${LB_BINARY_FILESYSTEM}"
++				exit 1
 +				;;
 +		esac
 +		;;
@@ -133,10 +147,11 @@ index 0000000..4e711e1
 +case "${LB_BUILD_WITH_CHROOT}" in
 +	true)
 +		_CHROOT_DIR=""
-+		_SYSLINUX_EFI_DIR="chroot/usr/lib/syslinux/$_EFI_TYPE"
++		_SYSLINUX_EFI_DIR="chroot/usr/lib/SYSLINUX.EFI/$_EFI_TYPE"
 +
 +		Check_package chroot/usr/bin/syslinux syslinux
 +		Check_package chroot/usr/lib/syslinux syslinux-common
++		Check_package chroot/usr/lib/SYSLINUX.EFI syslinux-efi
 +		Check_package chroot/usr/bin/mcopy mtools
 +		Check_package chroot/sbin/mkfs.msdos dosfstools
 +		;;
@@ -156,6 +171,13 @@ index 0000000..4e711e1
 +		then
 +			# syslinux-common
 +			Echo_error "/usr/lib/syslinux - no such directory"
++			exit 1
++		fi
++
++		if [ ! -e /usr/lib/SYSLINUX.EFI ]
++		then
++			# syslinux-efi
++			Echo_error "/usr/lib/SYSLINUX.EFI - no such directory"
 +			exit 1
 +		fi
 +

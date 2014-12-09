@@ -2,6 +2,7 @@ live-build (4.0.3-1kali2) kali-dev; urgency=medium
 
   [ Sophie Brun ]
   * Update EFI patch.
+  * Fix binary_syslinux to properly detect the presence of the bootloader.
 
   [ Raphaël Hertzog ]
   * Improve package list parsing code in multiple ways:

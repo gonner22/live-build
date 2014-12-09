@@ -1,0 +1,24 @@
+From: =?utf-8?q?Rapha=C3=ABl_Hertzog?= <hertzog@debian.org>
+Date: Tue, 9 Dec 2014 16:48:00 +0100
+Subject: binary_syslinux: correct the path used to check if the bootloader is
+ available
+
+The {iso,pxe,ext,sys}linux packages use /usr/lib/{ISO,PXE,EXT,SYS}LINUX/
+directories and not /share/{ISO,PXE,EXT,SYS}LINUX/.
+---
+ scripts/build/binary_syslinux | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/build/binary_syslinux b/scripts/build/binary_syslinux
+index abd900a..f0dba0e 100755
+--- a/scripts/build/binary_syslinux
++++ b/scripts/build/binary_syslinux
+@@ -143,7 +143,7 @@ case "${LB_BUILD_WITH_CHROOT}" in
+ 				;;
+ 
+ 			*)
+-				Check_package chroot/share/$(echo ${_BOOTLOADER} | tr [a-z] [A-Z]) ${_BOOTLOADER}
++				Check_package chroot/usr/lib/$(echo ${_BOOTLOADER} | tr [a-z] [A-Z]) ${_BOOTLOADER}
+ 				Check_package chroot/usr/lib/syslinux syslinux-common
+ 				;;
+ 		esac
