@@ -1,0 +1,26 @@
+From: =?utf-8?q?Rapha=C3=ABl_Hertzog?= <hertzog@debian.org>
+Date: Wed, 10 Dec 2014 15:58:34 +0100
+Subject: Better handle empty package lists.
+
+The fix in a294a46fb9fe28e43686b18da7b22ec1c46b0d4f was not enough.
+This should finally resolve the problem when a package list ends
+up empty (most notably due to #if evaluating to false).
+---
+ scripts/build/binary_package-lists | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/scripts/build/binary_package-lists b/scripts/build/binary_package-lists
+index ff19c3c..970de4f 100755
+--- a/scripts/build/binary_package-lists
++++ b/scripts/build/binary_package-lists
+@@ -153,6 +153,10 @@ then
+ 
+ 	for SECTION in ${POOL}/*
+ 	do
++		if [ ! -d "${SECTION}" ]; then
++			break # Do nothing if the package lists were empty...
++		fi
++
+ 		SECTION="$(basename ${SECTION})"
+ 
+ 		mkdir -p ${DISTS}/${LB_PARENT_DISTRIBUTION}/${SECTION}/binary-${LB_ARCHITECTURES}
