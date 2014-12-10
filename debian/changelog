@@ -1,3 +1,12 @@
+live-build (4.0.4-1kali1) kali-dev; urgency=medium
+
+  * Update on top of live-build 4.0.4-1. Remaining changes:
+    - skip comments in package list
+    - EFI support
+    - disable ixp4xx flavour on armel
+
+ -- Raphaël Hertzog <hertzog@debian.org>  Wed, 10 Dec 2014 09:14:54 +0100
+
 live-build (4.0.4-1) unstable; urgency=low
 
   [ Daniel Baumann ]

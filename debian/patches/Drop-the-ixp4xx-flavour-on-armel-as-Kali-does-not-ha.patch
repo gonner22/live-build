@@ -1,0 +1,28 @@
+From: =?utf-8?q?Rapha=C3=ABl_Hertzog?= <hertzog@debian.org>
+Date: Fri, 5 Dec 2014 09:36:27 +0100
+Subject: Drop the ixp4xx flavour on armel as Kali does not have it
+
+The main kali release includes linux 3.14 which had this flavour disabled.
+
+This patch should be dropped once the main kali release is based on
+Debian 8 with Linux 3.16 or newer.
+
+Forwarded: not-needed
+Origin: vendor
+---
+ functions/defaults.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/functions/defaults.sh b/functions/defaults.sh
+index b419232..bff4cc8 100755
+--- a/functions/defaults.sh
++++ b/functions/defaults.sh
+@@ -538,7 +538,7 @@ Set_defaults ()
+ 							LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-iop32x ixp4xx kirkwood orion5x versatile}"
+ 							;;
+ 						*)
+-							LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-ixp4xx kirkwood orion5x versatile}"
++							LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-kirkwood orion5x versatile}"
+ 							;;
+ 					esac
+ 					;;

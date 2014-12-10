@@ -7,15 +7,20 @@ possibly only as a side-effect of some other logic) and being able to
 comment package is a useful feature (to explain why some packages are
 included and to make it easy to uncomment some lines to add more useful
 packages).
+
+This patch has been merged in live-build 5.x.
+
+Applied-Upstream: 5.0~a1
+Forwarded: directly committed upstream
 ---
  functions/packagelists.sh | 4 ++++
  1 file changed, 4 insertions(+)
 
 diff --git a/functions/packagelists.sh b/functions/packagelists.sh
-index 3660f0f..5327591 100755
+index 8470d9a..02a879d 100755
 --- a/functions/packagelists.sh
 +++ b/functions/packagelists.sh
-@@ -109,6 +109,10 @@ Expand_packagelist ()
+@@ -107,6 +107,10 @@ Expand_packagelist ()
  					_LB_ENABLED=1
  					;;
  
