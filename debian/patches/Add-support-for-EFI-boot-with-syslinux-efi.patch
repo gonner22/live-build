@@ -80,7 +80,7 @@ index 0000000..f98a5bf
 +Check_architectures amd64 i386
 +Check_crossarchitectures
 +
-+case "$LIVE_IMAGE_ARCHITECTURE" in
++case "${LB_ARCHITECTURES}" in
 +	amd64)
 +		_EFI_TYPE=efi64
 +		;;
@@ -88,7 +88,7 @@ index 0000000..f98a5bf
 +		_EFI_TYPE=efi32
 +		;;
 +	*)
-+		echo "ERROR: can't provide EFI boot support to architecture $LIVE_IMAGE_ARCHITECTURE" >&2
++		echo "ERROR: can't provide EFI boot support to architecture ${LB_ARCHITECTURES}" >&2
 +		exit 1
 +		;;
 +esac

@@ -1,6 +1,8 @@
-live-build (4.0.4-1kali2) UNRELEASED; urgency=medium
+live-build (4.0.4-1kali2) kali-dev; urgency=medium
 
   * Better handle empty package lists (second try).
+  * Fix EFI patch to use again LB_ARCHITECTURES instead of
+    LIVE_IMAGE_ARCHITECTURE.
 
  -- Raphaël Hertzog <hertzog@debian.org>  Wed, 10 Dec 2014 16:03:17 +0100
 
