@@ -1,3 +1,10 @@
+live-build (4.0.4-1kali3) kali-dev; urgency=medium
+
+  * Fix EFI patch to properly include syslinux "libraries" which
+    are now in a separate path from syslinux.efi.
+
+ -- Raphaël Hertzog <hertzog@debian.org>  Tue, 03 Feb 2015 15:44:04 +0100
+
 live-build (4.0.4-1kali2) kali-dev; urgency=medium
 
   * Better handle empty package lists (second try).
