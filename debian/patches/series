@@ -2,3 +2,4 @@ Add-support-for-EFI-boot-with-syslinux-efi.patch
 Skip-comments-in-package-lists.patch
 Drop-the-ixp4xx-flavour-on-armel-as-Kali-does-not-ha.patch
 Better-handle-empty-package-lists.patch
+Use-linux-image-586-instead-of-linux-image-486-for-k.patch

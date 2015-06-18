@@ -1,3 +1,10 @@
+live-build (4.0.4-1kali4) kali-dev; urgency=medium
+
+  * Update d-i setup code to use linux-image-586 instead of linux-image-486
+    for newer versions of Kali.
+
+ -- Raphaël Hertzog <hertzog@debian.org>  Thu, 18 Jun 2015 10:42:53 +0200
+
 live-build (4.0.4-1kali3) kali-dev; urgency=medium
 
   * Fix EFI patch to properly include syslinux "libraries" which
