@@ -6,11 +6,13 @@ Bug-Debian: http://bugs.debian.org/731709
 Bug-Kali: https://bugs.kali.org/view.php?id=680
 ---
  scripts/build/binary     |   3 +
- scripts/build/binary_efi | 278 +++++++++++++++++++++++++++++++++++++++++++++++
+ scripts/build/binary_efi | 282 +++++++++++++++++++++++++++++++++++++++++++++++
  scripts/build/binary_iso |  37 +++++++
- 3 files changed, 318 insertions(+)
+ 3 files changed, 322 insertions(+)
  create mode 100644 scripts/build/binary_efi
 
+diff --git a/scripts/build/binary b/scripts/build/binary
+index c1f9ec6..b893988 100755
 --- a/scripts/build/binary
 +++ b/scripts/build/binary
 @@ -69,6 +69,9 @@ lb binary_loadlin ${@}
@@ -23,6 +25,9 @@ Bug-Kali: https://bugs.kali.org/view.php?id=680
  lb binary_checksums ${@}
  
  if [ "${LB_BUILD_WITH_CHROOT}" != "true" ]
+diff --git a/scripts/build/binary_efi b/scripts/build/binary_efi
+new file mode 100644
+index 0000000..038a7de
 --- /dev/null
 +++ b/scripts/build/binary_efi
 @@ -0,0 +1,282 @@
@@ -308,6 +313,8 @@ Bug-Kali: https://bugs.kali.org/view.php?id=680
 +
 +# Creating stage file
 +Create_stagefile .build/binary_efi
+diff --git a/scripts/build/binary_iso b/scripts/build/binary_iso
+index ddb3e64..8ced525 100755
 --- a/scripts/build/binary_iso
 +++ b/scripts/build/binary_iso
 @@ -82,6 +82,23 @@ fi

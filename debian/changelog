@@ -1,3 +1,9 @@
+live-build (4.0.4-1kali6) UNRELEASED; urgency=medium
+
+  * Make sure apt-ftparchive does not fail due to #693092.
+
+ -- Raphaël Hertzog <hertzog@debian.org>  Wed, 24 Jun 2015 17:47:29 +0200
+
 live-build (4.0.4-1kali5) kali-dev; urgency=medium
 
   * Add symlinks for moto/sana/kali-current in data/debian-cd/.

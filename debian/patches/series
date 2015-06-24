@@ -3,3 +3,4 @@ Skip-comments-in-package-lists.patch
 Drop-the-ixp4xx-flavour-on-armel-as-Kali-does-not-ha.patch
 Better-handle-empty-package-lists.patch
 Use-linux-image-586-instead-of-linux-image-486-for-k.patch
+Do-not-pass-the-version-to-apt-ftprelease-when-we-do.patch
