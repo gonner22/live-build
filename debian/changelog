@@ -1,3 +1,9 @@
+live-build (4.0.4-1kali5) kali-dev; urgency=medium
+
+  * Add symlinks for moto/sana/kali-current in data/debian-cd/.
+
+ -- Raphaël Hertzog <hertzog@debian.org>  Wed, 24 Jun 2015 16:06:05 +0200
+
 live-build (4.0.4-1kali4) kali-dev; urgency=medium
 
   * Update d-i setup code to use linux-image-586 instead of linux-image-486
