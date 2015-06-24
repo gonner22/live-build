@@ -1,0 +1,23 @@
+From: =?utf-8?q?Rapha=C3=ABl_Hertzog?= <hertzog@debian.org>
+Date: Wed, 24 Jun 2015 18:07:53 +0200
+Subject: Add versions for Kali releases
+
+---
+ functions/releases.sh | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/functions/releases.sh b/functions/releases.sh
+index 4c679cd..ca564f1 100755
+--- a/functions/releases.sh
++++ b/functions/releases.sh
+@@ -7,6 +7,10 @@
+ ## This is free software, and you are welcome to redistribute it
+ ## under certain conditions; see COPYING for details.
+ 
++# Kali releases
++RELEASE_kali="1.0"
++RELEASE_moto="1.0"
++RELEASE_sana="2.0"
+ 
+ # Debian releases
+ RELEASE_wheezy="7"

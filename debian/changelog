@@ -1,6 +1,7 @@
-live-build (4.0.4-1kali6) UNRELEASED; urgency=medium
+live-build (4.0.4-1kali6) kali-dev; urgency=medium
 
   * Make sure apt-ftparchive does not fail due to #693092.
+  * Add versions for Kali releases.
 
  -- Raphaël Hertzog <hertzog@debian.org>  Wed, 24 Jun 2015 17:47:29 +0200
 
