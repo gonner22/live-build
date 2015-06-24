@@ -1,0 +1,5 @@
+Changes to do when we introduce a new release
+---------------------------------------------
+* Update functions/releases.sh with the version
+  (via Add-versions-for-Kali-releases.patch)
+* Add the required symlink in debian/live-build.links
