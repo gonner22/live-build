@@ -5,3 +5,4 @@ Better-handle-empty-package-lists.patch
 Use-linux-image-586-instead-of-linux-image-486-for-k.patch
 Do-not-pass-the-version-to-apt-ftprelease-when-we-do.patch
 Add-versions-for-Kali-releases.patch
+Drop-elilo-from-list-of-d-i-required-packages-on-i38.patch
