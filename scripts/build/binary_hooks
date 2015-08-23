@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
+## Copyright (C) 2006-2015 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -58,21 +58,24 @@ do
 done
 
 ## Processing local hooks
+for HOOK in config/hooks/normal/*.binary config/hooks/live/*.binary
+do
+	if [ ! -e "${HOOK}" ]
+	then
+		continue
+	fi
 
-if Find_files config/hooks/*.binary
-then
-	for HOOK in config/hooks/*.binary
-	do
-		# Making hook executable
-		if [ ! -x "${HOOK}" ]
-		then
-			chmod +x "${HOOK}"
-		fi
+	# Making hook executable
+	if [ ! -x "${HOOK}" ]
+	then
+		chmod +x "${HOOK}"
+	fi
 
-		# Executing hook
-		./"${HOOK}" || { Echo_error "${HOOK} failed (exit non-zero). You should check for errors."; exit 1 ;}
-	done
+	# Executing hook
+	cd binary
+	../"${HOOK}" || { Echo_error "${HOOK} failed (exit non-zero). You should check for errors."; exit 1 ;}
+	cd "${OLDPWD}"
+done
 
-	# Creating stage file
-	Create_stagefile .build/binary_hooks
-fi
+# Creating stage file
+Create_stagefile .build/binary_hooks

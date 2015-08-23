@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
+## Copyright (C) 2006-2015 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -53,31 +53,23 @@ esac
 if ls config/package-lists/*.list > /dev/null 2>&1 || \
    ls config/package-lists/*.list.binary > /dev/null 2>&1
 then
+	# Check depends
+	Check_package host /usr/bin/apt-ftparchive apt-utils
+
 	case "${LB_BUILD_WITH_CHROOT}" in
 		true)
 			# Restoring cache
 			Restore_cache cache/packages.chroot
 
 			# Check depends
-			Check_package chroot/usr/bin/apt-ftparchive apt-utils
-			Check_package chroot/usr/bin/grep-aptavail dctrl-tools
+			Check_package chroot /usr/bin/grep-aptavail dctrl-tools
 
 			# Installing depends
 			Install_package
 			;;
 
 		false)
-			if [ ! -e /usr/bin/apt-ftparchive ]; then
-				# apt-utils
-				Echo_error "/usr/bin/apt-ftparchive - no such file."
-				exit 1
-			fi
-
-			if [ ! -e /usr/bin/grep-aptavail ]; then
-				# dctrl-tools
-				Echo_error "/usr/bin/grep-aptavail - no such file."
-				exit 1
-			fi
+			Check_package host /usr/bin/grep-aptavail dctrl-tools
 			;;
 	esac
 

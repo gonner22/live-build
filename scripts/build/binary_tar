@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
+## Copyright (C) 2006-2015 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -46,7 +46,8 @@ Create_lockfile .lock
 # Remove old binary
 rm -f ${LIVE_IMAGE_NAME}-${LB_ARCHITECTURES}.tar.bz2 ${LIVE_IMAGE_NAME}-${LB_ARCHITECTURES}.tar.gz ${LIVE_IMAGE_NAME}-${LB_ARCHITECTURES}.tar.lz ${LIVE_IMAGE_NAME}-${LB_ARCHITECTURES}.tar
 
-tar cf ${LIVE_IMAGE_NAME}-${LB_ARCHITECTURES}.tar.tar ${LIVE_IMAGE_NAME}-${LB_ARCHITECTURES}.
+tar cf ${LIVE_IMAGE_NAME}-${LB_ARCHITECTURES}.tar.tar binary
+
 case "${LB_COMPRESSION}" in
 	bzip2)
 		bzip2 ${BZIP2_OPTIONS} ${LIVE_IMAGE_NAME}-${LB_ARCHITECTURES}.tar.tar

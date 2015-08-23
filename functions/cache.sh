@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
+## Copyright (C) 2006-2015 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -17,7 +17,7 @@ Restore_cache ()
 		if [ -e "${DIRECTORY}" ]
 		then
 			# Restore old cache
-			if [ "$(stat --printf %d ${DIRECTORY})" = "$(stat --printf %d chroot/var/cache/apt/archives)" ]
+			if [ "$(stat --printf %d ${DIRECTORY}/)" = "$(stat --printf %d chroot/var/cache/apt/archives/)" ]
 			then
 				# with hardlinks
 				find "${DIRECTORY}" -name "*.deb" | xargs cp -fl -t chroot/var/cache/apt/archives

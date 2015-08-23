@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
+## Copyright (C) 2006-2015 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -58,10 +58,6 @@ New_configuration ()
 			LB_ARCHIVE_AREAS="${LB_ARCHIVE_AREAS:-main contrib non-free}"
 			;;
 
-		ubuntu)
-			LB_ARCHIVE_AREAS="${LB_ARCHIVE_AREAS:-main restricted}"
-			;;
-
 		*)
 			LB_ARCHIVE_AREAS="${LB_ARCHIVE_AREAS:-main}"
 			;;
@@ -70,9 +66,9 @@ New_configuration ()
 	export LB_ARCHIVE_AREAS
 
 	# Image: Archive Areas
-	LIVE_IMAGE_PARENT_ARCHIVE_AREAS="${LIVE_IMAGE_PARENT_ARCHIVE_AREAS:-$(Get_configuration config/build Parent-Archive-Areas)}"
-	LIVE_IMAGE_PARENT_ARCHIVE_AREAS="${LIVE_IMAGE_PARENT_ARCHIVE_AREAS:-${LB_ARCHIVE_AREAS}}"
-	export LIVE_IMAGE_PARENT_ARCHIVE_AREAS
+	LB_PARENT_ARCHIVE_AREAS="${LB_PARENT_ARCHIVE_AREAS:-$(Get_configuration config/build Parent-Archive-Areas)}"
+	LB_PARENT_ARCHIVE_AREAS="${LB_PARENT_ARCHIVE_AREAS:-${LB_ARCHIVE_AREAS}}"
+	export LB_PARENT_ARCHIVE_AREAS
 
 	# Image: Type
 	LIVE_IMAGE_TYPE="${LIVE_IMAGE_TYPE:-$(Get_configuration config/build Type)}"
@@ -96,13 +92,13 @@ Set_defaults ()
 	# Setting system type
 	LB_SYSTEM="${LB_SYSTEM:-live}"
 
-	# Setting mode (currently: debian, progress-linux, and ubuntu)
+	# Setting mode (currently: debian, progress-linux)
 	if [ -x /usr/bin/lsb_release ]
 	then
 		_DISTRIBUTOR="$(lsb_release -is | tr "[A-Z]" "[a-z]")"
 
 		case "${_DISTRIBUTOR}" in
-			debian|progress-linux|ubuntu)
+			debian|progress-linux)
 				LB_MODE="${LB_MODE:-${_DISTRIBUTOR}}"
 				;;
 
@@ -114,9 +110,6 @@ Set_defaults ()
 		if [ -e /etc/progress-linux_version ]
 		then
 			LB_MODE="${LB_MODE:-progress-linux}"
-		elif [ -e /etc/ubuntu_version ]
-		then
-			LB_MODE="${LB_MODE:-ubuntu}"
 		else
 			LB_MODE="${LB_MODE:-debian}"
 		fi
@@ -125,17 +118,13 @@ Set_defaults ()
 	# Setting distribution name
 	case "${LB_MODE}" in
 		progress-linux)
-			LB_DISTRIBUTION="${LB_DISTRIBUTION:-baureo}"
+			LB_DISTRIBUTION="${LB_DISTRIBUTION:-cairon}"
 			LB_DERIVATIVE="true"
-			;;
-
-		ubuntu)
-			LB_DISTRIBUTION="${LB_DISTRIBUTION:-quantal}"
-			LB_DERIVATIVE="false"
+			LB_DERIVATIVE_IS_BASED_ON="debian"
 			;;
 
 		*)
-			LB_DISTRIBUTION="${LB_DISTRIBUTION:-jessie}"
+			LB_DISTRIBUTION="${LB_DISTRIBUTION:-stretch}"
 			LB_DERIVATIVE="false"
 			;;
 	esac
@@ -148,7 +137,7 @@ Set_defaults ()
 					LB_PARENT_DEBIAN_INSTALLER_DISTRIBUTION="${LB_PARENT_DEBIAN_INSTALLER_DISTRIBUTION:-${LB_PARENT_DISTRIBUTION}}"
 					;;
 
-				charon|charon-backports)
+				cairon|cairon-backports)
 					LB_PARENT_DISTRIBUTION="${LB_PARENT_DISTRIBUTION:-sid}"
 					LB_PARENT_DEBIAN_INSTALLER_DISTRIBUTION="${LB_PARENT_DEBIAN_INSTALLER_DISTRIBUTION:-${LB_PARENT_DISTRIBUTION}}"
 					;;
@@ -220,18 +209,6 @@ Set_defaults ()
 			;;
 	esac
 
-	# Setting bootstrap program
-	if [ -z "${LB_BOOTSTRAP}" ] || ( [ ! -x "$(which ${LB_BOOTSTRAP} 2>/dev/null)" ] && [ "${LB_BOOTSTRAP}" != "copy" ] )
-	then
-		if [ -x "/usr/sbin/debootstrap" ]
-		then
-			LB_BOOTSTRAP="debootstrap"
-		elif [ -x "/usr/bin/cdebootstrap" ]
-		then
-			LB_BOOTSTRAP="cdebootstrap"
-		fi
-	fi
-
 	# Setting cache option
 	LB_CACHE="${LB_CACHE:-true}"
 	LB_CACHE_INDICES="${LB_CACHE_INDICES:-false}"
@@ -245,15 +222,7 @@ Set_defaults ()
 	# Setting initramfs hook
 	case "${LB_SYSTEM}" in
 		live)
-			case "${LB_MODE}" in
-				ubuntu)
-					LB_INITRAMFS="${LB_INITRAMFS:-casper}"
-					;;
-
-				*)
-					LB_INITRAMFS="${LB_INITRAMFS:-live-boot}"
-					;;
-			esac
+			LB_INITRAMFS="${LB_INITRAMFS:-live-boot}"
 			;;
 
 		normal)
@@ -265,17 +234,9 @@ Set_defaults ()
 
 	# Setting initsystem
 	case "${LB_MODE}" in
-		ubuntu)
-			case "${LB_INITRAMFS}" in
-				live-boot)
-					LB_INITSYSTEM="${LB_INITSYSTEM:-upstart}"
-					;;
-			esac
-			;;
-
 		progress-linux)
 			case "${LB_DISTRIBUTION}" in
-				chairon*)
+				cairon*)
 					LB_INITSYSTEM="${LB_INITSYSTEM:-systemd}"
 					;;
 
@@ -288,15 +249,7 @@ Set_defaults ()
 		*)
 			case "${LB_SYSTEM}" in
 				live)
-					case "${LB_PARENT_DISTRIBUTION}" in
-						wheezy)
-							LB_INITSYSTEM="${LB_INITSYSTEM:-sysvinit}"
-							;;
-
-						*)
-							LB_INITSYSTEM="${LB_INITSYSTEM:-systemd}"
-							;;
-					esac
+					LB_INITSYSTEM="${LB_INITSYSTEM:-systemd}"
 					;;
 
 				normal)
@@ -360,14 +313,6 @@ Set_defaults ()
 			;;
 	esac
 
-	# Setting templates
-	if [ -n "${LIVE_BUILD}" ]
-	then
-		LB_TEMPLATES="${LB_TEMPLATES:-${LIVE_BUILD}/templates}"
-	else
-		LB_TEMPLATES="${LB_TEMPLATES:-/usr/share/live/build/templates}"
-	fi
-
 	# Setting live build options
 	_BREAKPOINTS="${_BREAKPOINTS:-false}"
 	_COLOR="${_COLOR:-false}"
@@ -389,20 +334,6 @@ Set_defaults ()
 			LB_PARENT_MIRROR_BOOTSTRAP="${LB_PARENT_MIRROR_BOOTSTRAP:-http://ftp.debian.org/debian/}"
 			LB_MIRROR_BOOTSTRAP="${LB_MIRROR_BOOTSTRAP:-http://cdn.archive.progress-linux.org/packages/}"
 			;;
-
-		ubuntu)
-			case "${LB_ARCHITECTURES}" in
-				amd64|i386)
-					LB_MIRROR_BOOTSTRAP="${LB_MIRROR_BOOTSTRAP:-http://archive.ubuntu.com/ubuntu/}"
-					;;
-
-				*)
-					LB_MIRROR_BOOTSTRAP="${LB_MIRROR_BOOTSTRAP:-http://ports.ubuntu.com/ubuntu-ports/}"
-					;;
-			esac
-
-			LB_PARENT_MIRROR_BOOTSTRAP="${LB_PARENT_MIRROR_BOOTSTRAP:-${LB_MIRROR_BOOTSTRAP}}"
-			;;
 	esac
 
 	LB_PARENT_MIRROR_CHROOT="${LB_PARENT_MIRROR_CHROOT:-${LB_PARENT_MIRROR_BOOTSTRAP}}"
@@ -419,46 +350,18 @@ Set_defaults ()
 			LB_PARENT_MIRROR_CHROOT_SECURITY="${LB_PARENT_MIRROR_CHROOT_SECURITY:-http://security.debian.org/}"
 			LB_MIRROR_CHROOT_SECURITY="${LB_MIRROR_CHROOT_SECURITY:-${LB_MIRROR_CHROOT}}"
 			;;
-
-		ubuntu)
-			case "${LB_ARCHITECTURES}" in
-				amd64|i386)
-					LB_MIRROR_CHROOT_SECURITY="${LB_MIRROR_CHROOT_SECURITY:-http://security.ubuntu.com/ubuntu/}"
-					;;
-
-				*)
-					LB_MIRROR_CHROOT_SECURITY="${LB_MIRROR_CHROOT_SECURITY:-http://ports.ubuntu.com/ubuntu-ports/}"
-					;;
-			esac
-
-			LB_PARENT_MIRROR_CHROOT_SECURITY="${LB_PARENT_MIRROR_CHROOT_SECURITY:-${LB_MIRROR_CHROOT_SECURITY}}"
-			;;
 	esac
 
 	# Setting mirror which ends up in the image
 	case "${LB_MODE}" in
 		debian)
-			LB_MIRROR_BINARY="${LB_MIRROR_BINARY:-http://http.debian.net/debian/}"
+			LB_MIRROR_BINARY="${LB_MIRROR_BINARY:-http://httpredir.debian.org/debian/}"
 			LB_PARENT_MIRROR_BINARY="${LB_PARENT_MIRROR_BINARY:-${LB_MIRROR_BINARY}}"
 			;;
 
 		progress-linux)
 			LB_PARENT_MIRROR_BINARY="${LB_PARENT_MIRROR_BINARY:-http://ftp.debian.org/debian/}"
 			LB_MIRROR_BINARY="${LB_MIRROR_BINARY:-${LB_MIRROR_CHROOT}}"
-			;;
-
-		ubuntu)
-			case "${LB_ARCHITECTURES}" in
-				amd64|i386)
-					LB_MIRROR_BINARY="${LB_MIRROR_BINARY:-http://archive.ubuntu.com/ubuntu/}"
-				;;
-
-				*)
-					LB_MIRROR_BINARY="${LB_MIRROR_BINARY:-http://ports.ubuntu.com/ubuntu-ports/}"
-					;;
-			esac
-
-			LB_PARENT_MIRROR_BINARY="${LB_PARENT_MIRROR_BINARY:-${LB_MIRROR_BINARY}}"
 			;;
 	esac
 
@@ -472,20 +375,6 @@ Set_defaults ()
 		progress-linux)
 			LB_PARENT_MIRROR_BINARY_SECURITY="${LB_PARENT_MIRROR_BINARY_SECURITY:-http://security.debian.org/}"
 			LB_MIRROR_BINARY_SECURITY="${LB_MIRROR_BINARY_SECURITY:-${LB_MIRROR_CHROOT}}"
-			;;
-
-		ubuntu)
-			case "${LB_ARCHITECTURES}" in
-				amd64|i386)
-					LB_MIRROR_BINARY_SECURITY="${LB_MIRROR_BINARY_SECURITY:-http://security.ubuntu.com/ubuntu/}"
-					;;
-
-				*)
-					LB_MIRROR_BINARY_SECURITY="${LB_MIRROR_BINARY_SECURITY:-http://ports.ubuntu.com/ubuntu-ports/}"
-					;;
-			esac
-
-			LB_PARENT_MIRROR_BINARY_SECURITY="${LB_PARENT_MIRROR_BINARY_SECURITY:-${LB_MIRROR_BINARY_SECURITY}}"
 			;;
 	esac
 
@@ -513,61 +402,28 @@ Set_defaults ()
 	LB_INTERACTIVE="${LB_INTERACTIVE:-false}"
 
 	# Setting keyring packages
-	case "${LB_MODE}" in
-		ubuntu)
-			LB_KEYRING_PACKAGES="${LB_KEYRING_PACKAGES:-ubuntu-keyring}"
-			;;
-
-		*)
-			LB_KEYRING_PACKAGES="${LB_KEYRING_PACKAGES:-debian-archive-keyring}"
-			;;
-	esac
+	LB_KEYRING_PACKAGES="${LB_KEYRING_PACKAGES:-debian-archive-keyring}"
 
 	# Setting linux flavour string
 	case "${LB_ARCHITECTURES}" in
+		arm64)
+			LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-arm64}"
+			;;
+
 		armel)
-			case "${LB_MODE}" in
-                                ubuntu)
-					LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-omap}"
-					;;
-				*)
-					# armel will have special images: one rootfs image and many additional kernel images.
-					# therefore we default to all available armel flavours
-					case "${LB_DISTRIBUTION}" in
-						wheezy)
-							LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-iop32x ixp4xx kirkwood orion5x versatile}"
-							;;
-						*)
-							LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-ixp4xx kirkwood orion5x versatile}"
-							;;
-					esac
-					;;
-			esac
+			# armel will have special images: one rootfs image and many additional kernel images.
+			# therefore we default to all available armel flavours
+			LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-ixp4xx kirkwood orion5x versatile}"
 			;;
 
 		armhf)
 			# armhf will have special images: one rootfs image and many additional kernel images.
 			# therefore we default to all available armhf flavours
-			case "${LB_DISTRIBUTION}" in
-				wheezy)
-					LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-mx5 omap}"
-					;;
-				*)
-					LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-armmp armmp-lpae}"
-					;;
-			esac
+			LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-armmp armmp-lpae}"
 			;;
 
 		amd64)
-			case "${LB_MODE}" in
-				ubuntu)
-					LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-generic}"
-					;;
-
-				*)
-					LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-amd64}"
-					;;
-			esac
+			LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-amd64}"
 			;;
 
 		i386)
@@ -576,20 +432,8 @@ Set_defaults ()
 					LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-686-pae}"
 					;;
 
-				ubuntu)
-					case "${LB_DISTRIBUTION}" in
-						precise)
-							LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-generic-pae}"
-							;;
-
-						*)
-							LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-generic}"
-							;;
-					esac
-					;;
-
 				*)
-					LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-486}"
+					LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-586}"
 					;;
 			esac
 			;;
@@ -614,10 +458,6 @@ Set_defaults ()
 					exit 1
 					;;
 
-				ubuntu)
-					LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-powerpc-smp powerpc64-smp e500 powerpc-e500mc}"
-					;;
-
 				*)
 					LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-powerpc64 powerpc}"
 					;;
@@ -626,26 +466,13 @@ Set_defaults ()
 
 		s390x)
 			case "${LB_MODE}" in
-				progress-linux|ubuntu)
-					Echo_error "Architecture ${LB_ARCHITECTURES} not supported in the ${LB_MODE} mode."
-					exit 1
-					;;
-
-				*)
-					LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-s390x}"
-					;;
-			esac
-			;;
-
-		sparc)
-			case "${LB_MODE}" in
 				progress-linux)
 					Echo_error "Architecture ${LB_ARCHITECTURES} not supported in the ${LB_MODE} mode."
 					exit 1
 					;;
 
 				*)
-					LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-sparc64}"
+					LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-s390x}"
 					;;
 			esac
 			;;
@@ -657,19 +484,11 @@ Set_defaults ()
 	esac
 
 	# Set linux packages
-	case "${LB_MODE}" in
-		ubuntu)
-			LB_LINUX_PACKAGES="${LB_LINUX_PACKAGES:-linux}"
-			;;
-
-		*)
-			LB_LINUX_PACKAGES="${LB_LINUX_PACKAGES:-linux-image}"
-			;;
-	esac
+	LB_LINUX_PACKAGES="${LB_LINUX_PACKAGES:-linux-image}"
 
 	# Setting security updates option
 	case "${LB_PARENT_DISTRIBUTION}" in
-		jessie|sid)
+		sid)
 			LB_SECURITY="${LB_SECURITY:-false}"
 			;;
 
@@ -680,7 +499,7 @@ Set_defaults ()
 
 	# Setting updates updates option
 	case "${LB_PARENT_DISTRIBUTION}" in
-		jessie|sid)
+		sid)
 			LB_UPDATES="${LB_UPDATES:-false}"
 			;;
 
@@ -692,15 +511,7 @@ Set_defaults ()
 	## config/binary
 
 	# Setting image filesystem
-	case "${LB_ARCHITECTURES}" in
-		sparc)
-			LB_BINARY_FILESYSTEM="${LB_BINARY_FILESYSTEM:-ext4}"
-			;;
-
-		*)
-			LB_BINARY_FILESYSTEM="${LB_BINARY_FILESYSTEM:-fat32}"
-			;;
-	esac
+	LB_BINARY_FILESYSTEM="${LB_BINARY_FILESYSTEM:-fat32}"
 
 	# Setting image type
 	case "${LB_ARCHITECTURES}" in
@@ -793,11 +604,6 @@ Set_defaults ()
 			LB_BOOTAPPEND_LIVE_FAILSAFE="${LB_BOOTAPPEND_LIVE_FAILSAFE:-boot=live components memtest noapic noapm nodma nomce nolapic nomodeset nosmp nosplash vga=normal}"
 			;;
 
-		casper)
-			LB_BOOTAPPEND_LIVE="${LB_BOOTAPPEND_LIVE:-boot=casper quiet splash}"
-			LB_BOOTAPPEND_LIVE_FAILSAFE="${LB_BOOTAPPEND_LIVE_FAILSAFE:-boot=casper memtest noapic noapm nodma nomce nolapic nomodeset nosmp nosplash vga=normal}"
-			;;
-
 		none)
 			LB_BOOTAPPEND_LIVE="${LB_BOOTAPPEND_LIVE:-quiet splash}"
 			LB_BOOTAPPEND_LIVE_FAILSAFE="${LB_BOOTAPPEND_LIVE_FAILSAFE:-memtest noapic noapm nodma nomce nolapic nomodeset nosmp nosplash vga=normal}"
@@ -812,20 +618,7 @@ Set_defaults ()
 				;;
 
 			hdd*)
-				case "${LB_MODE}" in
-					ubuntu)
-						if [ "${LB_DEBIAN_INSTALLER}" = "live" ]
-						then
-							_LB_BOOTAPPEND_PRESEED="file=/cdrom/install/${LB_DEBIAN_INSTALLER_PRESEEDFILE}"
-						else
-							_LB_BOOTAPPEND_PRESEED="file=/hd-media/install/${LB_DEBIAN_INSTALLER_PRESEEDFILE}"
-						fi
-						;;
-
-					*)
-						_LB_BOOTAPPEND_PRESEED="file=/hd-media/install/${LB_DEBIAN_INSTALLER_PRESEEDFILE}"
-						;;
-				esac
+				_LB_BOOTAPPEND_PRESEED="file=/hd-media/install/${LB_DEBIAN_INSTALLER_PRESEEDFILE}"
 				;;
 
 			netboot)
@@ -861,10 +654,6 @@ Set_defaults ()
 		progress-linux)
 			LB_ISO_APPLICATION="${LB_ISO_APPLICATION:-Progress Linux}"
 			;;
-
-		ubuntu)
-			LB_ISO_APPLICATION="${LB_ISO_APPLICATION:-Ubuntu Live}"
-			;;
 	esac
 
 	# Set iso preparer
@@ -890,10 +679,6 @@ Set_defaults ()
 		progress-linux)
 			LB_HDD_LABEL="${LB_HDD_LABEL:-PROGRESS_$(echo ${LB_DISTRIBUTION} | tr "[a-z]" "[A-Z]")}"
 			;;
-
-		ubuntu)
-			LB_HDD_LABEL="${LB_HDD_LABEL:-UBUNTU}"
-			;;
 	esac
 
 	# Setting hdd size
@@ -908,10 +693,6 @@ Set_defaults ()
 		progress-linux)
 			LB_ISO_VOLUME="${LB_ISO_VOLUME:-Progress ${LB_DISTRIBUTION}}"
 			;;
-
-		ubuntu)
-			LB_ISO_VOLUME="${LB_ISO_VOLUME:-Ubuntu ${LB_DISTRIBUTION} \$(date +%Y%m%d-%H:%M)}"
-			;;
 	esac
 
 	# Setting memtest option
@@ -919,7 +700,7 @@ Set_defaults ()
 
 	# Setting loadlin option
 	case "${LB_MODE}" in
-		progress-linux|ubuntu)
+		progress-linux)
 
 			;;
 
@@ -943,7 +724,7 @@ Set_defaults ()
 
 	# Setting win32-loader option
 	case "${LB_MODE}" in
-		progress-linux|ubuntu)
+		progress-linux)
 
 			;;
 
@@ -989,17 +770,8 @@ Set_defaults ()
 	LB_NET_TARBALL="${LB_NET_TARBALL:-true}"
 
 	# Setting firmware option
-	case "${LB_MODE}" in
-		ubuntu)
-			LB_FIRMWARE_CHROOT="${LB_FIRMWARE_CHROOT:-false}"
-			LB_FIRMWARE_BINARY="${LB_FIRMWARE_BINARY:-false}"
-			;;
-
-		*)
-			LB_FIRMWARE_CHROOT="${LB_FIRMWARE_CHROOT:-true}"
-			LB_FIRMWARE_BINARY="${LB_FIRMWARE_BINARY:-true}"
-			;;
-	esac
+	LB_FIRMWARE_CHROOT="${LB_FIRMWARE_CHROOT:-true}"
+	LB_FIRMWARE_BINARY="${LB_FIRMWARE_BINARY:-true}"
 
 	# Setting swap file
 	LB_SWAP_FILE_SIZE="${LB_SWAP_FILE_SIZE:-512}"

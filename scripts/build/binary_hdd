@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
+## Copyright (C) 2006-2015 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -46,34 +46,20 @@ Create_lockfile .lock
 # Checking depends
 case "${LB_BINARY_FILESYSTEM}" in
 	fat*)
-		Check_package chroot/sbin/mkdosfs dosfstools
+		Check_package chroot /sbin/mkdosfs dosfstools
 		;;
 
 	ntfs)
-		Check_package chroot/sbin/mkfs.nfts ntfs-3g
+		Check_package chroot /sbin/mkfs.nfts ntfs-3g
 		;;
 esac
 
-Check_package chroot/usr/share/doc/mtools mtools
-Check_package chroot/sbin/parted parted
-
-if [ "${LB_ARCHITECTURES}" = "sparc" ]
-then
-	case "${LB_BINARY_FILESYSTEM}" in
-		ext2|ext3|ext4)
-			Check_package chroot/sbin/mkfs.${LB_BINARY_FILESYSTEM} e2fsprogs
-			;;
-
-		*)
-			Echo_error "Sparc only supports booting from ext2, ext3, ext4 or ufs."
-			exit 1
-			;;
-	esac
-fi
+Check_package chroot /usr/share/doc/mtools mtools
+Check_package chroot /sbin/parted parted
 
 case "${LB_BOOTLOADER}" in
 	grub)
-		Check_package chroot/usr/sbin/grub grub
+		Check_package chroot /usr/sbin/grub grub
 		;;
 
 	syslinux)
@@ -89,7 +75,7 @@ case "${LB_BOOTLOADER}" in
 				exit 1
 				;;
 		esac
-		Check_package chroot/usr/bin/${_BOOTLOADER} ${_BOOTLOADER}
+		Check_package chroot /usr/bin/${_BOOTLOADER} ${_BOOTLOADER}
 		;;
 esac
 
@@ -154,14 +140,7 @@ fi
 echo "!!! The following error/warning messages can be ignored !!!"
 Losetup $FREELO chroot/binary.img 0
 
-case "${LB_ARCHITECTURES}" in
-	sparc)
-		PARTITION_TABLE_TYPE="sun"
-		;;
-	*)
-		PARTITION_TABLE_TYPE="msdos"
-		;;
-esac
+PARTITION_TABLE_TYPE="msdos"
 
 case "${LB_BINARY_FILESYSTEM}" in
 	ext2|ext3|ext4)
@@ -191,7 +170,7 @@ case "${LB_BUILD_WITH_CHROOT}" in
 
 		if [ "${LB_BOOTLOADER}" = "syslinux" ]
 		then
-			dd if=chroot/usr/lib/${_BOOTLOADER}/mbr.bin of=${FREELO} bs=440 count=1
+			dd if=chroot/usr/lib/SYSLINUX/mbr.bin of=${FREELO} bs=440 count=1
 		fi
 		;;
 
@@ -203,7 +182,7 @@ case "${LB_BUILD_WITH_CHROOT}" in
 
 		if [ "${LB_BOOTLOADER}" = "syslinux" ]
 		then
-			dd if=/usr/lib/${_BOOTLOADER}/mbr.bin of=${FREELO} bs=440 count=1
+			dd if=/usr/lib/SYSLINUX/mbr.bin of=${FREELO} bs=440 count=1
 		fi
 		;;
 esac
