@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
+## Copyright (C) 2006-2015 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -52,7 +52,7 @@ fi
 case "${LB_BUILD_WITH_CHROOT}" in
 	true)
 		# Checking depends
-		Check_package chroot/usr/bin/grep-aptavail dctrl-tools
+		Check_package chroot /usr/bin/grep-aptavail dctrl-tools
 
 		# Restoring cache
 		Restore_cache cache/packages.chroot

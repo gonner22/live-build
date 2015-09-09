@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
+## Copyright (C) 2006-2015 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -107,6 +107,10 @@ Expand_packagelist ()
 					_LB_ENABLED=1
 					;;
 
+				\#*)
+					# Skip comments
+					;;
+
 				*)
 					if [ ${_LB_ENABLED} -eq 1 ]
 					then
@@ -134,7 +138,7 @@ Discover_package_architectures ()
 			for _LB_PACKAGE_LINE_PART in ${_LB_PACKAGE_LINE}
 			do
 				# Looking for <package>:<architecture>
-				if [ -n "$(echo ${_LB_PACKAGE_LINE_PART} | awk -F':' '{print $2}')" ]
+				if [ -n "$(echo ${_LB_PACKAGE_LINE_PART} | awk -F"=" '{print $1}' | awk -F':' '{print $2}')" ]
 				then
 					_LB_DISCOVERED_ARCHITECTURES="${_LB_DISCOVERED_ARCHITECTURES} $(echo ${_LB_PACKAGE_LINE_PART} | awk -F':' '{print $2}')"
 				fi

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
+## Copyright (C) 2006-2015 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -78,28 +78,32 @@ then
 fi
 
 ## Processing local hooks
-
-if Find_files config/hooks/*.chroot
+if ls config/hooks/normal/*.chroot config/hooks/live/*.chroot > /dev/null 2>&1
 then
 	# Restoring cache
 	Restore_cache cache/packages.chroot
 
-	for _HOOK in config/hooks/*.chroot
+	for HOOK in config/hooks/normal/*.chroot config/hooks/live/*.chroot
 	do
+		if [ ! -e "${HOOK}" ]
+		then
+			continue
+		fi
+
 		# Copying hook
-		cp "${_HOOK}" chroot/root
+		cp "${HOOK}" chroot/root
 
 		# Making hook executable
-		if [ ! -x chroot/root/"$(basename ${_HOOK})" ]
+		if [ ! -x chroot/root/"$(basename ${HOOK})" ]
 		then
-			chmod +x chroot/root/"$(basename ${_HOOK})"
+			chmod +x chroot/root/"$(basename ${HOOK})"
 		fi
 
 		# Executing hook
-		Chroot chroot "/root/$(basename ${_HOOK})" || { Echo_error "${_HOOK} failed (exit non-zero). You should check for errors."; exit 1 ;}
+		Chroot chroot "/root/$(basename ${HOOK})" || { Echo_error "${HOOK} failed (exit non-zero). You should check for errors."; exit 1 ;}
 
 		# Removing hook
-		rm -f chroot/root/"$(basename ${_HOOK})"
+		rm -f chroot/root/"$(basename ${HOOK})"
 	done
 
 	# Saving cache
@@ -112,4 +116,4 @@ fi
 # Remove bind mount of build config inside chroot.
 umount chroot/live-build/config
 rmdir chroot/live-build/config
-
+rmdir chroot/live-build

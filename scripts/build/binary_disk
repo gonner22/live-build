@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
+## Copyright (C) 2006-2015 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -51,19 +51,19 @@ mkdir -p binary/.disk
 ARCHITECTURE="$(echo ${LB_ARCHITECTURES} | sed -e 's| |/|g')"
 DISTRIBUTION="$(echo ${LB_DISTRIBUTION} | cut -b 1 | tr '[a-z]' '[A-Z]')"
 DISTRIBUTION="${DISTRIBUTION}$(echo ${LB_DISTRIBUTION} | cut -b 2-)"
-eval VERSION="$`echo RELEASE_${LB_DISTRIBUTION}`"
+
+if [ -e chroot/etc/os-release ]
+then
+	VERSION="$(. chroot/etc/os-release && echo ${VERSION_ID})"
+fi
+
+VERSION="${VERSION:-none}"
 
 case "${LB_MODE}" in
 	debian)
 		TITLE="Debian GNU/Linux"
 		STRING="Official Snapshot ${ARCHITECTURE}"
 		TRACE="project/trace/ftp-master.debian.org"
-		;;
-
-	ubuntu)
-		TITLE="Ubuntu"
-		STRING="Build ${ARCHITECTURE}"
-		TRACE=""
 		;;
 
 	progress-linux)
@@ -81,43 +81,21 @@ esac
 
 if [ -n "${TRACE}" ]
 then
-	echo "$(wget -q ${LB_PARENT_MIRROR_BOOTSTRAP}/${TRACE} -O - | head -n 1)" \
-	> binary/.disk/archive_trace
+	case "${LB_DERIVATIVE}" in
+		true)
+			echo "$(echo ${LB_PARENT_MIRROR_BOOTSTRAP} | awk -F:// '{ print $2 }'): $(wget -q ${LB_PARENT_MIRROR_BOOTSTRAP}/${TRACE} -O - | head -n 1)" \
+			> binary/.disk/archive_trace
+
+			echo "$(echo ${LB_MIRROR_BOOTSTRAP} | awk -F:// '{ print $2 }'): $(wget -q ${LB_MIRROR_BOOTSTRAP}/${TRACE} -O - | head -n 1)" \
+			>> binary/.disk/archive_trace
+			;;
+
+		false)
+			echo "$(wget -q ${LB_PARENT_MIRROR_BOOTSTRAP}/${TRACE} -O - | head -n 1)" \
+			> binary/.disk/archive_trace
+			;;
+	esac
 fi
-
-case "${LB_INITRAMFS}" in
-	casper)
-		for INITRD in binary/casper/initrd.img*
-		do
-			mkdir -p binary/uuid
-			cd binary/uuid
-
-			case "${LB_INITRAMFS_COMPRESSION}" in
-				gzip)
-					zcat "../../${INITRD}" | cpio --quiet -id conf/uuid.conf
-					;;
-
-				bzip2)
-					bzcat "../../${INITRD}" | cpio --quiet -id conf/uuid.conf
-					;;
-
-				lzma)
-					lzcat -S "" "../../${INITRD}" | cpio --quiet -id conf/uuid.conf
-					;;
-			esac
-
-			if [ -e conf/uuid.conf ]
-			then
-				mv conf/uuid.conf "../.disk/casper-uuid${INITRD#binary/casper/initrd.img}"
-			else
-				Echo_warning "Failed to find casper uuid.conf in '${INITRD}'"
-			fi
-
-			cd ${OLDPWD}
-			rm -rf binary/uuid
-		done
-		;;
-esac
 
 case "${LB_DEBIAN_INSTALLER}" in
 	cdrom)

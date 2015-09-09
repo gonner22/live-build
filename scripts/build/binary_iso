@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
+## Copyright (C) 2006-2015 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -53,19 +53,8 @@ Check_lockfile .lock
 Create_lockfile .lock
 
 # Checking depends
-Check_package chroot/usr/bin/xorriso xorriso
-
-case "${LB_PARENT_DISTRIBUTION}" in
-	wheezy)
-		_ISOHDPFX="/usr/lib/syslinux/isohdpfx.bin"
-		Check_package chroot/${_ISOHDPFX} syslinux-common
-		;;
-
-	*)
-		_ISOHDPFX="/usr/lib/ISOLINUX/isohdpfx.bin"
-		Check_package chroot/${_ISOHDPFX} isolinux
-		;;
-esac
+Check_package chroot /usr/bin/xorriso xorriso
+Check_package chroot /usr/lib/ISOLINUX/isohdpfx.bin isolinux
 
 # Restoring cache
 Restore_cache cache/packages.binary
@@ -80,12 +69,12 @@ then
 fi
 
 # Handle xorriso generic options
-XORRISO_OPTIONS="-R -r -J -joliet-long -l -cache-inodes"
+XORRISO_OPTIONS="-R -r -J -joliet-long -l -cache-inodes -iso-level 3"
 
 # Handle xorriso live-build specific options
 if [ "${LIVE_IMAGE_TYPE}" = "iso-hybrid" ]
 then
-	XORRISO_OPTIONS="${XORRISO_OPTIONS} -isohybrid-mbr ${_ISOHDPFX} -partition_offset 16"
+	XORRISO_OPTIONS="${XORRISO_OPTIONS} -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin -partition_offset 16"
 fi
 
 if [ "${_QUIET}" = "true" ]
@@ -126,7 +115,7 @@ case "${LB_BOOTLOADER}" in
 		XORRISO_EXCLUDE="boot/grub/stage2_eltorito"
 		;;
 
-	grub2)
+	grub-pc)
 		XORRISO_OPTIONS="${XORRISO_OPTIONS} -no-emul-boot -boot-load-size 4 -boot-info-table"
 		XORRISO_OPTIONS="${XORRISO_OPTIONS} -b boot/grub/grub_eltorito -J"
 		XORRISO_EXCLUDE="boot/grub/grub_eltorito"
@@ -160,7 +149,7 @@ esac
 #	XORRISO_OPTIONS="${XORRISO_OPTIONS} -m ${XORRISO_EXCLUDE}"
 #fi
 
-if [ "${LB_BOOTLOADER}" = "grub2" ]
+if [ "${LB_BOOTLOADER}" = "grub-pc" ]
 then
 
 cat > binary.sh << EOF
@@ -183,7 +172,7 @@ for file in \${input_dir}/*.mod \${input_dir}/efiemu??.o \
 do
 	if test -f "\$file"
 	then
-		cp -f "\$file" binary/boot/grub
+		cp -f "\$file" binary/boot/grub/i386-pc
 	fi
 done
 EOF
