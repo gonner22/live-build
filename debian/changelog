@@ -1,3 +1,19 @@
+live-build (5.0~a11-1kali1) kali-dev; urgency=medium
+
+  * Import new version from debian
+  * Drop the patches Drop-the-ixp4xx-flavour-on-armel-as-Kali-does-not-ha.patch
+    as it's not needed anymore with new kernel version
+  * Drop patches Do-not-pass-the-version-to-apt-ftprelease-when-we-do.patch
+    Use-linux-image-586-instead-of-linux-image-486-for-k.patch and
+    Drop-elilo-from-list-of-d-i-required-packages-on-i38.patch:
+    now included in debian
+  * Drop the patch Add-versions-for-Kali-releases.patch: fixed in debian (bug
+    790860)
+  * Remaining changes compared to debian: three patches including one for
+    supporting EFI boot
+
+ -- Sophie Brun <sophie@freexian.com>  Wed, 09 Sep 2015 11:20:20 +0200
+
 live-build (5.0~a11-1) unstable; urgency=low
 
   [ Daniel Baumann ]

@@ -16,12 +16,10 @@ Forwarded: directly committed upstream
  functions/packagelists.sh | 4 ++++
  1 file changed, 4 insertions(+)
 
-diff --git a/functions/packagelists.sh b/functions/packagelists.sh
-index 8470d9a..02a879d 100755
 --- a/functions/packagelists.sh
 +++ b/functions/packagelists.sh
-@@ -107,6 +107,10 @@ Expand_packagelist ()
- 					_LB_ENABLED=1
+@@ -111,6 +111,10 @@ Expand_packagelist ()
+ 					# Skip comments
  					;;
  
 +				\#*)

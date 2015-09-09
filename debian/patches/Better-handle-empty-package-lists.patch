@@ -9,11 +9,9 @@ up empty (most notably due to #if evaluating to false).
  scripts/build/binary_package-lists | 4 ++++
  1 file changed, 4 insertions(+)
 
-diff --git a/scripts/build/binary_package-lists b/scripts/build/binary_package-lists
-index ff19c3c..970de4f 100755
 --- a/scripts/build/binary_package-lists
 +++ b/scripts/build/binary_package-lists
-@@ -153,6 +153,10 @@ then
+@@ -145,6 +145,10 @@ then
  
  	for SECTION in ${POOL}/*
  	do
