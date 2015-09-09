@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
+## Copyright (C) 2006-2015 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -49,10 +49,6 @@ case "${LB_ARCHITECTURES}" in
 esac
 
 case "${LB_INITRAMFS}" in
-	casper)
-		INITFS="casper"
-		;;
-
 	live-boot)
 		INITFS="live"
 		;;
@@ -85,7 +81,7 @@ done
 case "${LB_CHROOT_FILESYSTEM}" in
 	ext2|ext3|ext4)
 		# Checking depends
-		Check_package chroot/sbin/mkfs.${LB_CHROOT_FILESYSTEM} e2fsprogs
+		Check_package chroot /sbin/mkfs.${LB_CHROOT_FILESYSTEM} e2fsprogs
 
 		# Restoring cache
 		Restore_cache cache/packages.binary
@@ -141,11 +137,7 @@ case "${LB_CHROOT_FILESYSTEM}" in
 				# Move image
 				mv chroot/filesystem.${LB_CHROOT_FILESYSTEM} binary/${INITFS}
 
-				case "${LB_MODE}" in
-					ubuntu)
-						du -B 1 -s chroot/chroot | cut -f1 > binary/${INITFS}/filesystem.size
-						;;
-				esac
+				du -B 1 -s chroot/chroot | cut -f1 > binary/${INITFS}/filesystem.size
 
 				if [ -e chroot/chroot.cache ]
 				then
@@ -158,7 +150,6 @@ case "${LB_CHROOT_FILESYSTEM}" in
 					lb chroot_resolv remove ${@}
 					lb chroot_hosts remove ${@}
 					lb chroot_sysv-rc remove ${@}
-					lb chroot_upstart remove ${@}
 					lb chroot_dpkg remove ${@}
 					lb chroot_debianchroot remove ${@}
 					lb chroot_sysfs remove ${@}
@@ -176,7 +167,6 @@ case "${LB_CHROOT_FILESYSTEM}" in
 					lb chroot_debianchroot install ${@}
 					lb chroot_dpkg install ${@}
 					lb chroot_sysv-rc install ${@}
-					lb chroot_upstart install ${@}
 					lb chroot_hosts install ${@}
 					lb chroot_resolv install ${@}
 					lb chroot_hostname install ${@}
@@ -211,7 +201,7 @@ case "${LB_CHROOT_FILESYSTEM}" in
 
 	jffs2)
 		# Checking depends
-		Check_package chroot/usr/sbin/mkfs.jffs2 mtd-tools
+		Check_package chroot /usr/sbin/mkfs.jffs2 mtd-tools
 
 		# Restoring cache
 		Restore_cache cache/packages.binary
@@ -248,7 +238,6 @@ case "${LB_CHROOT_FILESYSTEM}" in
 					lb chroot_resolv remove ${@}
 					lb chroot_hosts remove ${@}
 					lb chroot_sysv-rc remove ${@}
-					lb chroot_upstart remove ${@}
 					lb chroot_dpkg remove ${@}
 					lb chroot_debianchroot remove ${@}
 					lb chroot_sysfs remove ${@}
@@ -266,7 +255,6 @@ case "${LB_CHROOT_FILESYSTEM}" in
 					lb chroot_debianchroot install ${@}
 					lb chroot_dpkg install ${@}
 					lb chroot_sysv-rc install ${@}
-					lb chroot_upstart install ${@}
 					lb chroot_hosts install ${@}
 					lb chroot_resolv install ${@}
 					lb chroot_hostname install ${@}
@@ -310,7 +298,7 @@ case "${LB_CHROOT_FILESYSTEM}" in
 
 	squashfs)
 		# Checking depends
-		Check_package chroot/usr/share/doc/squashfs-tools squashfs-tools
+		Check_package chroot /usr/share/doc/squashfs-tools squashfs-tools
 
 		# Restoring cache
 		Restore_cache cache/packages.binary
@@ -352,10 +340,7 @@ case "${LB_CHROOT_FILESYSTEM}" in
 			esac
 		fi
 
-		if [ "${LB_MODE}" != "ubuntu" ]
-		then
-			MKSQUASHFS_OPTIONS="${MKSQUASHFS_OPTIONS} -comp xz"
-		fi
+		MKSQUASHFS_OPTIONS="${MKSQUASHFS_OPTIONS} -comp xz"
 
 		case "${LB_BUILD_WITH_CHROOT}" in
 			true)
@@ -371,11 +356,7 @@ case "${LB_CHROOT_FILESYSTEM}" in
 
 				rm -f chroot/chroot/excludes
 
-				case "${LB_MODE}" in
-					ubuntu)
-						du -B 1 -s chroot/chroot | cut -f1 > binary/${INITFS}/filesystem.size
-						;;
-				esac
+				du -B 1 -s chroot/chroot | cut -f1 > binary/${INITFS}/filesystem.size
 
 				# Move image
 				mv chroot/filesystem.squashfs binary/${INITFS}
@@ -392,7 +373,6 @@ case "${LB_CHROOT_FILESYSTEM}" in
 					lb chroot_resolv remove ${@}
 					lb chroot_hosts remove ${@}
 					lb chroot_sysv-rc remove ${@}
-					lb chroot_upstart remove ${@}
 					lb chroot_dpkg remove ${@}
 					lb chroot_debianchroot remove ${@}
 					lb chroot_sysfs remove ${@}
@@ -410,7 +390,6 @@ case "${LB_CHROOT_FILESYSTEM}" in
 					lb chroot_debianchroot install ${@}
 					lb chroot_dpkg install ${@}
 					lb chroot_sysv-rc install ${@}
-					lb chroot_upstart install ${@}
 					lb chroot_hosts install ${@}
 					lb chroot_resolv install ${@}
 					lb chroot_hostname install ${@}
@@ -436,11 +415,7 @@ case "${LB_CHROOT_FILESYSTEM}" in
 
 				mksquashfs chroot binary/${INITFS}/filesystem.squashfs ${MKSQUASHFS_OPTIONS}
 
-				case "${LB_MODE}" in
-					ubuntu)
-						du -B 1 -s chroot | cut -f1 > binary/${INITFS}/filesystem.size
-						;;
-				esac
+				du -B 1 -s chroot | cut -f1 > binary/${INITFS}/filesystem.size
 				;;
 		esac
 

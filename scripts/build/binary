@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
+## Copyright (C) 2006-2015 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -48,7 +48,6 @@ then
 	lb chroot_resolv install ${@}
 	lb chroot_hostname install ${@}
 	lb chroot_sysv-rc install ${@}
-	lb chroot_upstart install ${@}
 	lb chroot_apt install-binary ${@}
 	lb chroot_archives chroot install ${@}
 fi
@@ -61,8 +60,8 @@ lb binary_manifest ${@}
 lb binary_package-lists ${@}
 lb binary_linux-image ${@}
 lb binary_memtest ${@}
-lb binary_grub ${@}
-lb binary_grub2 ${@}
+lb binary_grub-legacy ${@}
+lb binary_grub-pc ${@}
 lb binary_syslinux ${@}
 lb binary_disk ${@}
 lb binary_loadlin ${@}
@@ -95,7 +94,6 @@ then
 	lb chroot_hostname remove ${@}
 	lb chroot_resolv remove ${@}
 	lb chroot_hosts remove ${@}
-	lb chroot_upstart remove ${@}
 	lb chroot_sysv-rc remove ${@}
 	lb chroot_dpkg remove ${@}
 	lb chroot_debianchroot remove ${@}

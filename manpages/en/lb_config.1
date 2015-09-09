@@ -1,4 +1,4 @@
-.TH LIVE\-BUILD 1 2014\-12\-10 4.0.4-1 "Live Systems Project"
+.TH LIVE\-BUILD 1 2015\-08\-23 5.0~a11-1 "Live Systems Project"
 
 .SH NAME
 \fBlb config\fR \- Create config directory
@@ -40,8 +40,6 @@
 	[\fB\-\-bootappend\-live\fR \fIPARAMETER\fR|\fI"PARAMETERS"\fR]
 .br
 	[\fB\-\-bootloader\fR grub|grub2|syslinux]
-.br
-	[\fB\-\-bootstrap\fR cdebootstrap|cdebootstrap-static|debootstrap]
 .br
 	[\fB\-\-cache\fR true|false]
 .br
@@ -267,8 +265,6 @@ sets boot parameters specific to debian\-installer, if included.
 sets boot parameters specific to debian\-live. A complete list of boot parameters can be found in the \fIlive\-boot\fR(7) and \fIlive\-config\fR(7) manual pages.
 .IP "\fB\-\-bootloader\fR grub|grub2|syslinux" 4
 defines which bootloader is being used in the generated image. This has only an effect if the selected binary image type does allow to choose the bootloader. For example, if you build a iso, always syslinux (or more precise, isolinux) is being used. Also note that some combinations of binary images types and bootloaders may be possible but live\-build does not support them yet. \fBlb config\fR will fail to create such a not yet supported configuration and give a explanation about it. For hdd images on amd64 and i386, the default is syslinux.
-.IP "\fB\-\-bootstrap\fR cdebootstrap|cdebootstrap-static|debootstrap" 4
-defines which program is used to bootstrap the debian chroot, default is debootstrap.
 .IP "\fB\-\-cache\fR true|false" 4
 defines globally if any cache should be used at all. Different caches can be controlled through the their own options.
 .IP "\fB\-\-cache\-indices\fR true|false" 4
@@ -348,7 +344,7 @@ sets the keyring package or additional keyring packages. By default this is set 
 .IP "\-k|\fB\-\-linux\-flavours\fR \fIFLAVOUR\fR|""\fIFLAVOURS\fR""" 4
 sets the kernel flavours to be installed. Note that in case you specify more than that the first will be configured the default kernel that gets booted.
 .IP "\fB\-\-linux\-packages\fR ""\fIPACKAGES\fR""" 4
-sets the internal name of the kernel packages naming scheme. If you use debian kernel packages, you will not have to adjust it. If you decide to use custom kernel packages that do not follow the debian naming scheme, remember to set this option to the stub of the packages only (for debian this is linux\-image\-2.6), so that \fISTUB\fR-\fIFLAVOUR\fR results in a valid package name (for debian e.g. linux\-image\-2.6\-486). Preferably you use the meta package name, if any, for the stub, so that your configuration is ABI independent. Also don't forget that you have to include stubs of the binary modules packages for unionfs or aufs, and squashfs if you built them out-of-tree.
+sets the internal name of the kernel packages naming scheme. If you use debian kernel packages, you will not have to adjust it. If you decide to use custom kernel packages that do not follow the debian naming scheme, remember to set this option to the stub of the packages only (for debian this is linux\-image\-2.6), so that \fISTUB\fR-\fIFLAVOUR\fR results in a valid package name (for debian e.g. linux\-image\-586). Preferably you use the meta package name, if any, for the stub, so that your configuration is ABI independent. Also don't forget that you have to include stubs of the binary modules packages for unionfs or aufs, and squashfs if you built them out-of-tree.
 .IP "\fB\-\-losetup\fR losetup|losetup.orig" 4
 sets the filename of the losetup binary from the host system that should be used. This is autodetected and does generally not need any customization.
 .IP "\fB\-\-memtest\fR memtest86+|memtest86|none" 4
@@ -364,7 +360,7 @@ sets the location of the debian updates package mirror that will be used to fetc
 .IP "\fB\-\-parent\-mirror\-chroot\-backports\fR \fIURL\fR" 4
 sets the location of the debian backports package mirror that will be used to fetch packages in order to build the live system. By default, this points to http://backports.debian.org/debian-backports/.
 .IP "\fB\-\-parent\-mirror\-binary\fR \fIURL\fR" 4
-sets the location of the debian package mirror that should end up configured in the final image and which is the one a user would see and use. This has not necessarily to be the same that is used to build the image, e.g. if you use a local mirror but want to have an official mirror in the image. By default, 'http://http.debian.net/debian/' is used.
+sets the location of the debian package mirror that should end up configured in the final image and which is the one a user would see and use. This has not necessarily to be the same that is used to build the image, e.g. if you use a local mirror but want to have an official mirror in the image. By default, 'http://httpredir.debian.org/debian/' is used.
 .IP "\fB\-\-parent\-mirror\-binary\-security\fR \fIURL\fR" 4
 sets the location of the debian security package mirror that should end up configured in the final image. By default, 'http://security.debian.org/' is used.
 .IP "\fB\-\-parent\-mirror\-binary\-updates\fR \fIURL\fR" 4

@@ -1,3 +1,206 @@
+live-build (5.0~a11-1) unstable; urgency=low
+
+  [ Daniel Baumann ]
+  * Getting rid of hard-coded release numbers and using /etc/os-release
+    instead (Closes: #790860).
+  * Updating stat calls to also give the right result in container setups,
+    thanks to Kristian Klausen <klausenbusk@hotmail.com> (Closes:
+    #789300).
+
+  [ Maximilian Mehnert ]
+  * Correct syslinux mbr.bin path.
+
+  [ Daniel Baumann ]
+  * Wrap and sort debian control file.
+
+ -- Daniel Baumann <mail@daniel-baumann.ch>  Sun, 23 Aug 2015 10:57:38 +0200
+
+live-build (5.0~a10-1) unstable; urgency=low
+
+  [ Daniel Baumann ]
+  * Correcting typos in chroot_hooks.
+
+  [ Raphaël Hertzog ]
+  * Do not pass an empty version in APT::FTPArchive::Release::Version
+    (Closes: #789800).
+  * Drop elilo from list of d-i required packages on i386.
+
+  [ Daniel Reichelt ]
+  * Fix check for presence of chroot hooks
+  * Fix hook scripts location in Makefile
+
+  [ Daniel Baumann ]
+  * Simplify hooks pattern in Makefile.
+
+ -- Daniel Baumann <mail@daniel-baumann.ch>  Mon, 10 Aug 2015 19:35:24 +0200
+
+live-build (5.0~a9-1) unstable; urgency=low
+
+  * Splitting non-live specific hooks into their own subdirectory within
+    hooks.
+  * Installing apt and dpkg updates (if any) first in derivatives mode,
+    then doing dist-upgrade.
+  * Correcting symlinking of hooks in lb config.
+  * Correcting execution of local binary hooks.
+  * Correcting execution of local source hooks.
+  * Removing parent-directory too when cleaning up the config tree bind
+    mount in chroot.
+
+ -- Daniel Baumann <mail@daniel-baumann.ch>  Sat, 06 Jun 2015 06:39:47 +0200
+
+live-build (5.0~a8-1) unstable; urgency=low
+
+  * Actually removing live-build-cgi from control.
+  * Correcting leftover reference to binary_grub in binary.
+
+ -- Daniel Baumann <mail@daniel-baumann.ch>  Tue, 19 May 2015 06:26:38 +0200
+
+live-build (5.0~a7-1) unstable; urgency=low
+
+  * Renaming grub2 helper to grub-pc for later grub-efi addition.
+  * Renaming grub helper to grub-legacy for consistency.
+  * Dropping obsolete template checks within grub helpers.
+  * Switching from http.debian.net to httpredir.debian.org as default
+    binary mirror.
+  * Removing broken samhain handling (Closes: #785264).
+
+ -- Daniel Baumann <mail@daniel-baumann.ch>  Thu, 14 May 2015 13:16:38 +0200
+
+live-build (5.0~a6-1) unstable; urgency=low
+
+  * Moving grub and grub2 templates into shared bootloader config
+    directory.
+  * Updating example gitignore file.
+  * Flattening frontend directory within the source tree.
+  * Adding hook to disable tmpfs on /tmp when using sysvinit, previously
+    done by live-config.
+  * Moving hooks to hooks/live, both in live-build sources and live-build
+    configs.
+  * Dropping automagics for casper.
+  * Dropping automagics for ubuntu.
+  * Adding data symlink for stretch.
+  * Dropping support for upstart.
+
+ -- Daniel Baumann <mail@daniel-baumann.ch>  Mon, 04 May 2015 20:03:59 +0200
+
+live-build (5.0~a5-1) unstable; urgency=low
+
+  * Removing temporary hack to exclude prism2-usb-firmware-installer, the
+    download homepage seems to work again (Closes: #783433).
+  * Moving cgi to its own source package.
+  * Correcting wrong tar command for tarball images, thanks to Yadickson
+    Soto <yadickson@gmail.com> (Closes: #780627).
+  * Setting debian default distribution to stretch.
+  * Setting progress-linux default distribution to cairon.
+  * Calling lb config in lb build to support building a all-default-image
+    with a simple lb build (Closes: #778327).
+  * Overwriting reather than appending content of autorun.inf (Closes:
+    #777359).
+
+ -- Daniel Baumann <mail@daniel-baumann.ch>  Tue, 28 Apr 2015 07:53:25 +0200
+
+live-build (5.0~a4-1) unstable; urgency=low
+
+  [ Richard Nelson ]
+  * Adding live-build version information to the footer of live-build-cgi
+    footer.html.
+
+  [ Daniel Baumann ]
+  * Adding hook to create locales files.
+
+  [ victory ]
+  * Unfuzzy Japanese translation.
+
+  [ Richard Nelson ]
+  * Rename LIVE_IMAGE_TYPE to LB_BINARY_IMAGES on l-b-cgi frontend.
+  * Initial commit to provide biuld status on l-b-cgi frontend.
+  * Harmonize variables on build status script for l-b-cgi frontend.
+  * Added output of processing builds to status page for l-b-cgi frontend.
+  * On status output of running builds only count directories for l-b-cgi
+    frontend.
+  * Adding live option for debian_installer in template for l-b-cgi
+    frontend.
+
+  [ Daniel Reichelt ]
+  * Don't truncate files outside the build chroot.
+
+ -- Daniel Baumann <mail@daniel-baumann.ch>  Sun, 26 Apr 2015 20:20:53 +0200
+
+live-build (5.0~a3-1) experimental; urgency=low
+
+  [ Daniel Baumann ]
+  * Removing spurious .grep.swp temporary file in source tree.
+  * Adding check for isolinux build-depends in chroot.
+  * Updating d-i bootparameter separator for jessie.
+  * Enabling security and release updates for jessie.
+  * Correcting typo in stagefile check for includes.chroot.
+  * Using -iso-level 3 option for xorriso to work with image sizes beyond
+    4 GB (Closes: #775424).
+  * Correcting packagelist parsing when packages are listed with notation
+    of a specific version (Closes: #775832).
+  * Switching to default to linux-image-586 on i386.
+
+  [ Fathi Boudra ]
+  * Adding linux flavours for arm64/armhf architectures.
+
+  [ Daniel Baumann ]
+  * Making functions/chroot_bind_path.sh executable within the source tree
+    (Closes: #777096).
+  * Using same logic to create the source/.disk/archive_trace for
+    binary/.disk/archive_trace too (Closes: #774200).
+  * Applying patch from jnqnfe <jnqnfe@gmail.com> to correct grub2
+    bootloader directory within the binary images (Closes: #775316).
+
+ -- Daniel Baumann <mail@daniel-baumann.ch>  Sat, 07 Feb 2015 06:57:26 +0100
+
+live-build (5.0~a2-1) experimental; urgency=low
+
+  [ Raphaël Hertzog ]
+  * Skip comments in package lists.
+
+  [ Jan Blunck ]
+  * Bind local repository into chroot directory.
+
+  [ jnqnfe ]
+  * Address "should check that we're building on debian through e.g. a
+    'derivative-is-based-on' variable or somesuch" fixme.
+
+  [ Daniel Baumann ]
+  * Updating misc settings for progress-linux.
+  * Cleaning up from python removal (LIVE_IMAGE_PARENT_ARCHIVE_AREAS).
+  * Dropping cdebootstrap support (Closes: #773657).
+
+  [ Richard Nelson ]
+  * Dropping support of config type rescue in frontend/cgi.
+
+  [ Daniel Baumann ]
+  * Adding wget to recommends (Closes: #774326).
+  * Changing package dependency checks within chroot to work outside as
+    well.
+  * Updating wget dependency in installer_debian-installer to look for
+    wget on the host system rather than the chroot.
+  * Adding wget dependency in chroot_firmware.
+  * Dropping some sparc leftovers (Closes: #774196).
+  * Adding apt-utils to recommends (Closes: #774339).
+  * Adding gpgv and debian-keyring to suggests for bootstrapping archive
+    keyrings in derivative modes.
+  * Dropping unuseful information from bug-script (Closes: #774340).
+  * Applying slightly modified patch from jnqnfe <jnqnfe@gmail.com> to
+    show correct win32-loader ico file on windows (Closes: #772781).
+  * Correcting dependency checks in binary_package-lists (Closes:
+    #774336).
+  * Dropping manual include of dbus for live-config-systemd, it's a
+    recommends now.
+  * Updating year in copyright notices to 2015.
+
+ -- Daniel Baumann <mail@daniel-baumann.ch>  Sun, 04 Jan 2015 20:06:56 +0100
+
+live-build (5.0~a1-1) experimental; urgency=low
+
+  * Dropping support for wheezy.
+
+ -- Daniel Baumann <mail@daniel-baumann.ch>  Wed, 10 Dec 2014 08:39:14 +0100
+
 live-build (4.0.4-1kali7) kali-dev; urgency=medium
 
   * Do not try to include elilo, it's gone from Debian Testing.

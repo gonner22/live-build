@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
+## Copyright (C) 2006-2015 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -48,10 +48,6 @@ Check_architectures amd64 i386
 Check_crossarchitectures
 
 case "${LB_INITRAMFS}" in
-	casper)
-		_INITRAMFS="casper"
-		;;
-
 	*)
 		_INITRAMFS="live"
 		;;
@@ -120,74 +116,24 @@ else
 	fi
 fi
 
-# legacy compatibility for wheezy
-if [ -e "${_SOURCE}.${LB_PARENT_DISTRIBUTION}" ]
-then
-	_SOURCE="${_SOURCE}.${LB_PARENT_DISTRIBUTION}"
-fi
-
 # Checking depends
 case "${LB_BUILD_WITH_CHROOT}" in
 	true)
-		case "${LB_PARENT_DISTRIBUTION}" in
-			wheezy)
-				case "${_BOOTLOADER}" in
-					syslinux|extlinux)
-						Check_package chroot/usr/bin/${_BOOTLOADER} ${_BOOTLOADER}
-						;;
-
-					*)
-						Check_package chroot/usr/lib/syslinux syslinux-common
-						;;
-				esac
-				;;
-
-			*)
-				Check_package chroot/usr/lib/$(echo ${_BOOTLOADER} | tr [a-z] [A-Z]) ${_BOOTLOADER}
-				Check_package chroot/usr/lib/syslinux syslinux-common
-				;;
-		esac
-
-		Check_package chroot/usr/lib/syslinux syslinux-common
+		Check_package chroot /usr/lib/$(echo ${_BOOTLOADER} | tr [a-z] [A-Z]) ${_BOOTLOADER}
+		Check_package chroot /usr/lib/syslinux syslinux-common
 
 		if ls "${_SOURCE}"/*.svg* > /dev/null 2>&1
 		then
-			Check_package chroot/usr/bin/rsvg-convert librsvg2-bin
+			Check_package chroot /usr/bin/rsvg-convert librsvg2-bin
 		fi
 		;;
 
 	false)
-		case "${LB_PARENT_DISTRIBUTION}" in
-			wheezy)
-				case "${_BOOTLOADER}" in
-					syslinux|extlinux)
-						if [ ! -e /usr/bin/${_BOOTLOADER} ]
-						then
-							# syslinux or extlinux
-							Echo_error "/usr/bin/${_BOOTLOADER} - no such file."
-							exit 1
-						fi
-						;;
-
-					*)
-						if ! ls /usr/lib/syslinux/${_BOOTLOADER}* > /dev/null 2>&1
-						then
-							Echo_error "/usr/lib/syslinux/${_BOOTLOADER}* - no such files."
-							exit 1
-						fi
-						;;
-				esac
-				;;
-
-			*)
-				if [ ! -e "/usr/share/$(echo ${_BOOTLOADER} | tr [a-z] [A-Z])" ]
-				then
-					Echo_error "/usr/share/$(echo ${_BOOTLOADER} | tr [a-z] [A-Z])"
-					exit 1
-				fi
-				;;
-		esac
-
+		if [ ! -e "/usr/share/$(echo ${_BOOTLOADER} | tr [a-z] [A-Z])" ]
+		then
+			Echo_error "/usr/share/$(echo ${_BOOTLOADER} | tr [a-z] [A-Z])"
+			exit 1
+		fi
 
 		if [ ! -e /usr/lib/syslinux ]
 		then
@@ -283,7 +229,12 @@ then
 	esac
 fi
 
-eval _VERSION="$`echo RELEASE_${LB_DISTRIBUTION}`"
+if [ -e chroot/etc/os-release ]
+then
+	_VERSION="$(. chroot/etc/os-release && echo ${VERSION_ID})"
+fi
+
+_VERSION="${VERSION:-none}"
 
 _DISTRIBUTION="${LB_DISTRIBUTION}"
 _ARCHITECTURE="${LB_ARCHITECTURES}"

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## live-build(7) - System Build Scripts
-## Copyright (C) 2006-2014 Daniel Baumann <mail@daniel-baumann.ch>
+## Copyright (C) 2006-2015 Daniel Baumann <mail@daniel-baumann.ch>
 ##
 ## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
 ## This is free software, and you are welcome to redistribute it
@@ -10,10 +10,11 @@
 
 Check_package ()
 {
-	FILE="${1}"
-	PACKAGE="${2}"
+	CHROOT="${1}"
+	FILE="${2}"
+	PACKAGE="${3}"
 
-	Check_installed "${FILE}" "${PACKAGE}"
+	Check_installed "${CHROOT}" "${FILE}" "${PACKAGE}"
 
 	case "${INSTALL_STATUS}" in
 		1)
@@ -66,38 +67,35 @@ Remove_package ()
 #                  2 if package isn't installed and we aren't in an apt managed system
 Check_installed ()
 {
-	FILE="${1}"
-	PACKAGE="${2}"
+	CHROOT="${1}"
+	FILE="${2}"
+	PACKAGE="${3}"
 
-	case "${LB_BUILD_WITH_CHROOT}" in
-		true)
+	if [ "${LB_BUILD_WITH_CHROOT}" = "true" ] && [ "${CHROOT}" = "chroot" ]
+	then
+		if Chroot chroot "dpkg-query -s ${PACKAGE}" 2> /dev/null | grep -qs "Status: install"
+		then
+			INSTALL_STATUS=0
+		else
+			INSTALL_STATUS=1
+		fi
+	else
+		if which dpkg-query > /dev/null 2>&1
+		then
 			if Chroot chroot "dpkg-query -s ${PACKAGE}" 2> /dev/null | grep -qs "Status: install"
 			then
 				INSTALL_STATUS=0
 			else
 				INSTALL_STATUS=1
 			fi
-			;;
-		false)
-			if which dpkg-query > /dev/null 2>&1
+		else
+			if [ ! -e "${FILE}" ]
 			then
-				if Chroot chroot "dpkg-query -s ${PACKAGE}" 2> /dev/null | grep -qs "Status: install"
-				then
-					INSTALL_STATUS=0
-				else
-					INSTALL_STATUS=1
-				fi
+				INSTALL_STATUS=2
 			else
-				FILE="$(echo ${FILE} | sed -e 's|chroot||')"
-
-				if [ ! -e "${FILE}" ]
-				then
-					INSTALL_STATUS=2
-				else
-					INSTALL_STATUS=0
-				fi
+				INSTALL_STATUS=0
 			fi
-			;;
-	esac
+		fi
+	fi
 }
 
