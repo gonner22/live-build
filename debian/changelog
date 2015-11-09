@@ -1,6 +1,7 @@
 live-build (5.0~a11-1kali2) kali-dev; urgency=medium
 
   * Add data/debian-cd/ symlinks for sana via debian/live-build.links.
+  * Use "sid" as target for the symlinks as this distribution always exists.
 
  -- Raphaël Hertzog <hertzog@debian.org>  Mon, 09 Nov 2015 17:16:18 +0100
 
