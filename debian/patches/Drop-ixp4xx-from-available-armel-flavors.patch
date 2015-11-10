@@ -1,0 +1,22 @@
+From: =?utf-8?q?Rapha=C3=ABl_Hertzog?= <hertzog@debian.org>
+Date: Tue, 10 Nov 2015 09:34:38 +0100
+Subject: Drop ixp4xx from available armel flavors
+
+It's gone from Debian unstable/testing and from Kali.
+---
+ functions/defaults.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/functions/defaults.sh b/functions/defaults.sh
+index eba52ae..9fcced9 100755
+--- a/functions/defaults.sh
++++ b/functions/defaults.sh
+@@ -413,7 +413,7 @@ Set_defaults ()
+ 		armel)
+ 			# armel will have special images: one rootfs image and many additional kernel images.
+ 			# therefore we default to all available armel flavours
+-			LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-ixp4xx kirkwood orion5x versatile}"
++			LB_LINUX_FLAVOURS="${LB_LINUX_FLAVOURS:-kirkwood orion5x versatile}"
+ 			;;
+ 
+ 		armhf)

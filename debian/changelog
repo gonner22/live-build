@@ -1,3 +1,9 @@
+live-build (5.0~a11-1kali3) kali-dev; urgency=medium
+
+  * Drop ixp4xx flavour on armel as it's gone from Debian/Kali.
+
+ -- Raphaël Hertzog <hertzog@debian.org>  Tue, 10 Nov 2015 09:35:51 +0100
+
 live-build (5.0~a11-1kali2) kali-dev; urgency=medium
 
   * Add data/debian-cd/ symlinks for sana via debian/live-build.links.

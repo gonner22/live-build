@@ -9,6 +9,8 @@ up empty (most notably due to #if evaluating to false).
  scripts/build/binary_package-lists | 4 ++++
  1 file changed, 4 insertions(+)
 
+diff --git a/scripts/build/binary_package-lists b/scripts/build/binary_package-lists
+index d81bfe7..dcbadcc 100755
 --- a/scripts/build/binary_package-lists
 +++ b/scripts/build/binary_package-lists
 @@ -145,6 +145,10 @@ then

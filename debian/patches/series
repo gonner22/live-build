@@ -1,3 +1,4 @@
 Add-support-for-EFI-boot-with-syslinux-efi.patch
 Skip-comments-in-package-lists.patch
 Better-handle-empty-package-lists.patch
+Drop-ixp4xx-from-available-armel-flavors.patch
