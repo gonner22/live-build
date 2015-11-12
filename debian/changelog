@@ -1,3 +1,9 @@
+live-build (5.0~a11-1kali4) kali-dev; urgency=medium
+
+  * Add libmenu.c32/libgpl.c32 to the required syslinux files.
+
+ -- Raphaël Hertzog <hertzog@debian.org>  Fri, 13 Nov 2015 09:40:17 +0100
+
 live-build (5.0~a11-1kali3) kali-dev; urgency=medium
 
   * Drop ixp4xx flavour on armel as it's gone from Debian/Kali.

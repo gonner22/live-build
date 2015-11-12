@@ -20,3 +20,11 @@ override_dh_link:
 	# workaround dh_link convertion of absolute symlinks to relvative symlinks
 	rm -rf debian/live-build/usr/share/live/build/bootloaders
 	cp -a share/bootloaders debian/live-build/usr/share/live/build/bootloaders
+	# Kali fix: add missing libmenu.c32 (upstream fix would add the
+	# symlink in the git repo directly)
+	for bootloader in extlinux isolinux pxelinux syslinux; do \
+	    ln -sf /usr/lib/syslinux/modules/bios/libmenu.c32 \
+	    	   debian/live-build/usr/share/live/build/bootloaders/$$bootloader/ ; \
+	    ln -sf /usr/lib/syslinux/modules/bios/libgpl.c32 \
+	    	   debian/live-build/usr/share/live/build/bootloaders/$$bootloader/ ; \
+	done
