@@ -17,8 +17,6 @@ Depends:
 Recommends:
  apt-utils,
  cpio,
- live-boot-doc,
- live-config-doc,
  live-manual-html | live-manual,
  wget,
 Suggests:
