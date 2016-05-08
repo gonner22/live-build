@@ -1,0 +1,3 @@
+2016-05-01	Daniel Baumann <daniel.baumann@open-infrastructure.net>
+
+	* Releasing version 20160301.
