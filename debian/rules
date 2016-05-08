@@ -4,10 +4,10 @@
 	dh ${@} --parallel
 
 override_dh_auto_install:
-	dh_auto_install -- DESTDIR=debian/live-build
+	dh_auto_install
 
 	# Removing unused files
-	rm -f debian/live-build/usr/share/doc/live-build/COPYING
+	rm -f debian/*/usr/share/doc/live-build/COPYING
 
 override_dh_builddeb:
 	dh_builddeb -- -Zxz
