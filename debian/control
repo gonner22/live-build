@@ -1,5 +1,5 @@
 Source: open-infrastructure-system-build
-Section: misc
+Section: admin
 Priority: optional
 Maintainer: Live Systems Maintainers <debian-live@lists.debian.org>
 Build-Depends:
