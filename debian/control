@@ -1,7 +1,7 @@
 Source: open-infrastructure-system-build
 Section: admin
 Priority: optional
-Maintainer: Live Systems Maintainers <debian-live@lists.debian.org>
+Maintainer: Daniel Baumann <mail@daniel-baumann.ch>
 Build-Depends:
  debhelper (>= 9),
 Standards-Version: 3.9.6
