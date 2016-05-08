@@ -7,7 +7,7 @@ override_dh_auto_install:
 	dh_auto_install
 
 	# Removing unused files
-	rm -f debian/*/usr/share/doc/live-build/COPYING
+	rm -rf debian/*/usr/share/doc/live-build
 
 override_dh_link:
 	dh_link
