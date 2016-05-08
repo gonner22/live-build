@@ -16,5 +16,5 @@ override_dh_link:
 	dh_link
 
 	# workaround dh_link convertion of absolute symlinks to relvative symlinks
-	rm -rf debian/live-build/usr/share/live/build/bootloaders
-	cp -a share/bootloaders debian/live-build/usr/share/live/build/bootloaders
+	rm -rf debian/open-infrastructure-system-build/usr/share/live/build/bootloaders
+	cp -a share/bootloaders debian/open-infrastructure-system-build/usr/share/live/build/bootloaders

@@ -1,4 +1,4 @@
-Source: live-build
+Source: open-infrastructure-system-build
 Section: misc
 Priority: optional
 Maintainer: Live Systems Maintainers <debian-live@lists.debian.org>
@@ -9,7 +9,7 @@ Homepage: http://live-systems.org/devel/live-build/
 Vcs-Browser: http://live-systems.org/gitweb/?p=live-build.git
 Vcs-Git: git://live-systems.org/git/live-build.git
 
-Package: live-build
+Package: open-infrastructure-system-build
 Architecture: all
 Depends:
  debootstrap,
