@@ -6,8 +6,8 @@ Build-Depends:
  debhelper (>= 9),
 Standards-Version: 3.9.6
 Homepage: http://open-infrastructure.net/system-build
-Vcs-Browser: http://live-systems.org/gitweb/?p=live-build.git
-Vcs-Git: git://live-systems.org/git/live-build.git
+Vcs-Browser: https://github.com/daniel-baumann/open-infrastructure-system-build
+Vcs-Git: https://github.com/daniel-baumann/open-infrastructure-system-build
 
 Package: open-infrastructure-system-build
 Architecture: all
