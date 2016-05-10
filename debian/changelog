@@ -1,0 +1,5 @@
+open-infrastructure-system-build (20160501-1) unstable; urgency=low
+
+  * Initial upload to sid (Closes: #816413).
+
+ -- Daniel Baumann <mail@daniel-baumann.ch>  Sun, 08 May 2016 08:11:35 +0200
