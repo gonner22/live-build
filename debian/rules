@@ -9,6 +9,14 @@ override_dh_auto_install:
 	# Removing unused files
 	rm -rf debian/*/usr/share/doc/live-build
 
+override_dh_compress:
+	dh_compress
+
+	# Recompressing without timestamp
+	cd debian/open-infrastructure-system-build/usr/share/live/build/bootloaders/grub-legacy && \
+	gunzip splash.xpm.gz && \
+	gzip -n splash.xpm
+
 override_dh_link:
 	dh_link
 
