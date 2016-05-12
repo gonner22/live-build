@@ -26,6 +26,8 @@ Conflicts:
  live-build,
 Replaces:
  live-build,
+Provides:
+ system-build,
 Description: System Image Build Tool
  system-build is a tool to build system images such as a live system from a
  configuration directory.
