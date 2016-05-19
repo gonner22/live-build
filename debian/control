@@ -5,7 +5,7 @@ Maintainer: Daniel Baumann <mail@daniel-baumann.ch>
 Build-Depends:
  debhelper (>= 9),
 Standards-Version: 3.9.8
-Homepage: http://open-infrastructure.net/system-build
+Homepage: https://open-infrastructure.net/software/system-build
 Vcs-Browser: https://github.com/daniel-baumann/open-infrastructure-system-build
 Vcs-Git: https://github.com/daniel-baumann/open-infrastructure-system-build
 
