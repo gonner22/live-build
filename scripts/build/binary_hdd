@@ -57,26 +57,34 @@ esac
 Check_package chroot /usr/share/doc/mtools mtools
 Check_package chroot /sbin/parted parted
 
-case "${LB_BOOTLOADER}" in
-	grub)
-		Check_package chroot /usr/sbin/grub grub
-		;;
+echo "${LB_BOOTLOADERS}" | \
+while IFS="," read -r BOOTLOADER
+do
+	case "${BOOTLOADER}" in
+		grub)
+			Check_package chroot /usr/sbin/grub grub
+			;;
+	esac
+done
 
-	syslinux)
-		case ${LB_BINARY_FILESYSTEM} in
-			fat*|ntfs)
-				_BOOTLOADER=syslinux
-				;;
-			ext[234]|btrfs)
-				_BOOTLOADER=extlinux
-				;;
-			*)
-				Echo_error "syslinux/extlinux doesn't support ${LB_BINARY_FILESYSTEM}"
-				exit 1
-				;;
-		esac
-		Check_package chroot /usr/bin/${_BOOTLOADER} ${_BOOTLOADER}
-		;;
+LB_PRIMARY_BOOTLOADER=$(echo "${LB_BOOTLOADERS}" | awk -F, '{ print $1 }')
+
+case ${LB_PRIMARY_BOOTLOADER} in
+		syslinux)
+			case ${LB_BINARY_FILESYSTEM} in
+				fat*|ntfs)
+					_BOOTLOADER=syslinux
+					;;
+				ext[234]|btrfs)
+					_BOOTLOADER=extlinux
+					;;
+				*)
+					Echo_error "syslinux/extlinux doesn't support ${LB_BINARY_FILESYSTEM}"
+					exit 1
+					;;
+			esac
+			Check_package chroot /usr/bin/${_BOOTLOADER} ${_BOOTLOADER}
+			;;
 esac
 
 # Restoring cache
@@ -164,11 +172,19 @@ esac
 case "${LB_BUILD_WITH_CHROOT}" in
 	true)
 		Chroot chroot "parted -s ${FREELO} mklabel ${PARTITION_TABLE_TYPE}" || true
-		Chroot chroot "parted -a optimal -s ${FREELO} mkpart primary ${PARTITION_TYPE} 0% 100%" || true
+		if [ "x${LB_HDD_PARTITION_START}" = "x" ];
+		then
+			Chroot chroot "parted -a optimal -s ${FREELO} mkpart primary\
+				${PARTITION_TYPE} 0% 100%" || true
+		else
+			Echo_message "using partition start at ${LB_HDD_PARTITION_START}"
+			Chroot chroot "parted -s ${FREELO} mkpart primary ${PARTITION_TYPE}\
+				${LB_HDD_PARTITION_START} 100%" || true
+		fi
 		Chroot chroot "parted -s ${FREELO} set 1 boot on" || true
 		Chroot chroot "parted -s ${FREELO} set 1 lba off" || true
 
-		if [ "${LB_BOOTLOADER}" = "syslinux" ]
+		if [ "${LB_PRIMARY_BOOTLOADER}" = "syslinux" ]
 		then
 			dd if=chroot/usr/lib/SYSLINUX/mbr.bin of=${FREELO} bs=440 count=1
 		fi
@@ -176,11 +192,19 @@ case "${LB_BUILD_WITH_CHROOT}" in
 
 	false)
 		parted -s ${FREELO} mklabel ${PARTITION_TABLE_TYPE} || true
-		parted -a optimal -s ${FREELO} mkpart primary ${PARTITION_TYPE} 0% 100% || true
+		if [ "x${LB_HDD_PARTITION_START}" = "x" ];
+		then
+			parted -a optimal -s ${FREELO} mkpart primary ${PARTITION_TYPE}\
+				0% 100% || true
+		else
+			Echo_message "using partition start at ${LB_HDD_PARTITION_START}"
+			parted -s ${FREELO} mkpart primary ${PARTITION_TYPE}\
+				${LB_HDD_PARTITION_START} 100% || true
+		fi
 		parted -s "${FREELO}" set 1 boot on || true
 		parted -s "${FREELO}" set 1 lba off || true
 
-		if [ "${LB_BOOTLOADER}" = "syslinux" ]
+		if [ "${LB_PRIMARY_BOOTLOADER}" = "syslinux" ]
 		then
 			dd if=/usr/lib/SYSLINUX/mbr.bin of=${FREELO} bs=440 count=1
 		fi
@@ -246,7 +270,7 @@ cp -T ${CP_OPTIONS} binary/ chroot/binary.tmp
 
 FIXME()
 {
-if [ "${LB_BOOTLOADER}" = "grub" ]
+if [ "${LB_PRIMARY_BOOTLOADER}" = "grub" ]
 then
 
 cat > chroot/grub.sh << EOF
@@ -312,7 +336,7 @@ then
 	mv chroot/dev.tmp chroot/dev
 fi
 
-mv chroot/binary.img ${LIVE_IMAGE_NAME}-${LB_ARCHITECTURES}
+mv chroot/binary.img ${LIVE_IMAGE_NAME}-${LB_ARCHITECTURES}.img
 
 # Saving cache
 Save_cache cache/packages.binary
