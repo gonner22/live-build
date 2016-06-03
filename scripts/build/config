@@ -32,7 +32,7 @@ USAGE="${PROGRAM}   [--apt apt|aptitude]\n\
 \t    [--bootappend-install PARAMETER|\"PARAMETERS\"]\n\
 \t    [--bootappend-live PARAMETER|\"PARAMETERS\"]\n\
 \t    [--bootappend-live-failsafe PARAMETER|\"PARAMETERS\"]\n\
-\t    [--bootloader grub-legacy|grub-pc|syslinux]\n\
+\t    [--bootloaders grub-legacy|grub-pc|syslinux]\n\
 \t    [--cache true|false]\n\
 \t    [--cache-indices true|false]\n\
 \t    [--cache-packages true|false]\n\
@@ -69,6 +69,7 @@ USAGE="${PROGRAM}   [--apt apt|aptitude]\n\
 \t    [--isohybrid-options OPTION|\"OPTIONS\"]\n\
 \t    [--hdd-label LABEL]\n\
 \t    [--hdd-size MB]\n\
+\t    [--hdd-partition-start [parted unit, e.g. 63s]\n\
 \t    [--iso-application NAME]\n\
 \t    [--iso-preparer NAME]\n\
 \t    [--iso-publisher NAME]\n\
@@ -137,9 +138,9 @@ Local_arguments ()
 		archive-areas:,parent-archive-areas:,chroot-filesystem:,
 		gzip-options:,image-name:,interactive:,keyring-packages:,linux-flavours:,linux-packages:,
 		security:,updates:,backports:,binary-filesystem:,binary-images:,
-		apt-indices:,bootappend-install:,bootappend-live:,bootappend-live-failsafe:,bootloader:,checksums:,compression:,config:,zsync:,build-with-chroot:,
+		apt-indices:,bootappend-install:,bootappend-live:,bootappend-live-failsafe:,bootloaders:,checksums:,compression:,config:,zsync:,build-with-chroot:,
 		debian-installer:,debian-installer-distribution:,debian-installer-preseedfile:,debian-installer-gui:,
-		grub-splash:,isohybrid-options:,hdd-label:,hdd-size:,iso-application:,iso-preparer:,iso-publisher:,
+		grub-splash:,isohybrid-options:,hdd-label:,hdd-size:,hdd-partition-start:,iso-application:,iso-preparer:,iso-publisher:,
 		iso-volume:,jffs2-eraseblock:,memtest:,net-root-filesystem:,net-root-mountoptions:,
 		net-root-path:,net-root-server:,net-cow-filesystem:,net-cow-mountoptions:,net-cow-path:,
 		net-cow-server:,net-tarball:,firmware-binary:,firmware-chroot:,swap-file-path:,swap-file-size:,
@@ -491,8 +492,8 @@ Local_arguments ()
 				shift 2
 				;;
 
-			--bootloader)
-				LB_BOOTLOADER="${2}"
+			--bootloaders)
+				LB_BOOTLOADERS="${2}"
 				shift 2
 				;;
 
@@ -563,6 +564,11 @@ Local_arguments ()
 
 			--hdd-size)
 				LB_HDD_SIZE="${2}"
+				shift 2
+				;;
+
+			--hdd-partition-start)
+				LB_HDD_PARTITION_START="${2}"
 				shift 2
 				;;
 
@@ -1149,9 +1155,9 @@ LB_BOOTAPPEND_INSTALL="${LB_BOOTAPPEND_INSTALL}"
 # (Default: empty)
 LB_BOOTAPPEND_LIVE_FAILSAFE="${LB_BOOTAPPEND_LIVE_FAILSAFE}"
 
-# \$LB_BOOTLOADER: set bootloader
-# (Default: ${LB_BOOTLOADER})
-LB_BOOTLOADER="${LB_BOOTLOADER}"
+# \$LB_BOOTLOADERS: set bootloaders
+# (Default: ${LB_BOOTLOADERS})
+LB_BOOTLOADERS="${LB_BOOTLOADERS}"
 
 # \$LB_CHECKSUMS: set checksums
 # (Default: ${LB_CHECKSUMS})
@@ -1197,6 +1203,10 @@ LB_HDD_LABEL="${LB_HDD_LABEL}"
 # \$LB_HDD_SIZE: set hdd filesystem size
 # (Default: ${LB_HDD_SIZE})
 LB_HDD_SIZE="${LB_HDD_SIZE}"
+
+# \$LB_HDD_PARTITION_START: set start of partition for the hdd target for BIOSes that expect a specific boot partition start (e.g. "63s"). If empty, use optimal layout.
+# (Default: ${LB_HDD_PARTITION_START})
+LB_HDD_PARTITION_START="${LB_HDD_PARTITION_START}"
 
 # \$LB_ISO_APPLICATION: set iso author
 # (Default: ${LB_ISO_APPLICATION})

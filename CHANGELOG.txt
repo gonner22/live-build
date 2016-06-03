@@ -1,3 +1,10 @@
+2016-06-01	Daniel Baumann <daniel.baumann@open-infrastructure.net>
+
+	* Releasing version 20160601.
+	* Merging previously staged and unreleased changes from live-images,
+	  marking the beginning of the fork (or continuation rather) of
+	  live-images now.
+
 2016-05-01	Daniel Baumann <daniel.baumann@open-infrastructure.net>
 
-	* Releasing version 20160301.
+	* Releasing version 20160501.
