@@ -1,3 +1,15 @@
+open-infrastructure-system-build (20160601-1) unstable; urgency=low
+
+  * Uploading to sid.
+  * Merging upstream version 20160601.
+  * Adding provides system-build.
+  * Updating homepage field.
+  * Switching to debhelper compat 10.
+  * Adding watch file.
+  * Refreshing manpage-whatis.patch.
+
+ -- Daniel Baumann <mail@daniel-baumann.ch>  Fri, 03 Jun 2016 15:56:25 +0200
+
 open-infrastructure-system-build (20160501-1) unstable; urgency=low
 
   * Initial upload to sid (Closes: #816413).
