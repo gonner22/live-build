@@ -5,7 +5,7 @@ diff -Naurp open-infrastructure-system-build.orig/manpages/en/lb_binary.1 open-i
 --- open-infrastructure-system-build.orig/manpages/en/lb_binary.1
 +++ open-infrastructure-system-build/manpages/en/lb_binary.1
 @@ -1,7 +1,7 @@
- .TH LIVE\-BUILD 1 2015\-08\-23 5.0~a11-1 "Live Systems Project"
+ .TH LIVE\-BUILD 1 2015\-10\-21 5.0~a11-1 "Live Systems Project"
  
  .SH NAME
 -\fBlb binary\fR \- Complete the binary stage
@@ -17,7 +17,7 @@ diff -Naurp open-infrastructure-system-build.orig/manpages/en/lb_bootstrap.1 ope
 --- open-infrastructure-system-build.orig/manpages/en/lb_bootstrap.1
 +++ open-infrastructure-system-build/manpages/en/lb_bootstrap.1
 @@ -1,7 +1,7 @@
- .TH LIVE\-BUILD 1 2015\-08\-23 5.0~a11-1 "Live Systems Project"
+ .TH LIVE\-BUILD 1 2015\-10\-21 5.0~a11-1 "Live Systems Project"
  
  .SH NAME
 -\fBlb bootstrap\fR \- Complete the bootstrap stage
@@ -29,7 +29,7 @@ diff -Naurp open-infrastructure-system-build.orig/manpages/en/lb_build.1 open-in
 --- open-infrastructure-system-build.orig/manpages/en/lb_build.1
 +++ open-infrastructure-system-build/manpages/en/lb_build.1
 @@ -1,7 +1,7 @@
- .TH LIVE\-BUILD 1 2015\-08\-23 5.0~a11-1 "Live Systems Project"
+ .TH LIVE\-BUILD 1 2015\-10\-21 5.0~a11-1 "Live Systems Project"
  
  .SH NAME
 -\fBlb build\fR \- Complete the bootstrap, chroot, binary, and source stages
@@ -41,7 +41,7 @@ diff -Naurp open-infrastructure-system-build.orig/manpages/en/lb_chroot.1 open-i
 --- open-infrastructure-system-build.orig/manpages/en/lb_chroot.1
 +++ open-infrastructure-system-build/manpages/en/lb_chroot.1
 @@ -1,7 +1,7 @@
- .TH LIVE\-BUILD 1 2015\-08\-23 5.0~a11-1 "Live Systems Project"
+ .TH LIVE\-BUILD 1 2015\-10\-21 5.0~a11-1 "Live Systems Project"
  
  .SH NAME
 -\fBlb chroot\fR \- Complete the chroot stage
@@ -53,7 +53,7 @@ diff -Naurp open-infrastructure-system-build.orig/manpages/en/lb_clean.1 open-in
 --- open-infrastructure-system-build.orig/manpages/en/lb_clean.1
 +++ open-infrastructure-system-build/manpages/en/lb_clean.1
 @@ -1,7 +1,7 @@
- .TH LIVE\-BUILD 1 2015\-08\-23 5.0~a11-1 "Live Systems Project"
+ .TH LIVE\-BUILD 1 2015\-10\-21 5.0~a11-1 "Live Systems Project"
  
  .SH NAME
 -\fBlb clean\fR \- Clean build directory
@@ -65,7 +65,7 @@ diff -Naurp open-infrastructure-system-build.orig/manpages/en/lb_config.1 open-i
 --- open-infrastructure-system-build.orig/manpages/en/lb_config.1
 +++ open-infrastructure-system-build/manpages/en/lb_config.1
 @@ -1,7 +1,7 @@
- .TH LIVE\-BUILD 1 2015\-08\-23 5.0~a11-1 "Live Systems Project"
+ .TH LIVE\-BUILD 1 2015\-10\-21 5.0~a11-1 "Live Systems Project"
  
  .SH NAME
 -\fBlb config\fR \- Create config directory
@@ -77,7 +77,7 @@ diff -Naurp open-infrastructure-system-build.orig/manpages/en/lb_source.1 open-i
 --- open-infrastructure-system-build.orig/manpages/en/lb_source.1
 +++ open-infrastructure-system-build/manpages/en/lb_source.1
 @@ -1,7 +1,7 @@
- .TH LIVE\-BUILD 1 2015\-08\-23 5.0~a11-1 "Live Systems Project"
+ .TH LIVE\-BUILD 1 2015\-10\-21 5.0~a11-1 "Live Systems Project"
  
  .SH NAME
 -\fBlb source\fR \- Complete the source stage
