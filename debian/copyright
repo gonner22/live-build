@@ -1,7 +1,7 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: system-build
 Upstream-Contact: Daniel Baumann <daniel.baumann@open-infrastructure.net>
-Source: https://github.com/open-infrastructure/system-build
+Source: https://sources.open-infrastructure.net/software/system-build
 
 Files: *
 Copyright: 2006-2016 Daniel Baumann <mail@daniel-baumann.ch>
