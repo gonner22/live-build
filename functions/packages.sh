@@ -32,15 +32,7 @@ Install_package ()
 {
 	if [ -n "${_LB_PACKAGES}" ] && [ "${LB_BUILD_WITH_CHROOT}" != "false" ]
 	then
-		case "${LB_APT}" in
-			apt|apt-get)
-				Chroot chroot "apt-get install -o APT::Install-Recommends=false ${APT_OPTIONS} ${_LB_PACKAGES}"
-				;;
-
-			aptitude)
-				Chroot chroot "aptitude install --without-recommends ${APTITUDE_OPTIONS} ${_LB_PACKAGES}"
-				;;
-		esac
+		Chroot chroot "apt-get install -o APT::Install-Recommends=false ${APT_OPTIONS} ${_LB_PACKAGES}"
 	fi
 }
 
@@ -48,15 +40,7 @@ Remove_package ()
 {
 	if [ -n "${_LB_PACKAGES}" ] && [ "${LB_BUILD_WITH_CHROOT}" != "false" ]
 	then
-		case "${LB_APT}" in
-			apt|apt-get)
-				Chroot chroot "apt-get remove --purge ${APT_OPTIONS} ${_LB_PACKAGES}"
-				;;
-
-			aptitude)
-				Chroot chroot "aptitude purge ${APTITUDE_OPTIONS} ${_LB_PACKAGES}"
-				;;
-		esac
+		Chroot chroot "apt-get remove --purge ${APT_OPTIONS} ${_LB_PACKAGES}"
 	fi
 }
 

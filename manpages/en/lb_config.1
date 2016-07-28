@@ -1,4 +1,4 @@
-.TH LIVE\-BUILD 1 2015\-10\-21 5.0~a11-1 "Live Systems Project"
+.TH LIVE\-BUILD 1 2016\-07\-28 20160601 "Live Systems Project"
 
 .SH NAME
 \fBlb config\fR \- Create config directory
@@ -9,8 +9,6 @@
 .\" FIXME
 \fBlb config\fR
 .br
-	[\fB\-\-apt\fR apt|aptitude]
-.br
 	[\fB\-\-apt\-ftp\-proxy\fR \fIURL\fR]
 .br
 	[\fB\-\-apt\-http\-proxy\fR \fIURL\fR]
@@ -18,8 +16,6 @@
 	[\fB\-\-apt\-indices\fR true|false]
 .br
 	[\fB\-\-apt\-options\fR \fIOPTION\fR|"\fIOPTIONS\fR"]
-.br
-	[\fB\-\-aptitude\-options\fR \fIOPTION\fR|"\fIOPTIONS\fR"]
 .br
 	[\fB\-\-apt\-pipeline\fR \fIDEPTH\fR]
 .br
@@ -205,7 +201,7 @@
 .br
 	[\-s|\fB\-\-source\-images\fR iso|netboot|tar|hdd]
 .br
-	[\fB\-\-tasksel\fR apt|aptitude|tasksel]
+	[\fB\-\-tasksel\fR apt|tasksel]
 .br
 	[\fB\-\-templates\fR \fIPATH\fR]
 .br
@@ -233,8 +229,6 @@ Note: Currently \fBlb config\fR tries to be smart and sets defaults for some opt
 In addition to its specific options \fBlb config\fR understands all generic live\-build options. See \fIlive\-build\fR(7) for a complete list of all generic live\-build options.
 .PP
 .\" FIXME
-.IP "\fB\-\-apt\fR apt|aptitude" 4
-defines if apt\-get or aptitude is used to install packages when building the image. The default is apt.
 .IP "\fB\-\-apt\-ftp\-proxy\fR \fIURL\fR" 4
 sets the ftp proxy to be used by apt. By default, this is empty. Note that this variable is only for the proxy that gets used by apt internally within the chroot, it is not used for anything else.
 .IP "\fB\-\-apt\-http\-proxy\fR \fIURL\fR" 4
@@ -243,10 +237,8 @@ sets the http proxy to be used by apt. By default, this is empty. Note that this
 defines if the resulting images should have apt indices or not and defaults to true. If set to none, no indices are included at all.
 .IP "\fB\-\-apt\-options\fR \fIOPTION\fR|""\fIOPTIONS\fR""" 4
 defines the default options that will be appended to every apt call that is made inside chroot during the building of the image. By default, this is set to \-\-yes to allow non-interactive installation of packages.
-.IP "\fB\-\-aptitude\-options\fR \fIOPTION\fR|""\fIOPTIONS\fR""" 4
-defines the default options that will be appended to every aptitude call that is made inside chroot during building of the image. By default, this is set to \-\-assume\-yes to allow non-interactive installation of packages.
 .IP "\fB\-\-apt\-pipeline\fR \fIDEPTH\fR" 4
-sets the depth of the apt/aptitude pipeline. In cases where the remote server is not RFC conforming or buggy (such as Squid 2.0.2) this option can be a value from 0 to 5 indicating how many outstanding requests APT should send. A value of zero MUST be specified if the remote host does not properly linger on TCP connections \- otherwise data corruption will occur. Hosts which require this are in violation of RFC 2068. By default, live\-build does not set this option.
+sets the depth of the apt pipeline. In cases where the remote server is not RFC conforming or buggy (such as Squid 2.0.2) this option can be a value from 0 to 5 indicating how many outstanding requests APT should send. A value of zero MUST be specified if the remote host does not properly linger on TCP connections \- otherwise data corruption will occur. Hosts which require this are in violation of RFC 2068. By default, live\-build does not set this option.
 .IP "\fB\-\-apt\-recommends\fR true|false" 4
 defines if apt should install recommended packages automatically. By default, this is true.
 .IP "\fB\-\-apt\-secure\fR true|false" 4
@@ -438,7 +430,7 @@ defines if firmware packages should be automatically included into the live imag
 defines the path to a swap file to create in the binary image. Default is not to create a swap file.
 .IP "\fB\-\-swap\-file\-size\fR \fIMB\fR" 4
 defines what size in megabytes the swap file should be, if one is to be created. Default is 512MB.
-.IP "\fB\-\-tasksel\fR apt|aptitude|tasksel" 4
+.IP "\fB\-\-tasksel\fR apt|tasksel" 4
 selects which program is used to install tasks. By default, this is set to tasksel.
 .IP "\fB\-\-templates\fR \fIPATH\fR" 4
 sets the path to the templates that live\-build is going to use, e.g. for bootloaders. By default, this is set to /usr/share/live/build/templates/.
