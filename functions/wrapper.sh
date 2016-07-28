@@ -13,13 +13,5 @@ Apt ()
 	CHROOT="${1}"
 	shift
 
-	case "${LB_APT}" in
-		apt|apt-get)
-			Chroot ${CHROOT} apt-get ${APT_OPTIONS} ${@}
-			;;
-
-		aptitude)
-			Chroot ${CHROOT} aptitude ${APTITUDE_OPTIONS} ${@}
-			;;
-	esac
+	Chroot ${CHROOT} apt-get ${APT_OPTIONS} ${@}
 }

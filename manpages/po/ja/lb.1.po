@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: live-build\n"
-"POT-Creation-Date: 2015-10-21 02:21+0200\n"
+"POT-Creation-Date: 2016-07-28 07:01+0200\n"
 "PO-Revision-Date: 2014-08-28 02:52+0900\n"
 "Last-Translator: victory <victory.deb@gmail.com>\n"
 "Language-Team: none\n"
@@ -26,17 +26,17 @@ msgstr "LIVE-BUILD"
 #: en/lb.1:1 en/lb_binary.1:1 en/lb_bootstrap.1:1 en/lb_build.1:1
 #: en/lb_chroot.1:1 en/lb_clean.1:1 en/lb_config.1:1 en/lb_source.1:1
 #: en/live-build.7:1
-#, fuzzy, no-wrap
-msgid "2015-10-21"
-msgstr "2015-02-07"
+#, no-wrap
+msgid "2016-07-28"
+msgstr ""
 
 #. type: TH
 #: en/lb.1:1 en/lb_binary.1:1 en/lb_bootstrap.1:1 en/lb_build.1:1
 #: en/lb_chroot.1:1 en/lb_clean.1:1 en/lb_config.1:1 en/lb_source.1:1
 #: en/live-build.7:1
-#, fuzzy, no-wrap
-msgid "5.0~a11-1"
-msgstr "5.0~a3-1"
+#, no-wrap
+msgid "20160601"
+msgstr ""
 
 #. type: TH
 #: en/lb.1:1 en/lb_binary.1:1 en/lb_bootstrap.1:1 en/lb_build.1:1
@@ -79,7 +79,7 @@ msgstr "B<lb> [I<live-build\\ オプション>]"
 
 #. type: SH
 #: en/lb.1:11 en/lb_binary.1:9 en/lb_bootstrap.1:9 en/lb_build.1:9
-#: en/lb_chroot.1:9 en/lb_clean.1:9 en/lb_config.1:223 en/lb_source.1:9
+#: en/lb_chroot.1:9 en/lb_clean.1:9 en/lb_config.1:219 en/lb_source.1:9
 #: en/live-build.7:11
 #, no-wrap
 msgid "DESCRIPTION"
@@ -96,7 +96,7 @@ msgstr ""
 
 #. type: SH
 #: en/lb.1:16 en/lb_binary.1:14 en/lb_bootstrap.1:14 en/lb_build.1:14
-#: en/lb_chroot.1:14 en/lb_clean.1:16 en/lb_config.1:232 en/lb_source.1:14
+#: en/lb_chroot.1:14 en/lb_clean.1:16 en/lb_config.1:228 en/lb_source.1:14
 #: en/live-build.7:20
 #, no-wrap
 msgid "OPTIONS"
@@ -115,7 +115,7 @@ msgstr ""
 
 #. type: SH
 #: en/lb.1:19 en/lb_binary.1:17 en/lb_bootstrap.1:17 en/lb_build.1:17
-#: en/lb_chroot.1:17 en/lb_clean.1:38 en/lb_config.1:462 en/lb_source.1:17
+#: en/lb_chroot.1:17 en/lb_clean.1:38 en/lb_config.1:454 en/lb_source.1:17
 #: en/live-build.7:213
 #, no-wrap
 msgid "FILES"
@@ -130,7 +130,7 @@ msgstr "B<無し>"
 
 #. type: SH
 #: en/lb.1:22 en/lb_binary.1:20 en/lb_bootstrap.1:20 en/lb_build.1:22
-#: en/lb_chroot.1:20 en/lb_clean.1:43 en/lb_config.1:469 en/lb_source.1:20
+#: en/lb_chroot.1:20 en/lb_clean.1:43 en/lb_config.1:461 en/lb_source.1:20
 #: en/live-build.7:217
 #, no-wrap
 msgid "SEE ALSO"
@@ -138,20 +138,20 @@ msgstr "関連項目"
 
 #. type: Plain text
 #: en/lb.1:24 en/lb_binary.1:22 en/lb_bootstrap.1:22 en/lb_build.1:24
-#: en/lb_chroot.1:22 en/lb_clean.1:45 en/lb_config.1:471 en/lb_source.1:22
+#: en/lb_chroot.1:22 en/lb_clean.1:45 en/lb_config.1:463 en/lb_source.1:22
 msgid "I<live-build>(7)"
 msgstr "I<live-build>(7)"
 
 #. type: Plain text
 #: en/lb.1:26 en/lb_binary.1:24 en/lb_bootstrap.1:24 en/lb_build.1:26
-#: en/lb_chroot.1:24 en/lb_clean.1:47 en/lb_config.1:477 en/lb_source.1:24
+#: en/lb_chroot.1:24 en/lb_clean.1:47 en/lb_config.1:469 en/lb_source.1:24
 #: en/live-build.7:223
 msgid "This program is a part of live-build."
 msgstr "このプログラムは live-build の一部です。"
 
 #. type: SH
 #: en/lb.1:27 en/lb_binary.1:25 en/lb_bootstrap.1:25 en/lb_build.1:27
-#: en/lb_chroot.1:25 en/lb_clean.1:48 en/lb_config.1:478 en/lb_source.1:25
+#: en/lb_chroot.1:25 en/lb_clean.1:48 en/lb_config.1:470 en/lb_source.1:25
 #: en/live-build.7:224
 #, no-wrap
 msgid "HOMEPAGE"
@@ -159,7 +159,7 @@ msgstr "ホームページ"
 
 #. type: Plain text
 #: en/lb.1:29 en/lb_binary.1:27 en/lb_bootstrap.1:27 en/lb_build.1:29
-#: en/lb_chroot.1:27 en/lb_clean.1:50 en/lb_config.1:480 en/lb_source.1:27
+#: en/lb_chroot.1:27 en/lb_clean.1:50 en/lb_config.1:472 en/lb_source.1:27
 #: en/live-build.7:226
 msgid ""
 "More information about live-build and the Live Systems project can be found "
@@ -172,7 +172,7 @@ msgstr ""
 
 #. type: SH
 #: en/lb.1:30 en/lb_binary.1:28 en/lb_bootstrap.1:28 en/lb_build.1:30
-#: en/lb_chroot.1:28 en/lb_clean.1:51 en/lb_config.1:481 en/lb_source.1:28
+#: en/lb_chroot.1:28 en/lb_clean.1:51 en/lb_config.1:473 en/lb_source.1:28
 #: en/live-build.7:227
 #, no-wrap
 msgid "BUGS"
@@ -180,7 +180,7 @@ msgstr "バグ"
 
 #. type: Plain text
 #: en/lb.1:32 en/lb_binary.1:30 en/lb_bootstrap.1:30 en/lb_build.1:32
-#: en/lb_chroot.1:30 en/lb_clean.1:53 en/lb_config.1:483 en/lb_source.1:30
+#: en/lb_chroot.1:30 en/lb_clean.1:53 en/lb_config.1:475 en/lb_source.1:30
 #: en/live-build.7:229
 msgid ""
 "Bugs can be reported by submitting a bugreport for the live-build package in "
@@ -195,7 +195,7 @@ msgstr ""
 
 #. type: SH
 #: en/lb.1:33 en/lb_binary.1:31 en/lb_bootstrap.1:31 en/lb_build.1:33
-#: en/lb_chroot.1:31 en/lb_clean.1:54 en/lb_config.1:484 en/lb_source.1:31
+#: en/lb_chroot.1:31 en/lb_clean.1:54 en/lb_config.1:476 en/lb_source.1:31
 #: en/live-build.7:230
 #, no-wrap
 msgid "AUTHOR"
@@ -203,7 +203,7 @@ msgstr "作者"
 
 #. type: Plain text
 #: en/lb.1:34 en/lb_binary.1:32 en/lb_bootstrap.1:32 en/lb_build.1:34
-#: en/lb_chroot.1:32 en/lb_clean.1:55 en/lb_config.1:485 en/lb_source.1:32
+#: en/lb_chroot.1:32 en/lb_clean.1:55 en/lb_config.1:477 en/lb_source.1:32
 #: en/live-build.7:231
 msgid ""
 "live-build was written by Daniel Baumann E<lt>I<mail@daniel-baumann.ch>E<gt>."

@@ -1,9 +1,55 @@
+2016-07-01	Daniel Baumann <daniel.baumann@open-infrastructure.net>
+
+	* Releasing version 20160701.
+
+	[ Daniel Baumann ]
+	* Adding commit messages to previous changelog.
+	* Removing support for using aptitude instead of apt.
+	* Including apt-transport-https if archives are used with https.
+
+	[ Kristian Klausen ]
+	* Fixing typo in binary_syslinux (Closes: #832686).
+	* Switching d-i.debian.org URIs from http to https (Closes: #832680).
+	* Disabling ext4 64bit features when using extlinux.
+
+	[ Chris Lamb ]
+	* Setting xorriso's "modification time" to SOURCE_DATE_EPOCH as a first step for reproducible ISO images (Closes: #832689).
+
 2016-06-01	Daniel Baumann <daniel.baumann@open-infrastructure.net>
 
 	* Releasing version 20160601.
-	* Merging previously staged and unreleased changes from live-images,
-	  marking the beginning of the fork (or continuation rather) of
-	  live-images now.
+
+	[ Carlos Zuferri ]
+	* Adding missing file extension to hdd images.
+
+	[ Adrian Gibanel Lopez ]
+	* Adding multi bootloader support.
+	* Adding loopback cfg support.
+
+	[ Maximilian Mehnert ]
+	* Forcing link creation when diverting flash-kernel.
+	* Starting partition at specific place for old BIOSes.
+	* Fixing coding style in binary_hdd.
+
+	[ Carlos Zuferri ]
+	* Using 'Live Systems Project' as default project in .pot files.
+
+	[ trebmuh ]
+	* Adding French manpage translations.
+
+	[ Ben Armstrong ]
+	* Removing 586 flavour for i386 architecture (Closes: #832705).
+
+	[ Raphaël Hertzog ]
+	* Better handling empty package lists.
+	* Dropping ixp4xx from available armel flavors.
+	* Adding symlinks for libgpl.c32 and libmenu.c32.
+
+	[ Kristian Klausen ]
+	* Including ext{3,4} journal size when calculating image size (Closes: #832671).
+
+	[ Daniel Baumann ]
+	* Correcting version string in changelog.
 
 2016-05-01	Daniel Baumann <daniel.baumann@open-infrastructure.net>
 

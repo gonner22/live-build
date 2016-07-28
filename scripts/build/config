@@ -16,12 +16,10 @@ set -e
 # Setting static variables
 PROGRAM="lb config"
 DESCRIPTION="$(Echo 'create configuration for live-build(7)')"
-USAGE="${PROGRAM}   [--apt apt|aptitude]\n\
-\t    [--apt-ftp-proxy URL]\n\
+USAGE="${PROGRAM}   [--apt-ftp-proxy URL]\n\
 \t    [--apt-http-proxy URL]\n\
 \t    [--apt-indices true|false]\n\
 \t    [--apt-options OPTION|\"OPTIONS\"]\n\
-\t    [--aptitude-options OPTION|\"OPTIONS\"]\n\
 \t    [--apt-pipeline DEPTH]\n\
 \t    [--apt-recommends true|false]\n\
 \t    [--apt-secure true|false]\n\
@@ -113,7 +111,7 @@ USAGE="${PROGRAM}   [--apt apt|aptitude]\n\
 \t    [--firmware-chroot true|false]\n\
 \t    [--swap-file-path PATH]\n\
 \t    [--swap-file-size MB]\n\
-\t    [--tasksel apt|aptitude|tasksel]\n\
+\t    [--tasksel apt|tasksel]\n\
 \t    [--updates true|false]\n\
 \t    [--backports true|false]\n\
 \t    [--verbose]\n\
@@ -126,7 +124,7 @@ USAGE="${PROGRAM}   [--apt apt|aptitude]\n\
 
 Local_arguments ()
 {
-	LONG_OPTIONS="apt:,apt-ftp-proxy:,apt-http-proxy:,apt-options:,aptitude-options:,debootstrap-options:,
+	LONG_OPTIONS="apt:,apt-ftp-proxy:,apt-http-proxy:,apt-options:,debootstrap-options:,
 		apt-pipeline:,apt-recommends:,apt-secure:,apt-source-archives:,bootstrap:,cache:,cache-indices:,cache-packages:,
 		cache-stages:,debconf-frontend:,debconf-priority:,dump,
 		initramfs:,initramfs-compression:,initsystem:,fdisk:,losetup:,mode:,system:,tasksel:,
@@ -226,11 +224,6 @@ Local_arguments ()
 
 			--apt-options)
 				APT_OPTIONS="${2}"
-				shift 2
-				;;
-
-			--aptitude-options)
-				APTITUDE_OPTIONS="${2}"
 				shift 2
 				;;
 
@@ -882,31 +875,27 @@ fi
 cat > config/common << EOF
 # config/common - common options for live-build(7)
 
-# \$LB_APT: set package manager
-# (Default: ${LB_APT})
-LB_APT="${LB_APT}"
-
-# \$LB_APT_FTP_PROXY: set apt/aptitude ftp proxy
+# \$LB_APT_FTP_PROXY: set apt ftp proxy
 # (Default: autodetected or empty)
 LB_APT_FTP_PROXY="${LB_APT_FTP_PROXY}"
 
-# \$LB_APT_HTTP_PROXY: set apt/aptitude http proxy
+# \$LB_APT_HTTP_PROXY: set apt http proxy
 # (Default: autodetected or empty)
 LB_APT_HTTP_PROXY="${LB_APT_HTTP_PROXY}"
 
-# \$LB_APT_PIPELINE: set apt/aptitude pipeline depth
+# \$LB_APT_PIPELINE: set apt pipeline depth
 # (Default: ${LB_APT_PIPELINE})
 LB_APT_PIPELINE="${LB_APT_PIPELINE}"
 
-# \$LB_APT_RECOMMENDS: set apt/aptitude recommends
+# \$LB_APT_RECOMMENDS: set apt recommends
 # (Default: ${LB_APT_RECOMMENDS})
 LB_APT_RECOMMENDS="${LB_APT_RECOMMENDS}"
 
-# \$LB_APT_SECURE: set apt/aptitude security
+# \$LB_APT_SECURE: set apt security
 # (Default: ${LB_APT_SECURE})
 LB_APT_SECURE="${LB_APT_SECURE}"
 
-# \$LB_APT_SOURCE_ARCHIVES: set apt/aptitude source entries in sources.list
+# \$LB_APT_SOURCE_ARCHIVES: set apt source entries in sources.list
 # (Default: ${LB_APT_SOURCE_ARCHIVES})
 LB_APT_SOURCE_ARCHIVES="${LB_APT_SOURCE_ARCHIVES}"
 
@@ -994,7 +983,6 @@ _QUIET="${_QUIET}"
 
 # Internal stuff (FIXME)
 APT_OPTIONS="${APT_OPTIONS}"
-APTITUDE_OPTIONS="${APTITUDE_OPTIONS}"
 DEBOOTSTRAP_OPTIONS="${DEBOOTSTRAP_OPTIONS}"
 GZIP_OPTIONS="${GZIP_OPTIONS}"
 ISOHYBRID_OPTIONS="${ISOHYBRID_OPTIONS}"
@@ -1139,7 +1127,7 @@ cat > config/binary << EOF
 # (Default: ${LB_BINARY_FILESYSTEM})
 LB_BINARY_FILESYSTEM="${LB_BINARY_FILESYSTEM}"
 
-# \$LB_APT_INDICES: set apt/aptitude generic indices
+# \$LB_APT_INDICES: set apt generic indices
 # (Default: ${LB_APT_INDICES})
 LB_APT_INDICES="${LB_APT_INDICES}"
 

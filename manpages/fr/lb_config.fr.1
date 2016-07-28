@@ -3,7 +3,7 @@
 .\" This file was generated with po4a. Translate the source file.
 .\"
 .\"*******************************************************************
-.TH LIVE\-BUILD 1 21.10.2015 5.0~a11\-1 "Projet Live Systems"
+.TH LIVE\-BUILD 1 2016\-07\-28 20160601 "Projet Live Systems"
 
 .SH NOM
 \fBlb config\fP \- Crée un répertoire de configuration
@@ -14,8 +14,6 @@
 .\" FIXME
 \fBlb config\fP
 .br
-  [\fB\-\-apt\fP apt|aptitude]
-.br
   [\fB\-\-apt\-ftp\-proxy\fP \fIURL\fP]
 .br
   [\fB\-\-apt\-http\-proxy\fP \fIURL\fP]
@@ -23,8 +21,6 @@
   [\fB\-\-apt\-indices\fP true|false]
 .br
   [\fB\-\-apt\-options\fP \fIOPTION\fP|"\fIOPTIONS\fP"]
-.br
-  [\fB\-\-aptitude\-options\fP \fIOPTION\fP|"\fIOPTIONS\fP"]
 .br
   [\fB\-\-apt\-pipeline\fP \fIPROFONDEUR\fP]
 .br
@@ -211,7 +207,7 @@
 .br
   [\-s|\fB\-\-source\-images\fP iso|netboot|tar|hdd]
 .br
-  [\fB\-\-tasksel\fP apt|aptitude|tasksel]
+  [\fB\-\-tasksel\fP apt|tasksel]
 .br
   [\fB\-\-templates\fP \fICHEMIN\fP]
 .br
@@ -257,9 +253,6 @@ options génériques de live\-build. Voir \fIlive\-build\fP(7) pour une liste
 complète de toutes les options génériques de live\-build options.
 .PP
 .\" FIXME
-.IP "\fB\-\-apt\fP apt|aptitude" 4
-définit si apt\-get ou aptitude est utilisé pour installer des paquets lors
-de la construction de l'image. Par défaut : apt.
 .IP "\fB\-\-apt\-ftp\-proxy\fP \fIURL\fP" 4
 paramètre le proxy ftp à être utilisé par apt. Par défaut, cette option est
 vide. Notez que cette variable est uniquement pour le proxy qui est utilisé
@@ -276,15 +269,10 @@ définit les options par défaut qui seront ajoutées à chaque appel apt qui
 est fait à l'intérieur du chroot pendant la construction de l'image. Par
 défaut, ceci est paramétré à \-\-yes pour permettre l'installation
 non\-interactive de paquets.
-.IP "\fB\-\-aptitude\-options\fP \fIOPTION\fP|\(dq\fIOPTIONS\fP\(dq" 4
-définit les options par défaut qui seront ajoutées à chaque appel d'aptitude
-fait à l'intérieur du chroot pendant la construction de l'image. Par défaut,
-ceci est paramétré à \-\-assume\-yes pour permettre l'installation
-non\-interactive de paquets.
 .IP "\fB\-\-apt\-pipeline\fP \fIPROFONDEUR\fP" 4
-paramètre la profondeur du tube (pipeline) apt/aptitude. Dans les cas où le
-serveur distant n'est pas conforme aux RFC ou est bogué (comme Squid 2.0.2),
-cette option peut être une valeur de 0 à 5 indiquant combien de requêtes
+paramètre la profondeur du tube (pipeline) apt. Dans les cas où le serveur
+distant n'est pas conforme aux RFC ou est bogué (comme Squid 2.0.2), cette
+option peut être une valeur de 0 à 5 indiquant combien de requêtes
 non\-résolue APT devrait envoyer. Une valeur de zéro doit être spécifiée si
 l'hôte distant s'attarde improprement sur les connexions TCP \- autrement,
 une corruption des données apparaîtra. Les hôtes qui nécessitent ceci sont
@@ -536,10 +524,11 @@ debian kernel packages, you will not have to adjust it. If you decide to use
 custom kernel packages that do not follow the debian naming scheme, remember
 to set this option to the stub of the packages only (for debian this is
 linux\-image\-2.6), so that \fISTUB\fP\-\fIFLAVOUR\fP results in a valid package name
-(for debian e.g. linux\-image\-686\-pae). Preferably you use the meta package name,
-if any, for the stub, so that your configuration is ABI independent. Also
-don't forget that you have to include stubs of the binary modules packages
-for unionfs or aufs, and squashfs if you built them out\-of\-tree.
+(for debian e.g. linux\-image\-686\-pae). Preferably you use the meta package
+name, if any, for the stub, so that your configuration is ABI
+independent. Also don't forget that you have to include stubs of the binary
+modules packages for unionfs or aufs, and squashfs if you built them
+out\-of\-tree.
 .IP "\fB\-\-losetup\fP losetup|losetup.orig" 4
 sets the filename of the losetup binary from the host system that should be
 used. This is autodetected and does generally not need any customization.
@@ -713,7 +702,7 @@ not to create a swap file.
 .IP "\fB\-\-swap\-file\-size\fP \fIMB\fP" 4
 defines what size in megabytes the swap file should be, if one is to be
 created. Default is 512MB.
-.IP "\fB\-\-tasksel\fP apt|aptitude|tasksel" 4
+.IP "  [\fB\-\-tasksel\fP apt|tasksel]" 4
 selects which program is used to install tasks. By default, this is set to
 tasksel.
 .IP "\fB\-\-templates\fP \fIPATH\fP" 4
