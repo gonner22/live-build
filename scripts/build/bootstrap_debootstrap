@@ -76,6 +76,12 @@ then
 	DEBOOTSTRAP_OPTIONS="${DEBOOTSTRAP_OPTIONS} --no-check-gpg"
 fi
 
+# Include apt-transport-https
+if grep '^deb https' config/archives/*.list.*
+then
+	DEBOOTSTRAP_OPTIONS="${DEBOOTSTRAP_OPTIONS} --include=apt-transport-https"
+fi
+
 if [ -x "/usr/sbin/debootstrap" ]
 then
 	if [ "${LB_CACHE_PACKAGES}" = "true" ]
