@@ -1,7 +1,11 @@
 open-infrastructure-system-build (20160601-1) unstable; urgency=low
 
   * Uploading to sid.
-  * Merging upstream version 20160601.
+  * Merging upstream version 20160601:
+    - Removing 586 flavour for i386 architecture (Closes: #832705).
+    - Including ext{3,4} journal size when calculating image size
+      (Closes: #832671).
+    [...]
   * Adding provides system-build.
   * Updating homepage field.
   * Switching to debhelper compat 10.
