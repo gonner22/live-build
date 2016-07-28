@@ -1,3 +1,19 @@
+open-infrastructure-system-build (20160701-1) unstable; urgency=low
+
+  * Merging upstream version 20160701:
+    - Fixing typo in binary_syslinux (Closes: #832686).
+    - Switching d-i.debian.org URIs from http to https (Closes: #832680).
+    - Setting xorriso's "modification time" to SOURCE_DATE_EPOCH as a first step
+      for reproducible ISO images (Closes: #832689).
+    [...]
+  * Adding gpg verification to watch file.
+  * Updating upstream git location.
+  * Updating vcs fields.
+  * Adding bug numbers to previous changelog entries.
+  * Removing manpage-whatis.patch.
+
+ -- Daniel Baumann <mail@daniel-baumann.ch>  Thu, 28 Jul 2016 14:38:27 +0200
+
 open-infrastructure-system-build (20160601-1) unstable; urgency=low
 
   * Uploading to sid.
