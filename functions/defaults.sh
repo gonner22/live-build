@@ -167,7 +167,6 @@ Set_defaults ()
 	# LB_APT_PIPELINE
 
 	APT_OPTIONS="${APT_OPTIONS:---yes}"
-	APTITUDE_OPTIONS="${APTITUDE_OPTIONS:---assume-yes}"
 
 	BZIP2_OPTIONS="${BZIP2_OPTIONS:--6}"
 

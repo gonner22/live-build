@@ -240,13 +240,6 @@ then
 	done
 fi
 
-# Installing aptitude
-if [ "${LB_APT}" = "aptitude" ] && [ ! -x chroot/usr/bin/aptitude ]
-then
-	Chroot chroot "apt-get ${APT_OPTIONS} update"
-	Chroot chroot "apt-get ${APT_OPTIONS} install aptitude"
-fi
-
 # Rebuild apt indices from scratch.
 # Due to the fact that apt doesn't understand
 # pinning on the fly, we need to manually remove

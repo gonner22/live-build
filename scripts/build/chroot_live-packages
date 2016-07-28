@@ -72,15 +72,7 @@ esac
 # Install live packages
 if [ -n "${_PACKAGES}" ]
 then
-	case "${LB_APT}" in
-		apt|apt-get)
-			Chroot chroot "apt-get ${APT_OPTIONS} install ${_PACKAGES}"
-			;;
-
-		aptitude)
-			Chroot chroot "aptitude ${APTITUDE_OPTIONS} install ${_PACKAGES}"
-			;;
-	esac
+	Chroot chroot "apt-get ${APT_OPTIONS} install ${_PACKAGES}"
 
 	# Creating stage file
 	Create_stagefile .build/chroot_live-packages

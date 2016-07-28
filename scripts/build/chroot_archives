@@ -418,12 +418,6 @@ EOF
 			then
 				cp -f cache/indices.bootstrap/*Release* chroot/var/lib/apt/lists
 			fi
-
-			if [ "${LB_APT}" = "aptitude" ] && [ ! -x /usr/bin/aptitude ]
-			then
-				Chroot chroot "apt-get ${APT_OPTIONS} update"
-				Chroot chroot "apt-get ${APT_OPTIONS} install aptitude"
-			fi
 		else # Get fresh indices
 			# Check local archive keys
 			if Find_files config/archives/*.key || \
@@ -450,13 +444,6 @@ EOF
 					Chroot chroot "dpkg -i /root/$(basename ${PACKAGE})"
 					rm -f chroot/root/$(basename ${PACKAGE})
 				done
-			fi
-
-			# Installing aptitude
-			if [ "${LB_APT}" = "aptitude" ] && [ ! -x /chroot/usr/bin/aptitude ]
-			then
-				Chroot chroot "apt-get ${APT_OPTIONS} update"
-				Chroot chroot "apt-get ${APT_OPTIONS} install aptitude"
 			fi
 
 			# Rebuild apt indices from scratch.

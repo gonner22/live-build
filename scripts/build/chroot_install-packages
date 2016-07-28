@@ -80,15 +80,7 @@ then
 	Restore_cache cache/packages.chroot
 
 	# Installing packages
-	case "${LB_APT}" in
-		apt|apt-get)
-			Chroot chroot "xargs --arg-file=/root/packages.chroot apt-get ${APT_OPTIONS} install"
-			;;
-
-		aptitude)
-			Chroot chroot "xargs --arg-file=/root/packages.chroot aptitude ${APTITUDE_OPTIONS} install"
-			;;
-	esac
+	Chroot chroot "xargs --arg-file=/root/packages.chroot apt-get ${APT_OPTIONS} install"
 
 	# Tidying up
 	rm -f chroot/root/packages.chroot
