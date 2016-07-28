@@ -1,3 +1,20 @@
+2016-07-01	Daniel Baumann <daniel.baumann@open-infrastructure.net>
+
+	* Releasing version 20160701.
+
+	[ Daniel Baumann ]
+	* Adding commit messages to previous changelog.
+	* Removing support for using aptitude instead of apt.
+	* Including apt-transport-https if archives are used with https.
+
+	[ Kristian Klausen ]
+	* Fixing typo in binary_syslinux (Closes: #832686).
+	* Switching d-i.debian.org URIs from http to https (Closes: #832680).
+	* Disabling ext4 64bit features when using extlinux.
+
+	[ Chris Lamb ]
+	* Setting xorriso's "modification time" to SOURCE_DATE_EPOCH as a first step for reproducible ISO images (Closes: #832689).
+
 2016-06-01	Daniel Baumann <daniel.baumann@open-infrastructure.net>
 
 	* Releasing version 20160601.
