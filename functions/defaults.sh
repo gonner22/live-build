@@ -369,7 +369,7 @@ Set_defaults ()
 			;;
 	esac
 
-	## config/chroot
+	## config/system
 
 	# Setting chroot filesystem
 	LB_CHROOT_FILESYSTEM="${LB_CHROOT_FILESYSTEM:-squashfs}"
