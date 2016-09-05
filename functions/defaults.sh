@@ -92,28 +92,8 @@ Set_defaults ()
 	# Setting system type
 	LB_SYSTEM="${LB_SYSTEM:-live}"
 
-	# Setting mode (currently: debian, progress-linux)
-	if [ -x /usr/bin/lsb_release ]
-	then
-		_DISTRIBUTOR="$(lsb_release -is | tr "[A-Z]" "[a-z]")"
-
-		case "${_DISTRIBUTOR}" in
-			debian|progress-linux)
-				LB_MODE="${LB_MODE:-${_DISTRIBUTOR}}"
-				;;
-
-			*)
-				LB_MODE="${LB_MODE:-debian}"
-				;;
-		esac
-	else
-		if [ -e /etc/progress-linux_version ]
-		then
-			LB_MODE="${LB_MODE:-progress-linux}"
-		else
-			LB_MODE="${LB_MODE:-debian}"
-		fi
-	fi
+	# Setting mode
+	LB_MODE="${LB_MODE:-debian}"
 
 	# Setting distribution name
 	case "${LB_MODE}" in
