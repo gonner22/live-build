@@ -141,7 +141,7 @@ else
 fi
 
 case "${LB_INITRAMFS}" in
-	live-boot)
+	system-boot)
 		INITFS="live"
 		;;
 
@@ -154,7 +154,7 @@ esac
 case "${LIVE_IMAGE_TYPE}" in
 	iso*|tar)
 		case "${LB_INITRAMFS}" in
-			live-boot)
+			system-boot)
 				DESTDIR_LIVE="binary/live"
 				;;
 

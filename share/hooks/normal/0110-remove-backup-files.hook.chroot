@@ -16,3 +16,6 @@ rm -f /etc/gshadow-
 
 rm -f /var/cache/debconf/*-old
 rm -f /var/lib/dpkg/*-old
+
+# Workaround for user-setup
+touch /etc/passwd-

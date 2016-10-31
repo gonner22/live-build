@@ -92,28 +92,8 @@ Set_defaults ()
 	# Setting system type
 	LB_SYSTEM="${LB_SYSTEM:-live}"
 
-	# Setting mode (currently: debian, progress-linux)
-	if [ -x /usr/bin/lsb_release ]
-	then
-		_DISTRIBUTOR="$(lsb_release -is | tr "[A-Z]" "[a-z]")"
-
-		case "${_DISTRIBUTOR}" in
-			debian|progress-linux)
-				LB_MODE="${LB_MODE:-${_DISTRIBUTOR}}"
-				;;
-
-			*)
-				LB_MODE="${LB_MODE:-debian}"
-				;;
-		esac
-	else
-		if [ -e /etc/progress-linux_version ]
-		then
-			LB_MODE="${LB_MODE:-progress-linux}"
-		else
-			LB_MODE="${LB_MODE:-debian}"
-		fi
-	fi
+	# Setting mode
+	LB_MODE="${LB_MODE:-debian}"
 
 	# Setting distribution name
 	case "${LB_MODE}" in
@@ -221,7 +201,7 @@ Set_defaults ()
 	# Setting initramfs hook
 	case "${LB_SYSTEM}" in
 		live)
-			LB_INITRAMFS="${LB_INITRAMFS:-live-boot}"
+			LB_INITRAMFS="${LB_INITRAMFS:-system-boot}"
 			;;
 
 		normal)
@@ -325,12 +305,12 @@ Set_defaults ()
 	# Setting mirror to fetch packages from
 	case "${LB_MODE}" in
 		debian)
-			LB_MIRROR_BOOTSTRAP="${LB_MIRROR_BOOTSTRAP:-http://ftp.debian.org/debian/}"
+			LB_MIRROR_BOOTSTRAP="${LB_MIRROR_BOOTSTRAP:-http://deb.debian.org/debian/}"
 			LB_PARENT_MIRROR_BOOTSTRAP="${LB_PARENT_MIRROR_BOOTSTRAP:-${LB_MIRROR_BOOTSTRAP}}"
 			;;
 
 		progress-linux)
-			LB_PARENT_MIRROR_BOOTSTRAP="${LB_PARENT_MIRROR_BOOTSTRAP:-http://ftp.debian.org/debian/}"
+			LB_PARENT_MIRROR_BOOTSTRAP="${LB_PARENT_MIRROR_BOOTSTRAP:-http://deb.debian.org/debian/}"
 			LB_MIRROR_BOOTSTRAP="${LB_MIRROR_BOOTSTRAP:-http://cdn.archive.progress-linux.org/packages/}"
 			;;
 	esac
@@ -354,12 +334,12 @@ Set_defaults ()
 	# Setting mirror which ends up in the image
 	case "${LB_MODE}" in
 		debian)
-			LB_MIRROR_BINARY="${LB_MIRROR_BINARY:-http://httpredir.debian.org/debian/}"
+			LB_MIRROR_BINARY="${LB_MIRROR_BINARY:-http://deb.debian.org/debian/}"
 			LB_PARENT_MIRROR_BINARY="${LB_PARENT_MIRROR_BINARY:-${LB_MIRROR_BINARY}}"
 			;;
 
 		progress-linux)
-			LB_PARENT_MIRROR_BINARY="${LB_PARENT_MIRROR_BINARY:-http://ftp.debian.org/debian/}"
+			LB_PARENT_MIRROR_BINARY="${LB_PARENT_MIRROR_BINARY:-http://deb.debian.org/debian/}"
 			LB_MIRROR_BINARY="${LB_MIRROR_BINARY:-${LB_MIRROR_CHROOT}}"
 			;;
 	esac
@@ -590,7 +570,7 @@ Set_defaults ()
 
 	# Setting boot parameters
 	case "${LB_INITRAMFS}" in
-		live-boot)
+		system-boot)
 			LB_BOOTAPPEND_LIVE="${LB_BOOTAPPEND_LIVE:-boot=live components quiet splash}"
 			LB_BOOTAPPEND_LIVE_FAILSAFE="${LB_BOOTAPPEND_LIVE_FAILSAFE:-boot=live components memtest noapic noapm nodma nomce nolapic nomodeset nosmp nosplash vga=normal}"
 			;;

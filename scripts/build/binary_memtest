@@ -80,7 +80,7 @@ Install_package
 
 # Setting destination directory
 case "${LB_INITRAMFS}" in
-	live-boot)
+	system-boot)
 		DESTDIR="binary/live"
 		;;
 

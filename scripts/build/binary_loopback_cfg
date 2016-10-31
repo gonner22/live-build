@@ -102,7 +102,7 @@ else
 fi
 
 case "${LB_INITRAMFS}" in
-	live-boot)
+	system-boot)
 		INITFS="live"
 		;;
 

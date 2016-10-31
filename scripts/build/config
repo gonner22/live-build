@@ -59,7 +59,7 @@ USAGE="${PROGRAM}   [--apt-ftp-proxy URL]\n\
 \t    [--grub-splash FILE]\n\
 \t    [--gzip-options OPTION|\"OPTIONS\"]\n\
 \t    [--ignore-system-defaults]\n\
-\t    [--initramfs auto|none|live-boot]\n\
+\t    [--initramfs auto|none|system-boot]\n\
 \t    [--initramfs-compression bzip2|gzip|lzma]\n\
 \t    [--initsystem sysvinit|systemd|none]\n\
 \t    [--image-name [NAME]\n\
@@ -1336,24 +1336,9 @@ then
 	mkdir -p config/package-lists
 
 	case "${LB_INITRAMFS}" in
-		live-boot)
-			echo "live-boot" > config/package-lists/live.list.chroot
-			echo "live-config" >> config/package-lists/live.list.chroot
-
-			case "${LB_INITSYSTEM}" in
-				none)
-					# do nothing
-					;;
-
-				systemd)
-					echo "live-config-systemd" >> config/package-lists/live.list.chroot
-					;;
-
-				sysvinit)
-					echo "live-config-${LB_INITSYSTEM}" >> config/package-lists/live.list.chroot
-					echo "sysvinit-core" >> config/package-lists/live.list.chroot
-					;;
-			esac
+		system-boot)
+			echo "system-boot" > config/package-lists/live.list.chroot
+			echo "system-config" >> config/package-lists/live.list.chroot
 			;;
 
 		*)
