@@ -1,5 +1,9 @@
 2016-11-01	Daniel Baumann <daniel.baumann@open-infrastructure.net>
 
+	* Releasing version 20161101-lts1.
+
+2016-11-01	Daniel Baumann <daniel.baumann@open-infrastructure.net>
+
 	* Releasing version 20161101.
 
 	[ Daniel Baumann ]
