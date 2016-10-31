@@ -1,3 +1,12 @@
+open-infrastructure-system-build (20161101-1) unstable; urgency=high
+
+  * Uploading to sid.
+  * Merging upstream version 20161101.
+  * Adding upload note to previous changelog.
+  * Updating debhelper build-depends for version 10.
+
+ -- Daniel Baumann <mail@daniel-baumann.ch>  Mon, 31 Oct 2016 12:58:42 +0100
+
 open-infrastructure-system-build (20160701-1) unstable; urgency=low
 
   * Uploading to sid.
