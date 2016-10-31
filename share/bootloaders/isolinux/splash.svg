@@ -279,7 +279,7 @@
          x="190.68135"
          sodipodi:role="line"
          style="font-size:19.99996948px;font-style:normal;font-weight:normal;-inkscape-font-specification:DejaVu Sans"
-         id="tspan3070">live-config: @LIVE_CONFIG_VERSION@</tspan><tspan
+         id="tspan3070">system-config: @SYSTEM_CONFIG_VERSION@</tspan><tspan
          y="799.20654"
          x="190.68135"
          sodipodi:role="line"
