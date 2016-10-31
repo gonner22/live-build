@@ -3,7 +3,7 @@ Section: admin
 Priority: optional
 Maintainer: Daniel Baumann <mail@daniel-baumann.ch>
 Build-Depends:
- debhelper (>= 9.20160402~),
+ debhelper (>= 10),
 Standards-Version: 3.9.8
 Homepage: https://open-infrastructure.net/software/system-build
 Vcs-Browser: https://sources.progress-linux.org/users/daniel/debian/packages/open-infrastructure-system-build
