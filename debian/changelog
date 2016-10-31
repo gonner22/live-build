@@ -1,3 +1,10 @@
+open-infrastructure-system-build (20161101-lts1-1) unstable; urgency=high
+
+  * Uploading to sid.
+  * Merging upstream version 20161101-lts1.
+
+ -- Daniel Baumann <mail@daniel-baumann.ch>  Mon, 31 Oct 2016 13:18:03 +0100
+
 open-infrastructure-system-build (20161101-1) unstable; urgency=high
 
   * Uploading to sid.
