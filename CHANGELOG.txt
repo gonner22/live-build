@@ -1,3 +1,26 @@
+2016-11-15	Daniel Baumann <daniel.baumann@open-infrastructure.net>
+
+	* Releasing version 20161115.
+	* Backward incompatible changes:
+	  - renames output files from live-system* to system*.
+	  - renames source tarballs from tar and debian.tar to orig.tar and config.tar.
+	  - renames chroot stage on disk to system.
+
+	[ Daniel Baumann ]
+	* Setting live-image-name by default to system instead of live-system.
+	* Renaming upstream source tarball to orig.tar.
+	* Renaming system-build config tarball to config.tar.
+	* Renaming config/chroot to config/system.
+	* Renaming license file for consistency.
+	* Renaming version file for consistency.
+	* Removing manpage translations in order to rewrite manpage from scratch.
+	* Adding chroot hook to remove auto-generated kernel autoremove file.
+	* Adding chroot hook to remove systemd journal database.
+	* Including ca-certificates too when including apt-transport-https.
+	* Correcting https check in archive lists to cover both list and lists.* files.
+	* Using deb.debian.org with https as default mirror.
+	* Removing trailing slash in mirror defaults.
+
 2016-11-01	Daniel Baumann <daniel.baumann@open-infrastructure.net>
 
 	* Releasing version 20161101.

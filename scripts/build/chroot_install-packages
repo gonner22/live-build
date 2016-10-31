@@ -25,7 +25,7 @@ shift
 Arguments "${@}"
 
 # Reading configuration files
-Read_conffiles config/all config/common config/bootstrap config/chroot config/binary config/source
+Read_conffiles config/all config/common config/bootstrap config/system config/binary config/source
 Set_defaults
 
 Echo_message "Begin installing packages (${_PASS} pass)..."

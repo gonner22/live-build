@@ -9,7 +9,7 @@
 
 
 PROGRAM="live-build"
-VERSION="$(if [ -e ${LIVE_BUILD}/VERSION ]; then cat ${LIVE_BUILD}/VERSION; else cat /usr/share/live/build/VERSION; fi)"
+VERSION="$(if [ -e ${LIVE_BUILD}/VERSION.txt ]; then cat ${LIVE_BUILD}/VERSION.txt; else cat /usr/share/live/build/VERSION.txt; fi)"
 CONFIG_VERSION="$(echo ${VERSION} | awk -F- '{ print $1 }')"
 
 # FIXME
