@@ -269,7 +269,7 @@
          x="190.68135"
          sodipodi:role="line"
          style="font-size:19.99996948px;font-style:normal;font-weight:normal;-inkscape-font-specification:DejaVu Sans"
-         id="tspan3076">live-build: @LIVE_BUILD_VERSION@</tspan><tspan
+         id="tspan3076">system-build: @SYSTEM_BUILD_VERSION@</tspan><tspan
          y="759.20667"
          x="190.68135"
          sodipodi:role="line"
