@@ -266,7 +266,6 @@ _LINUX_VERSIONS="$(for _LINUX in chroot/boot/vmlinuz-* ; do chroot chroot apt-ca
 _SYSTEM_BUILD_VERSION="$(lb --version)"
 _SYSTEM_BOOT_VERSION="$(chroot chroot apt-cache policy open-infrastructure-system-boot | awk '/Installed: / { print $2 }')"
 _SYSTEM_CONFIG_VERSION="$(chroot chroot apt-cache policy open-infrastructure-system-config | awk '/Installed: / { print $2 }')"
-_LIVE_TOOLS_VERSION="$(chroot chroot apt-cache policy live-tools | awk '/Installed: / { print $2 }')"
 
 case "${LB_MODE}" in
 	progress-linux)
@@ -302,7 +301,6 @@ do
 			-e "s|@SYSTEM_BUILD_VERSION@|${_SYSTEM_BUILD_VERSION}|g" \
 			-e "s|@SYSTEM_BOOT_VERSION@|${_SYSTEM_BOOT_VERSION}|g" \
 			-e "s|@SYSTEM_CONFIG_VERSION@|${_SYSTEM_CONFIG_VERSION}|g" \
-			-e "s|@LIVE_TOOLS_VERSION@|${_LIVE_TOOLS_VERSION}|g" \
 		"${_FILE}"
 	fi
 done
