@@ -1,5 +1,6 @@
 open-infrastructure-system-build (20160701-1) unstable; urgency=low
 
+  * Uploading to sid.
   * Merging upstream version 20160701:
     - Fixing typo in binary_syslinux (Closes: #832686).
     - Switching d-i.debian.org URIs from http to https (Closes: #832680).
