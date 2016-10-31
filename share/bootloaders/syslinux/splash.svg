@@ -274,7 +274,7 @@
          x="190.68135"
          sodipodi:role="line"
          style="font-size:19.99996948px;font-style:normal;font-weight:normal;-inkscape-font-specification:DejaVu Sans"
-         id="tspan3068">live-boot: @LIVE_BOOT_VERSION@</tspan><tspan
+         id="tspan3068">system-boot: @SYSTEM_BOOT_VERSION@</tspan><tspan
          y="779.2066"
          x="190.68135"
          sodipodi:role="line"

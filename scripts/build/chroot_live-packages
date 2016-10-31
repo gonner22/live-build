@@ -36,7 +36,7 @@ Check_lockfile .lock
 # Creating lock file
 Create_lockfile .lock
 
-# Queue installation of live-boot
+# Queue installation of system-boot
 if [ -n "${LB_INITRAMFS}" ] && [ "${LB_INITRAMFS}" != "none" ]
 then
 	_PACKAGES="${LB_INITRAMFS}"

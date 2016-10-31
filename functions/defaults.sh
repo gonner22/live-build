@@ -221,7 +221,7 @@ Set_defaults ()
 	# Setting initramfs hook
 	case "${LB_SYSTEM}" in
 		live)
-			LB_INITRAMFS="${LB_INITRAMFS:-live-boot}"
+			LB_INITRAMFS="${LB_INITRAMFS:-system-boot}"
 			;;
 
 		normal)
@@ -590,7 +590,7 @@ Set_defaults ()
 
 	# Setting boot parameters
 	case "${LB_INITRAMFS}" in
-		live-boot)
+		system-boot)
 			LB_BOOTAPPEND_LIVE="${LB_BOOTAPPEND_LIVE:-boot=live components quiet splash}"
 			LB_BOOTAPPEND_LIVE_FAILSAFE="${LB_BOOTAPPEND_LIVE_FAILSAFE:-boot=live components memtest noapic noapm nodma nomce nolapic nomodeset nosmp nosplash vga=normal}"
 			;;

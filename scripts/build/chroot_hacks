@@ -65,7 +65,7 @@ esac
 
 # Update initramfs (always, because of udev rules in initrd)
 case "${LB_INITRAMFS}" in
-	live-boot)
+	system-boot)
 		#UPDATE_INITRAMFS_OPTIONS="LIVE_GENERATE_UUID=1"
 		;;
 esac
@@ -100,7 +100,7 @@ case "${LB_INITRAMFS_COMPRESSION}" in
 esac
 
 case "${LB_INITRAMFS}" in
-	live-boot)
+	system-boot)
 		ID="1000"
 		;;
 
@@ -114,7 +114,7 @@ rm -f chroot/etc/hosts
 if [ "${LB_DEBIAN_INSTALLER}" = "live" ]
 then
 	# This is a temporary hack to get rid of fstab;
-	# needs cleanup in live-boot first to proper fix.
+	# needs cleanup in system-boot first to proper fix.
 	rm -f chroot/etc/fstab
 	touch chroot/etc/fstab
 fi
