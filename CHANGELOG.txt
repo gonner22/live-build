@@ -1,3 +1,25 @@
+2016-11-01	Daniel Baumann <daniel.baumann@open-infrastructure.net>
+
+	* Releasing version 20161101.
+
+	[ Daniel Baumann ]
+	* Using references to system-build instead of live-build.
+	* Using system-boot instead of live-boot.
+	* Using system-config instead of live-config.
+	* Dropping references to live-tools.
+	* Making config check for https in archive list files silent.
+
+	[ Chris Lamb ]
+	* Exposing exposes the SOURCE_DATE_EPOCH variable when running scripts inside the chroot, otherwise the chroot operation resets the environment (Closes: #833118).
+
+	[ Daniel Baumann ]
+	* Removing automatic mode setting.
+	* Adding workaround for user-setup.
+	* Setting default debian mirrors to deb.debian.org.
+
+	[ Sophie Brun ]
+	* Handling packages.chroot with an explicitly trusted file:// repository.
+
 2016-07-01	Daniel Baumann <daniel.baumann@open-infrastructure.net>
 
 	* Releasing version 20160701.

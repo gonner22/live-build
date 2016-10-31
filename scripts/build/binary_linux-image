@@ -44,7 +44,7 @@ Check_lockfile .lock
 Create_lockfile .lock
 
 case "${LB_INITRAMFS}" in
-	live-boot)
+	system-boot)
 		DESTDIR="binary/live"
 		;;
 
@@ -73,10 +73,10 @@ cp chroot/boot/"${LINUX}"-* "${DESTDIR}"
 cp chroot/boot/initrd.img-* "${DESTDIR}"
 
 case "${LB_INITRAMFS}" in
-	live-boot)
-		if [ -e chroot/usr/share/doc/live-boot/parameters.txt ]
+	system-boot)
+		if ls chroot/usr/share/doc/*system-boot/parameters.txt > /dev/null 2>&1
 		then
-			cp chroot/usr/share/doc/live-boot/parameters.txt "${DESTDIR}"/parameters
+			cp chroot/usr/share/doc/*system-boot/parameters.txt "${DESTDIR}"/parameters
 		fi
 		;;
 esac

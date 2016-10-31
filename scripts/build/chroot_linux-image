@@ -43,7 +43,7 @@ Create_lockfile .lock
 
 # Diverting update-initramfs
 #case "${LB_INITRAMFS}" in
-#	live-boot)
+#	system-boot)
 #		mv chroot/usr/sbin/update-initramfs chroot/usr/sbin/update-initramfs.live-build
 #		;;
 #esac

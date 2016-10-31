@@ -49,7 +49,7 @@ case "${LB_ARCHITECTURES}" in
 esac
 
 case "${LB_INITRAMFS}" in
-	live-boot)
+	system-boot)
 		INITFS="live"
 		;;
 
