@@ -2,8 +2,6 @@
 
 SHELL := sh -e
 
-LANGUAGES = $(shell cd manpages/po && ls)
-
 SCRIPTS = frontend/* functions/* examples/auto/* examples/hooks/* scripts/*.sh scripts/*/* share/bin/* share/hooks/*/*
 
 all: build
@@ -54,22 +52,6 @@ install:
 	mkdir -p $(DESTDIR)/usr/share/doc/live-build
 	cp -r LICENSE.txt examples $(DESTDIR)/usr/share/doc/live-build
 
-	# Installing manpages
-	for MANPAGE in manpages/en/*; \
-	do \
-		SECTION="$$(basename $${MANPAGE} | awk -F. '{ print $$2 }')"; \
-		install -D -m 0644 $${MANPAGE} $(DESTDIR)/usr/share/man/man$${SECTION}/$$(basename $${MANPAGE}); \
-	done
-
-	for LANGUAGE in $(LANGUAGES); \
-	do \
-		for MANPAGE in manpages/$${LANGUAGE}/*; \
-		do \
-			SECTION="$$(basename $${MANPAGE} | awk -F. '{ print $$3 }')"; \
-			install -D -m 0644 $${MANPAGE} $(DESTDIR)/usr/share/man/$${LANGUAGE}/man$${SECTION}/$$(basename $${MANPAGE} .$${LANGUAGE}.$${SECTION}).$${SECTION}; \
-		done; \
-	done
-
 uninstall:
 	# Uninstalling shared data
 	rm -rf $(DESTDIR)/usr/share/live/build
@@ -80,22 +62,6 @@ uninstall:
 
 	# Uninstalling documentation
 	rm -rf $(DESTDIR)/usr/share/doc/live-build
-
-	# Uninstalling manpages
-	for MANPAGE in manpages/en/*; \
-	do \
-		SECTION="$$(basename $${MANPAGE} | awk -F. '{ print $$2 }')"; \
-		rm -f $(DESTDIR)/usr/share/man/man$${SECTION}/$$(basename $${MANPAGE} .en.$${SECTION}).$${SECTION}; \
-	done
-
-	for LANGUAGE in $(LANGUAGES); \
-	do \
-		for MANPAGE in manpages/$${LANGUAGE}/*; \
-		do \
-			SECTION="$$(basename $${MANPAGE} | awk -F. '{ print $$3 }')"; \
-			rm -f $(DESTDIR)/usr/share/man/$${LANGUAGE}/man$${SECTION}/$$(basename $${MANPAGE} .$${LANGUAGE}.$${SECTION}).$${SECTION}; \
-		done; \
-	done
 
 clean:
 
