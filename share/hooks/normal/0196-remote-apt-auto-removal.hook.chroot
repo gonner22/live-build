@@ -1,0 +1,6 @@
+#!/bin/sh
+
+set -e
+
+# Remove auto-generated file
+rm -f /etc/apt/apt.conf.d/01autoremove-kernels
