@@ -77,7 +77,8 @@ then
 fi
 
 # Include apt-transport-https
-if grep -qs '^deb https' config/archives/*.list.*
+if grep -qs '^deb https' config/archives/*.list ||
+   grep -qs '^deb https' config/archives/*.list.*
 then
 	DEBOOTSTRAP_OPTIONS="${DEBOOTSTRAP_OPTIONS} --include=apt-transport-https,ca-certificates"
 fi
