@@ -40,7 +40,7 @@ build:
 install:
 	# Installing shared data
 	mkdir -p $(DESTDIR)/usr/share/live/build
-	cp -r data functions VERSION $(DESTDIR)/usr/share/live/build
+	cp -r data functions VERSION.txt $(DESTDIR)/usr/share/live/build
 	cp -r share/* $(DESTDIR)/usr/share/live/build
 
 	# Installing executables
