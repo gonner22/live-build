@@ -16,7 +16,7 @@ chroot.packages.*
 
 config/binary
 config/bootstrap
-config/chroot
+config/system
 config/common
 config/source
 

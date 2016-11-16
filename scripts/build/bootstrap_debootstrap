@@ -21,7 +21,7 @@ USAGE="${PROGRAM} [--force]"
 Arguments "${@}"
 
 # Reading configuration files
-Read_conffiles config/all config/common config/bootstrap config/chroot config/binary config/source
+Read_conffiles config/all config/common config/bootstrap config/system config/binary config/source
 Set_defaults
 
 if [ ! -x "$(which debootstrap 2>/dev/null)" ]
@@ -77,9 +77,10 @@ then
 fi
 
 # Include apt-transport-https
-if grep -qs '^deb https' config/archives/*.list.*
+if grep -qs '^deb https' config/archives/*.list ||
+   grep -qs '^deb https' config/archives/*.list.*
 then
-	DEBOOTSTRAP_OPTIONS="${DEBOOTSTRAP_OPTIONS} --include=apt-transport-https"
+	DEBOOTSTRAP_OPTIONS="${DEBOOTSTRAP_OPTIONS} --include=apt-transport-https,ca-certificates"
 fi
 
 if [ -x "/usr/sbin/debootstrap" ]
