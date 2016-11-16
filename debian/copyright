@@ -1,6 +1,6 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: system-build
-Upstream-Contact: Daniel Baumann <daniel.baumann@open-infrastructure.net>
+Upstream-Contact: Open Infrastructure <software@lists.open-infrastructure.net>
 Source: https://sources.open-infrastructure.net/software/system-build
 
 Files: *
