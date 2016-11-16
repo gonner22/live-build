@@ -1,3 +1,11 @@
+open-infrastructure-system-build (20161115-1) experimental; urgency=low
+
+  * Uploading to experimental.
+  * Merging upstream version 20161115.
+  * Updating upstream contact in copyright file.
+
+ -- Daniel Baumann <mail@daniel-baumann.ch>  Wed, 16 Nov 2016 08:10:21 +0100
+
 open-infrastructure-system-build (20161101-1) unstable; urgency=high
 
   * Uploading to sid.
