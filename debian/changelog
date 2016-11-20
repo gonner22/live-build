@@ -1,10 +1,11 @@
-live-build (3.0.5+really+is+2.0.12-0.tails4~1.gbp0a046d) UNRELEASED; urgency=medium
+live-build (3.0.5+really+is+2.0.12-0.tails4~2.gbp5e0f37) UNRELEASED; urgency=medium
 
-  ** SNAPSHOT build @0a046dbe648c3e16e0eb920f6f7d69bc3534631b **
+  ** SNAPSHOT build @5e0f37535965f1fec0b4ce577ef3185260ea0a0c **
 
   [ Chris Lamb ]
   * Factor out clamping mtimes into its own method.
   * Add a lb_chroot_reproducible that is run afer all hacks.
+  * Don't traverse filesystems to avoid trying to clamp files in /sys, etc.
 
  -- intrigeri <intrigeri@boum.org>  Sun, 20 Nov 2016 16:19:10 +0000
 
