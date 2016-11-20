@@ -1,6 +1,4 @@
-live-build (3.0.5+really+is+2.0.12-0.tails4~2.gbp5e0f37) UNRELEASED; urgency=medium
-
-  ** SNAPSHOT build @5e0f37535965f1fec0b4ce577ef3185260ea0a0c **
+live-build (3.0.5+really+is+2.0.12-0.tails4) builder-jessie; urgency=medium
 
   [ Chris Lamb ]
   * Factor out clamping mtimes into its own method.
