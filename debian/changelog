@@ -1,3 +1,13 @@
+live-build (3.0.5+really+is+2.0.12-0.tails4~1.gbp0a046d) UNRELEASED; urgency=medium
+
+  ** SNAPSHOT build @0a046dbe648c3e16e0eb920f6f7d69bc3534631b **
+
+  [ Chris Lamb ]
+  * Factor out clamping mtimes into its own method.
+  * Add a lb_chroot_reproducible that is run afer all hacks.
+
+ -- intrigeri <intrigeri@boum.org>  Sun, 20 Nov 2016 16:19:10 +0000
+
 live-build (3.0.5+really+is+2.0.12-0.tails3) builder-jessie; urgency=medium
 
   [ intrigeri ]
