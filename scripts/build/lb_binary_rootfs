@@ -277,7 +277,7 @@ case "${LB_CHROOT_FILESYSTEM}" in
 
 	squashfs)
 		# Checking depends
-		Check_package chroot/usr/share/doc/squashfs-tools squashfs-tools
+		Check_package chroot/usr/share/doc/squashfs-tools-ng squashfs-tools-ng
 
 		# Restoring cache
 		Restore_cache cache/packages_binary
@@ -297,32 +297,12 @@ case "${LB_CHROOT_FILESYSTEM}" in
 		# Remove stale squashfs image
 		rm -f chroot/filesystem.squashfs
 
-		MKSQUASHFS_OPTIONS="${MKSQUASHFS_OPTIONS} -no-progress"
-
-		if [ "${_VERBOSE}" = "true" ]
-		then
-			MKSQUASHFS_OPTIONS="${MKSQUASHFS_OPTIONS} -info"
-		fi
-
-		if [ -f config/binary_rootfs/squashfs.sort ]
-		then
-			MKSQUASHFS_OPTIONS="${MKSQUASHFS_OPTIONS} -sort squashfs.sort"
-
-			case "${LB_BUILD_WITH_CHROOT}" in
-				true)
-					cp config/binary_rootfs/squashfs.sort chroot
-					;;
-
-				false)
-					cp config/binary_rootfs/squashfs.sort .
-					;;
-			esac
-		fi
+		MKSQUASHFS_OPTIONS="${MKSQUASHFS_OPTIONS} --quiet --keep-xattr"
 
 		case "${LB_BUILD_WITH_CHROOT}" in
 			true)
 				# Create image
-				Chroot chroot "mksquashfs chroot filesystem.squashfs ${MKSQUASHFS_OPTIONS}"
+				Chroot chroot "gensquashfs ${MKSQUASHFS_OPTIONS} --pack-dir chroot filesystem.squashfs"
 
 				case "${LB_MODE}" in
 					ubuntu)
@@ -384,7 +364,7 @@ case "${LB_CHROOT_FILESYSTEM}" in
 				;;
 
 			false)
-				mksquashfs chroot binary/${INITFS}/filesystem.squashfs ${MKSQUASHFS_OPTIONS}
+				gensquashfs ${MKSQUASHFS_OPTIONS} --pack-dir chroot binary/${INITFS}/filesystem.squashfs
 
 				case "${LB_MODE}" in
 					ubuntu)

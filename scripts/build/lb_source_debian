@@ -59,7 +59,7 @@ ${LB_INITRAMFS}
 dosfstools
 genisoimage
 parted
-squashfs-tools
+squashfs-tools-ng
 genext2fs
 mtd-tools
 EOF
