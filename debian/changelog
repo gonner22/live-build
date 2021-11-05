@@ -1,3 +1,10 @@
+live-build (3.0.5+really+is+2.0.12-0.tails7) builder-buster; urgency=medium
+
+  * Add support for gensquashfs' --sort-file (tails#18655).
+  * Add support for SquashFS excludes
+
+ -- intrigeri <intrigeri@debian.org>  Fri, 05 Nov 2021 10:03:31 +0000
+
 live-build (3.0.5+really+is+2.0.12-0.tails6) builder-buster; urgency=medium
 
   * Switch from squashfs-tools to squashfs-tools-ng (tails#18655).
