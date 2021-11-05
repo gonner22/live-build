@@ -1,3 +1,9 @@
+live-build (3.0.5+really+is+2.0.12-0.tails6) builder-buster; urgency=medium
+
+  * Switch from squashfs-tools to squashfs-tools-ng (tails#18655).
+
+ -- intrigeri <intrigeri@boum.org>  Fri, 05 Nov 2021 07:29:42 +0000
+
 live-build (3.0.5+really+is+2.0.12-0.tails5) builder-jessie; urgency=medium
 
   [ Chris Lamb ]
