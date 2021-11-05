@@ -313,7 +313,8 @@ case "${LB_CHROOT_FILESYSTEM}" in
 					cp config/binary_rootfs/squashfs.sort chroot
 					if [ -x config/binary_rootfs/update-squashfs-sort-file ]
 					then
-						Chroot chroot config/binary_rootfs/update-squashfs-sort-file \
+						cp -a config/binary_rootfs/update-squashfs-sort-file chroot
+						Chroot chroot update-squashfs-sort-file \
 						       squashfs.sort chroot > chroot/squashfs.sort.new
 						mv chroot/squashfs.sort.new chroot/squashfs.sort
 					fi
