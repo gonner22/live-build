@@ -1,3 +1,9 @@
+live-build (3.0.5+really+is+2.0.12-0.tails5+update.squashfs.sort.file.2) 18655-zstd-squashfs; urgency=medium
+
+  * Fix hook to modify the SquashFS sort file at build time
+
+ -- intrigeri <intrigeri@debian.org>  Fri, 05 Nov 2021 13:51:49 +0000
+
 live-build (3.0.5+really+is+2.0.12-0.tails5+update.squashfs.sort.file.1) 18655-zstd-squashfs; urgency=medium
 
   * Add hook to modify the SquashFS sort file at build time
