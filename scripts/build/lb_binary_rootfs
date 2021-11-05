@@ -311,12 +311,14 @@ case "${LB_CHROOT_FILESYSTEM}" in
 			case "${LB_BUILD_WITH_CHROOT}" in
 				true)
 					cp config/binary_rootfs/squashfs.sort chroot
-					if [ -x config/binary_rootfs/update-squashfs-sort-file ]
+					if [ -f config/binary_rootfs/update-squashfs-sort-file ]
 					then
-						cp -a config/binary_rootfs/update-squashfs-sort-file chroot
-						Chroot chroot update-squashfs-sort-file \
-						       squashfs.sort chroot > chroot/squashfs.sort.new
+						cp config/binary_rootfs/update-squashfs-sort-file chroot
+						chmod +x chroot/update-squashfs-sort-file
+						Chroot chroot "./update-squashfs-sort-file squashfs.sort chroot" \
+						       > chroot/squashfs.sort.new
 						mv chroot/squashfs.sort.new chroot/squashfs.sort
+						rm chroot/update-squashfs-sort-file
 					fi
 					;;
 
