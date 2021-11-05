@@ -1,3 +1,9 @@
+live-build (3.0.5+really+is+2.0.12-0.tails8) builder-buster; urgency=medium
+
+  * Revert "Add support for SquashFS excludes"
+
+ -- intrigeri <intrigeri@boum.org>  Fri, 05 Nov 2021 11:23:03 +0000
+
 live-build (3.0.5+really+is+2.0.12-0.tails7) builder-buster; urgency=medium
 
   * Add support for gensquashfs' --sort-file (tails#18655).
