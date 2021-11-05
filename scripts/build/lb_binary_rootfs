@@ -314,19 +314,6 @@ case "${LB_CHROOT_FILESYSTEM}" in
 
 		MKSQUASHFS_OPTIONS="${MKSQUASHFS_OPTIONS} --quiet --keep-xattr"
 
-		# Temporarily move excluded files out of the way
-		if [ -f config/binary_rootfs/squashfs.excludes ]
-		then
-			EXCLUDED_BACKUP_DIR=$(mktemp --directory)
-			while read -r exclude
-			do
-				dir=$(dirname "$exclude")
-				mkdir -p "${EXCLUDED_BACKUP_DIR}/${dir}"
-				# shellcheck disable=SC2086
-				mv chroot/${exclude} "${EXCLUDED_BACKUP_DIR}/${dir}/"
-			done < config/binary_rootfs/squashfs.excludes
-		fi
-
 		case "${LB_BUILD_WITH_CHROOT}" in
 			true)
 				# Create image
@@ -401,17 +388,6 @@ case "${LB_CHROOT_FILESYSTEM}" in
 				esac
 				;;
 		esac
-
-		# Restore excluded files
-		if [ -f config/binary_rootfs/squashfs.excludes ]
-		then
-			while read -r exclude
-			do
-				dir=$(dirname "$exclude")
-				# shellcheck disable=SC2086
-				mv "${EXCLUDED_BACKUP_DIR}"/${exclude} "chroot/${dir}/"
-			done < config/binary_rootfs/squashfs.excludes
-		fi
 
 		if [ -n "${LB_ROOT_COMMAND}" ]
 		then
