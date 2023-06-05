@@ -330,9 +330,12 @@ EOF
 			then
 				for FILE in config/chroot_sources/*.chroot.gpg
 				do
-					cp ${FILE} chroot/root
-					Chroot chroot "apt-key add /root/$(basename ${FILE})"
-					rm -f chroot/root/$(basename ${FILE})
+					if grep -q "PGP PUBLIC KEY BLOCK" "${FILE}"
+					then
+						cp ${FILE} chroot/etc/apt/trusted.gpg.d/$(basename ${FILE}).asc
+					else
+						cp ${FILE} chroot/etc/apt/trusted.gpg.d/$(basename ${FILE}).gpg
+					fi
 				done
 			fi
 
@@ -583,9 +586,12 @@ EOF
 		then
 			for FILE in config/chroot_sources/*.binary.gpg
 			do
-				cp ${FILE} chroot/root
-				Chroot chroot "apt-key add /root/$(basename ${FILE})"
-				rm -f chroot/root/$(basename ${FILE})
+				if grep -q "PGP PUBLIC KEY BLOCK" "${FILE}"
+				then
+					cp ${FILE} chroot/etc/apt/trusted.gpg.d/$(basename ${FILE}).asc
+				else
+					cp ${FILE} chroot/etc/apt/trusted.gpg.d/$(basename ${FILE}).gpg
+				fi
 			done
 		fi
 
