@@ -1,4 +1,4 @@
-live-build (3.0.5+really+is+2.0.12-0.tails5) builder-jessie; urgency=medium
+live-build (3.0.5+really+is+2.0.12-0.telestai-cb5) builder-jessie; urgency=medium
 
   [ Chris Lamb ]
   * Add a Date utility that will use SOURCE_DATE_EPOCH if necessary.
@@ -7,7 +7,7 @@ live-build (3.0.5+really+is+2.0.12-0.tails5) builder-jessie; urgency=medium
 
  -- intrigeri <intrigeri@boum.org>  Mon, 21 Nov 2016 16:46:34 +0000
 
-live-build (3.0.5+really+is+2.0.12-0.tails4) builder-jessie; urgency=medium
+live-build (3.0.5+really+is+2.0.12-0.telestai-cb4) builder-jessie; urgency=medium
 
   [ Chris Lamb ]
   * Factor out clamping mtimes into its own method.
@@ -16,7 +16,7 @@ live-build (3.0.5+really+is+2.0.12-0.tails4) builder-jessie; urgency=medium
 
  -- intrigeri <intrigeri@boum.org>  Sun, 20 Nov 2016 16:19:10 +0000
 
-live-build (3.0.5+really+is+2.0.12-0.tails3) builder-jessie; urgency=medium
+live-build (3.0.5+really+is+2.0.12-0.telestai-cb3) builder-jessie; urgency=medium
 
   [ intrigeri ]
   * Use xorriso instead of genisoimage, by backporting (most of) lb_binary_iso
@@ -36,21 +36,21 @@ live-build (3.0.5+really+is+2.0.12-0.tails3) builder-jessie; urgency=medium
 
  -- intrigeri <intrigeri@boum.org>  Sat, 19 Nov 2016 13:54:34 +0000
 
-live-build (3.0.5+really+is+2.0.12-0.tails2) bugfix-9419-eatmydata-in-build-chroot; urgency=medium
+live-build (3.0.5+really+is+2.0.12-0.telestai-cb2) bugfix-9419-eatmydata-in-build-chroot; urgency=medium
 
   * Adding LD_PRELOAD and FAKETIME to the list of variables
     passed through to commands run with Chroot(). This fixes
-    Tails#9419, and will help with reproducible builds (Tails#5630).
+    Telestai-CB#9419, and will help with reproducible builds (Telestai-CB#5630).
   * Fixing the build by not attempting to build non-existing German
     manpages.
 
- -- Tails developers <tails@boum.org>  Mon, 18 May 2015 17:25:16 +0200
+ -- Telestai-CB developers <telestai-cb@boum.org>  Mon, 18 May 2015 17:25:16 +0200
 
-live-build (3.0.5+really+is+2.0.12-0.tails1) builder-wheezy; urgency=medium
+live-build (3.0.5+really+is+2.0.12-0.telestai-cb1) builder-wheezy; urgency=medium
 
   * Rebuild with a version number greater than Wheezy's one.
 
- -- Tails developers <tails@boum.org>  Sun, 11 May 2014 13:12:12 +0200
+ -- Telestai-CB developers <telestai-cb@boum.org>  Sun, 11 May 2014 13:12:12 +0200
 
 live-build (2.0.12-2) unstable; urgency=low
 
